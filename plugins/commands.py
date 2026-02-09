@@ -204,5 +204,5 @@ async def leaderboard_cmd(c, m):
         row.append(InlineKeyboardButton("Next ➡️", callback_data=f"leader_{page+1}"))
     if row:
         kb.append(row)
-    
+    kb.append([InlineKeyboardButton("🏆 Most Wins", callback_data=f"lb_toggle_wins_{page}")])
     await m.reply_text("\n".join(txt_lines), reply_markup=InlineKeyboardMarkup(kb) if kb else None, parse_mode=ParseMode.HTML)
