@@ -1,0 +1,399 @@
+2026-02-09 13:35:47,651 - root - INFO - Initializing Database and Data...
+2026-02-09 13:36:03,152 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 13:36:03,495 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 13:36:03,587 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 13:36:03,596 - root - INFO - ✅ Loaded 196 Marvel characters.
+2026-02-09 13:36:03,597 - root - INFO - Starting Web Server...
+2026-02-09 13:36:03,607 - root - INFO - Starting Background Threads...
+2026-02-09 13:36:03,612 - root - INFO - Starting Pyrogram Client...
+2026-02-09 13:36:03,969 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 13:36:03,971 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 13:36:05,642 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 13:36:05] "GET / HTTP/1.1" 200 -
+2026-02-09 13:36:11,487 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 13:36:11,589 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 13:36:11,595 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 13:36:12,117 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 13:36:12,120 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 13:36:12,121 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 13:36:12,123 - pyrogram.session.session - INFO - Session started
+2026-02-09 13:36:12,206 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 13:36:12,520 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:36:12,522 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:36:12,524 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:36:12,525 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:36:12,670 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("callbacks") in group 0 from "plugins.callbacks"
+2026-02-09 13:36:12,674 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("list_pagination") in group 0 from "plugins.callbacks"
+2026-02-09 13:36:12,742 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("start_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:36:12,744 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("guide_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:36:12,745 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("list_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:36:12,747 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("profile_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:36:12,749 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("status_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:36:12,802 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:36:12,804 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("pokemon_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:36:12,805 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comic_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:36:12,806 - pyrogram.client - INFO - [anime_bot] Successfully loaded 14 plugins from "plugins"
+2026-02-09 13:36:12,808 - pyrogram.dispatcher - INFO - Started 24 HandlerTasks
+2026-02-09 13:44:03,426 - root - INFO - Initializing Database and Data...
+2026-02-09 13:44:05,222 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 13:44:05,496 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 13:44:05,506 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 13:44:05,510 - root - INFO - ✅ Loaded 196 Marvel characters.
+2026-02-09 13:44:05,511 - root - INFO - Starting Web Server...
+2026-02-09 13:44:05,516 - root - INFO - Starting Background Threads...
+2026-02-09 13:44:05,518 - root - INFO - Starting Pyrogram Client...
+2026-02-09 13:44:05,563 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 13:44:05,564 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 13:44:07,206 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 13:44:07,290 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 13:44:07,292 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 13:44:07,571 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 13:44:07] "GET / HTTP/1.1" 200 -
+2026-02-09 13:44:07,702 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 13:44:07,703 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 13:44:07,704 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 13:44:07,704 - pyrogram.session.session - INFO - Session started
+2026-02-09 13:44:07,722 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 13:44:07,933 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:44:07,934 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:44:07,934 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:44:07,935 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:44:07,968 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("callbacks") in group 0 from "plugins.callbacks"
+2026-02-09 13:44:07,968 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("list_pagination") in group 0 from "plugins.callbacks"
+2026-02-09 13:44:07,998 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("start_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:44:07,998 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("guide_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:44:07,999 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("list_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:44:07,999 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("profile_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:44:08,000 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("status_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:44:08,002 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:44:08,003 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("pokemon_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:44:08,004 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comic_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:44:08,004 - pyrogram.client - INFO - [anime_bot] Successfully loaded 14 plugins from "plugins"
+2026-02-09 13:44:08,005 - pyrogram.dispatcher - INFO - Started 24 HandlerTasks
+2026-02-09 13:48:09,472 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 3 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 13:54:09,647 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 13:54:09] "GET / HTTP/1.1" 200 -
+2026-02-09 13:57:49,004 - root - INFO - Initializing Database and Data...
+2026-02-09 13:57:50,742 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 13:57:51,011 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 13:57:51,020 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 13:57:51,023 - root - INFO - ✅ Loaded 196 Marvel characters.
+2026-02-09 13:57:51,024 - root - INFO - Starting Web Server...
+2026-02-09 13:57:51,027 - root - INFO - Starting Background Threads...
+2026-02-09 13:57:51,029 - root - INFO - Starting Pyrogram Client...
+2026-02-09 13:57:51,059 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 13:57:51,059 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 13:57:52,728 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 13:57:52,815 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 13:57:52,817 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 13:57:53,099 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 13:57:53] "GET / HTTP/1.1" 200 -
+2026-02-09 13:57:53,216 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 13:57:53,217 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 13:57:53,218 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 13:57:53,218 - pyrogram.session.session - INFO - Session started
+2026-02-09 13:57:53,235 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 13:57:53,461 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:57:53,462 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:57:53,463 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:57:53,464 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 13:57:53,544 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("callbacks") in group 0 from "plugins.callbacks"
+2026-02-09 13:57:53,547 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("start_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:57:53,547 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("guide_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:57:53,548 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("list_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:57:53,549 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("profile_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:57:53,549 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("status_cmd") in group 0 from "plugins.commands"
+2026-02-09 13:57:53,563 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:57:53,563 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("pokemon_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:57:53,563 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comic_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 13:57:53,564 - pyrogram.client - INFO - [anime_bot] Successfully loaded 13 plugins from "plugins"
+2026-02-09 13:57:53,565 - pyrogram.dispatcher - INFO - Started 24 HandlerTasks
+2026-02-09 14:03:41,033 - root - INFO - Game -1003603092187_1770625683_422 forfeited due to timeout
+2026-02-09 14:06:59,390 - root - INFO - Initializing Database and Data...
+2026-02-09 14:07:01,251 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 14:07:01,495 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 14:07:01,504 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 14:07:01,507 - root - INFO - ✅ Loaded 196 Marvel characters with 4 series.
+2026-02-09 14:07:01,508 - root - INFO - Starting Web Server...
+2026-02-09 14:07:01,513 - root - INFO - Starting Background Threads...
+2026-02-09 14:07:01,515 - root - INFO - Starting Pyrogram Client...
+2026-02-09 14:07:01,544 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 14:07:01,545 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 14:07:03,529 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 14:07:03,541 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 14:07:03] "GET / HTTP/1.1" 200 -
+2026-02-09 14:07:03,613 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 14:07:03,615 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 14:07:04,007 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 14:07:04,008 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 14:07:04,009 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 14:07:04,010 - pyrogram.session.session - INFO - Session started
+2026-02-09 14:07:04,025 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 14:07:04,252 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:07:04,253 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:07:04,254 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:07:04,255 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:07:04,311 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("callbacks") in group 0 from "plugins.callbacks"
+2026-02-09 14:07:04,320 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("start_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:07:04,321 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("guide_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:07:04,322 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("list_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:07:04,322 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("profile_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:07:04,323 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("status_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:07:04,350 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:07:04,351 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("pokemon_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:07:04,352 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comic_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:07:04,352 - pyrogram.client - INFO - [anime_bot] Successfully loaded 13 plugins from "plugins"
+2026-02-09 14:07:04,353 - pyrogram.dispatcher - INFO - Started 24 HandlerTasks
+2026-02-09 14:13:54,497 - pyrogram.dispatcher - ERROR - Telegram says: [400 MESSAGE_NOT_MODIFIED] - The message was not modified because you tried to edit it using the same content (caused by "messages.EditMessage")
+Traceback (most recent call last):
+  File "C:\Users\2005y\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "C:\Users\2005y\OneDrive\Desktop\draftbot\animedraft\multianime\plugins\callbacks.py", line 82, in callbacks
+    await q.edit_message_text(
+  File "C:\Users\2005y\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pyrogram\types\bots_and_keyboards\callback_query.py", line 200, in edit_message_text
+    return await self._client.edit_message_text(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\2005y\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pyrogram\methods\messages\edit_message_text.py", line 82, in edit_message_text
+    r = await self.invoke(
+        ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\2005y\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pyrogram\methods\advanced\invoke.py", line 79, in invoke
+    r = await self.session.invoke(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\2005y\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pyrogram\session\session.py", line 389, in invoke
+    return await self.send(query, timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\2005y\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pyrogram\session\session.py", line 357, in send
+    RPCError.raise_it(result, type(data))
+  File "C:\Users\2005y\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pyrogram\errors\rpc_error.py", line 91, in raise_it
+    raise getattr(
+pyrogram.errors.exceptions.bad_request_400.MessageNotModified: Telegram says: [400 MESSAGE_NOT_MODIFIED] - The message was not modified because you tried to edit it using the same content (caused by "messages.EditMessage")
+2026-02-09 14:17:05,605 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 14:17:05] "GET / HTTP/1.1" 200 -
+2026-02-09 14:19:23,232 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 3 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 14:20:22,799 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 8 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 14:20:25,448 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 5 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 14:20:29,583 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 3 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 14:20:30,585 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 3 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 14:21:22,489 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 8 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 14:21:30,589 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 3 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 14:27:07,685 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 14:27:07] "GET / HTTP/1.1" 200 -
+2026-02-09 14:27:51,530 - root - INFO - Game -1003603092187_1770627124_129 forfeited due to timeout
+2026-02-09 14:29:44,955 - pyrogram.session.session - WARNING - [anime_bot] Waiting for 3 seconds before continuing (required by "messages.EditMessage")
+2026-02-09 14:30:09,949 - root - INFO - Initializing Database and Data...
+2026-02-09 14:30:13,198 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 14:30:13,472 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 14:30:13,488 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 14:30:13,496 - root - INFO - ✅ Loaded 196 Marvel characters with 4 series.
+2026-02-09 14:30:13,497 - root - INFO - Starting Web Server...
+2026-02-09 14:30:13,503 - root - INFO - Starting Background Threads...
+2026-02-09 14:30:13,510 - root - INFO - Starting Pyrogram Client...
+2026-02-09 14:30:13,605 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 14:30:13,607 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 14:30:15,537 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 14:30:15] "GET / HTTP/1.1" 200 -
+2026-02-09 14:30:19,085 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 14:30:19,180 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 14:30:19,193 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 14:30:19,658 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 14:30:19,660 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 14:30:19,661 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 14:30:19,662 - pyrogram.session.session - INFO - Session started
+2026-02-09 14:30:19,723 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 14:30:20,011 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:30:20,012 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:30:20,014 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:30:20,015 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:30:20,016 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comicimg_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:30:20,017 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_comic_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:30:20,018 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("characters_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:30:20,126 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("callbacks") in group 0 from "plugins.callbacks"
+2026-02-09 14:30:20,161 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("start_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:30:20,162 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("guide_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:30:20,162 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("list_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:30:20,163 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("profile_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:30:20,164 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("status_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:30:20,168 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:30:20,169 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("pokemon_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:30:20,171 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comic_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:30:20,172 - pyrogram.client - INFO - [anime_bot] Successfully loaded 16 plugins from "plugins"
+2026-02-09 14:30:20,174 - pyrogram.dispatcher - INFO - Started 24 HandlerTasks
+2026-02-09 14:38:36,614 - root - INFO - Initializing Database and Data...
+2026-02-09 14:38:38,373 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 14:38:38,619 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 14:38:38,628 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 14:38:38,631 - root - INFO - ✅ Loaded 196 Marvel characters with 4 series.
+2026-02-09 14:38:38,631 - root - INFO - Starting Web Server...
+2026-02-09 14:38:38,635 - root - INFO - Starting Background Threads...
+2026-02-09 14:38:38,637 - root - INFO - Starting Pyrogram Client...
+2026-02-09 14:38:38,673 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 14:38:38,674 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 14:38:40,374 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 14:38:40,465 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 14:38:40,467 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 14:38:40,682 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 14:38:40] "GET / HTTP/1.1" 200 -
+2026-02-09 14:38:40,881 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 14:38:40,883 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 14:38:40,883 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 14:38:40,883 - pyrogram.session.session - INFO - Session started
+2026-02-09 14:38:40,898 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 14:38:41,135 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:38:41,136 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:38:41,136 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:38:41,137 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:38:41,137 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comicimg_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:38:41,137 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_comic_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:38:41,138 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("characters_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:40:03,181 - root - INFO - Initializing Database and Data...
+2026-02-09 14:40:04,850 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 14:40:05,086 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 14:40:05,096 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 14:40:05,099 - root - INFO - ✅ Loaded 196 Marvel characters with 4 series.
+2026-02-09 14:40:05,100 - root - INFO - Starting Web Server...
+2026-02-09 14:40:05,104 - root - INFO - Starting Background Threads...
+2026-02-09 14:40:05,106 - root - INFO - Starting Pyrogram Client...
+2026-02-09 14:40:05,145 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 14:40:05,146 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 14:40:06,916 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 14:40:07,168 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 14:40:07] "GET / HTTP/1.1" 200 -
+2026-02-09 14:40:08,013 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 14:40:08,015 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 14:40:08,492 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 14:40:08,492 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 14:40:08,493 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 14:40:08,493 - pyrogram.session.session - INFO - Session started
+2026-02-09 14:40:08,507 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 14:40:08,743 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:40:08,744 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:40:08,744 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:40:08,745 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:40:08,745 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comicimg_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:40:08,745 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_comic_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:40:08,746 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("characters_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:40:08,786 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("callbacks") in group 0 from "plugins.callbacks"
+2026-02-09 14:40:08,789 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("start_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:40:08,789 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("guide_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:40:08,790 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("list_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:40:08,791 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("profile_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:40:08,791 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("status_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:40:08,793 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:40:08,794 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("pokemon_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:40:08,794 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comic_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:40:08,795 - pyrogram.client - INFO - [anime_bot] Successfully loaded 16 plugins from "plugins"
+2026-02-09 14:40:08,795 - pyrogram.dispatcher - INFO - Started 24 HandlerTasks
+2026-02-09 14:50:09,214 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 14:50:09] "GET / HTTP/1.1" 200 -
+2026-02-09 14:54:57,057 - root - INFO - Stop signal received (SIGINT). Exiting...
+2026-02-09 14:54:57,195 - pyrogram.dispatcher - INFO - Stopped 24 HandlerTasks
+2026-02-09 14:54:57,196 - pyrogram.session.session - INFO - PingTask stopped
+2026-02-09 14:54:57,197 - pyrogram.connection.connection - INFO - Disconnected
+2026-02-09 14:54:57,198 - pyrogram.session.session - INFO - NetworkTask stopped
+2026-02-09 14:54:57,199 - pyrogram.session.session - INFO - Session stopped
+2026-02-09 14:56:28,573 - root - INFO - Initializing Database and Data...
+2026-02-09 14:56:38,113 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 14:56:38,351 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 14:56:38,360 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 14:56:38,363 - root - INFO - ✅ Loaded 196 Marvel characters with 4 series.
+2026-02-09 14:56:38,364 - root - INFO - Starting Web Server...
+2026-02-09 14:56:38,368 - root - INFO - Starting Background Threads...
+2026-02-09 14:56:38,371 - root - INFO - Starting Pyrogram Client...
+2026-02-09 14:56:38,552 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 14:56:38,553 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 14:56:40,266 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 14:56:40,353 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 14:56:40,355 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 14:56:40,407 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 14:56:40] "GET / HTTP/1.1" 200 -
+2026-02-09 14:56:40,791 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 14:56:40,792 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 14:56:40,792 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 14:56:40,793 - pyrogram.session.session - INFO - Session started
+2026-02-09 14:56:40,807 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 14:56:41,059 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:56:41,060 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:56:41,060 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:56:41,061 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:56:41,061 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comicimg_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:56:41,062 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_comic_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:56:41,063 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("characters_cmd") in group 0 from "plugins.admin"
+2026-02-09 14:56:41,078 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("callbacks") in group 0 from "plugins.callbacks"
+2026-02-09 14:56:41,090 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("start_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:56:41,091 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("guide_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:56:41,092 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("list_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:56:41,092 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("profile_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:56:41,093 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("status_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:56:41,094 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("leaderboard_cmd") in group 0 from "plugins.commands"
+2026-02-09 14:56:41,097 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:56:41,098 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("pokemon_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:56:41,098 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comic_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 14:56:41,099 - pyrogram.client - INFO - [anime_bot] Successfully loaded 17 plugins from "plugins"
+2026-02-09 14:56:41,100 - pyrogram.dispatcher - INFO - Started 24 HandlerTasks
+2026-02-09 15:01:50,920 - pyrogram.dispatcher - ERROR - name 'game_id' is not defined
+Traceback (most recent call last):
+  File "C:\Users\2005y\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\pyrogram\dispatcher.py", line 240, in handler_worker
+    await handler.callback(self.client, *args)
+  File "C:\Users\2005y\OneDrive\Desktop\draftbot\animedraft\multianime\plugins\callbacks.py", line 288, in callbacks
+    [InlineKeyboardButton(f"🔵 {p1n} {p1_status}", callback_data=f"startrpg_{game_id}_p1")],
+                                                                             ^^^^^^^
+NameError: name 'game_id' is not defined
+2026-02-09 15:03:21,452 - root - INFO - Initializing Database and Data...
+2026-02-09 15:03:23,175 - root - INFO - ✅ Connected to MongoDB.
+2026-02-09 15:03:23,428 - root - INFO - ✅ Loaded 2414 characters.
+2026-02-09 15:03:23,438 - root - INFO - ✅ Loaded 727 Pokémon.
+2026-02-09 15:03:23,441 - root - INFO - ✅ Loaded 196 Marvel characters with 4 series.
+2026-02-09 15:03:23,442 - root - INFO - Starting Web Server...
+2026-02-09 15:03:23,446 - root - INFO - Starting Background Threads...
+2026-02-09 15:03:23,448 - root - INFO - Starting Pyrogram Client...
+2026-02-09 15:03:23,487 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://192.168.29.224:8000
+2026-02-09 15:03:23,487 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-02-09 15:03:25,317 - pyrogram.connection.connection - INFO - Connecting...
+2026-02-09 15:03:25,409 - pyrogram.connection.connection - INFO - Connected! Production DC5 - IPv4
+2026-02-09 15:03:25,411 - pyrogram.session.session - INFO - NetworkTask started
+2026-02-09 15:03:25,487 - werkzeug - INFO - 127.0.0.1 - - [09/Feb/2026 15:03:25] "GET / HTTP/1.1" 200 -
+2026-02-09 15:03:25,861 - pyrogram.session.session - INFO - Session initialized: Layer 158
+2026-02-09 15:03:25,862 - pyrogram.session.session - INFO - Device: CPython 3.11.9 - Pyrogram 2.0.106
+2026-02-09 15:03:25,863 - pyrogram.session.session - INFO - System: Windows 10 (en)
+2026-02-09 15:03:25,863 - pyrogram.session.session - INFO - Session started
+2026-02-09 15:03:25,881 - pyrogram.session.session - INFO - PingTask started
+2026-02-09 15:03:26,123 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("acast_cmd") in group 0 from "plugins.admin"
+2026-02-09 15:03:26,124 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_char_cmd") in group 0 from "plugins.admin"
+2026-02-09 15:03:26,125 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("addpoints_cmd") in group 0 from "plugins.admin"
+2026-02-09 15:03:26,126 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("newyear_cmd") in group 0 from "plugins.admin"
+2026-02-09 15:03:26,127 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comicimg_cmd") in group 0 from "plugins.admin"
+2026-02-09 15:03:26,128 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("add_comic_cmd") in group 0 from "plugins.admin"
+2026-02-09 15:03:26,129 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("characters_cmd") in group 0 from "plugins.admin"
+2026-02-09 15:03:26,152 - pyrogram.client - INFO - [anime_bot] [LOAD] CallbackQueryHandler("callbacks") in group 0 from "plugins.callbacks"
+2026-02-09 15:03:26,220 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("start_cmd") in group 0 from "plugins.commands"
+2026-02-09 15:03:26,221 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("guide_cmd") in group 0 from "plugins.commands"
+2026-02-09 15:03:26,223 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("list_cmd") in group 0 from "plugins.commands"
+2026-02-09 15:03:26,223 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("profile_cmd") in group 0 from "plugins.commands"
+2026-02-09 15:03:26,224 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("status_cmd") in group 0 from "plugins.commands"
+2026-02-09 15:03:26,225 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("leaderboard_cmd") in group 0 from "plugins.commands"
+2026-02-09 15:03:26,228 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 15:03:26,229 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("pokemon_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 15:03:26,230 - pyrogram.client - INFO - [anime_bot] [LOAD] MessageHandler("comic_draft_cmd") in group 0 from "plugins.draft"
+2026-02-09 15:03:26,230 - pyrogram.client - INFO - [anime_bot] Successfully loaded 17 plugins from "plugins"
+2026-02-09 15:03:26,231 - pyrogram.dispatcher - INFO - Started 24 HandlerTasks
+2026-02-09 15:08:29,077 - root - INFO - Stop signal received (SIGINT). Exiting...
+2026-02-09 15:08:29,111 - pyrogram.dispatcher - INFO - Stopped 24 HandlerTasks
+2026-02-09 15:08:29,112 - pyrogram.session.session - INFO - PingTask stopped
+2026-02-09 15:08:29,113 - pyrogram.connection.connection - INFO - Disconnected
+2026-02-09 15:08:29,114 - pyrogram.session.session - INFO - NetworkTask stopped
+2026-02-09 15:08:29,115 - pyrogram.session.session - INFO - Session stopped

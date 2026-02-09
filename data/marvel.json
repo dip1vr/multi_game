@@ -1,0 +1,2984 @@
+[
+  {
+    "name": "Spider-Man (Peter Parker)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 65,
+      "genius": 95,
+      "powerhouse": 60,
+      "mystic": 5,
+      "street_level": 98,
+      "cosmic": 10,
+      "trickster": 1,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/gobp77.jpg"
+  },
+  {
+    "name": "Miles Morales",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 50,
+      "genius": 85,
+      "powerhouse": 55,
+      "mystic": 10,
+      "street_level": 90,
+      "cosmic": 10,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/i37orl.jpg"
+  },
+  {
+    "name": "Spider-Gwen (Ghost-Spider)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 60,
+      "genius": 75,
+      "powerhouse": 50,
+      "mystic": 5,
+      "street_level": 95,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ppocft.jpg"
+  },
+  {
+    "name": "Spider-Man 2099 (Miguel O'Hara)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 70,
+      "genius": 90,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 90,
+      "cosmic": 30,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/m5i499.jpg"
+  },
+  {
+    "name": "Scarlet Spider (Ben Reilly)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 50,
+      "genius": 80,
+      "powerhouse": 60,
+      "mystic": 0,
+      "street_level": 92,
+      "cosmic": 10,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/kbvf7j.jpg"
+  },
+  {
+    "name": "Silk (Cindy Moon)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 40,
+      "genius": 70,
+      "powerhouse": 55,
+      "mystic": 5,
+      "street_level": 96,
+      "cosmic": 10,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/eg7t44.jpg"
+  },
+  {
+    "name": "Venom (Eddie Brock)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 30,
+      "genius": 50,
+      "powerhouse": 85,
+      "mystic": 5,
+      "street_level": 85,
+      "cosmic": 40,
+      "trickster": 50,
+      "herald": 15
+    },
+    "img": "https://files.catbox.moe/ap67mt.jpg"
+  },
+  {
+    "name": "Carnage",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 0,
+      "genius": 30,
+      "powerhouse": 80,
+      "mystic": 5,
+      "street_level": 95,
+      "cosmic": 20,
+      "trickster": 100,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/wohd7e.jpg"
+  },
+  {
+    "name": "Anti-Venom",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 40,
+      "genius": 50,
+      "powerhouse": 85,
+      "mystic": 60,
+      "street_level": 80,
+      "cosmic": 10,
+      "trickster": 30,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/zcknlt.jpg"
+  },
+  {
+    "name": "Toxin",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 30,
+      "genius": 40,
+      "powerhouse": 90,
+      "mystic": 5,
+      "street_level": 85,
+      "cosmic": 10,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/mdhdzz.jpg"
+  },
+  {
+    "name": "Green Goblin (Norman Osborn)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 70,
+      "genius": 90,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 75,
+      "cosmic": 10,
+      "trickster": 98,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/p2vbnz.jpg"
+  },
+  {
+    "name": "Kingpin",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 85,
+      "genius": 90,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 80,
+      "cosmic": 0,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/56vaf4.jpg"
+  },
+  {
+    "name": "Vulture",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 20,
+      "genius": 75,
+      "powerhouse": 40,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 0,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/xe3716.jpg"
+  },
+  {
+    "name": "Rhino",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 10,
+      "genius": 10,
+      "powerhouse": 90,
+      "mystic": 0,
+      "street_level": 50,
+      "cosmic": 0,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/s3u1qo.jpg"
+  },
+  {
+    "name": "Lizard (Curt Connors)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 20,
+      "genius": 85,
+      "powerhouse": 80,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 0,
+      "trickster": 50,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/yty3w1.jpg"
+  },
+  {
+    "name": "Shocker",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 10,
+      "genius": 40,
+      "powerhouse": 50,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 0,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/k10rjc.jpg"
+  },
+  {
+    "name": "Electro",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 10,
+      "genius": 50,
+      "powerhouse": 80,
+      "mystic": 0,
+      "street_level": 50,
+      "cosmic": 10,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/s726vp.jpg"
+  },
+  {
+    "name": "Kraven the Hunter",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 50,
+      "genius": 70,
+      "powerhouse": 75,
+      "mystic": 20,
+      "street_level": 90,
+      "cosmic": 0,
+      "trickster": 30,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/eeq53d.jpg"
+  },
+  {
+    "name": "Sandman",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 30,
+      "genius": 40,
+      "powerhouse": 90,
+      "mystic": 0,
+      "street_level": 65,
+      "cosmic": 0,
+      "trickster": 50,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/vj9ery.jpg"
+  },
+  {
+    "name": "Mysterio",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 20,
+      "genius": 85,
+      "powerhouse": 20,
+      "mystic": 60,
+      "street_level": 40,
+      "cosmic": 10,
+      "trickster": 95,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/0dsela.jpg"
+  },
+  {
+    "name": "Doc Ock (Doctor Octopus)",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 60,
+      "genius": 98,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 10,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/osd262.jpg"
+  },
+  {
+    "name": "Morbius",
+    "series": "spider Man",
+    "stats": {
+      "paragon": 20,
+      "genius": 85,
+      "powerhouse": 65,
+      "mystic": 30,
+      "street_level": 80,
+      "cosmic": 0,
+      "trickster": 50,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/wxioau.jpg"
+  },
+  {
+    "name": "Captain America (Steve Rogers)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 99,
+      "genius": 85,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 98,
+      "cosmic": 5,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/5vsuh6.jpg"
+  },
+  {
+    "name": "Iron Man (Tony Stark)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 99,
+      "powerhouse": 85,
+      "mystic": 5,
+      "street_level": 60,
+      "cosmic": 50,
+      "trickster": 15,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/utlzyf.jpg"
+  },
+  {
+    "name": "Thor Odinson",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 65,
+      "powerhouse": 98,
+      "mystic": 85,
+      "street_level": 85,
+      "cosmic": 90,
+      "trickster": 2,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/zxx0dg.jpg"
+  },
+  {
+    "name": "Hulk (Bruce Banner)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 20,
+      "genius": 95,
+      "powerhouse": 100,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 30,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/l01sy8.jpg"
+  },
+  {
+    "name": "Black Widow (Natasha Romanoff)}",
+    "series": "avengers",
+    "stats": null,
+    "img": null
+  },
+  {
+    "name": "Hawkeye (Clint Barton)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 75,
+      "powerhouse": 30,
+      "mystic": 0,
+      "street_level": 95,
+      "cosmic": 0,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/vdn7s4.jpg"
+  },
+  {
+    "name": "Doctor Strange",
+    "series": "avengers",
+    "stats": {
+      "paragon": 75,
+      "genius": 95,
+      "powerhouse": 60,
+      "mystic": 100,
+      "street_level": 50,
+      "cosmic": 85,
+      "trickster": 10,
+      "herald": 70
+    },
+    "img": "https://files.catbox.moe/u6p7at.jpg"
+  },
+  {
+    "name": "Black Panther (T'Challa)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 95,
+      "genius": 95,
+      "powerhouse": 70,
+      "mystic": 40,
+      "street_level": 98,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/asvamo.jpg"
+  },
+  {
+    "name": "Scarlet Witch",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 60,
+      "powerhouse": 50,
+      "mystic": 100,
+      "street_level": 30,
+      "cosmic": 95,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/41zhpp.jpg"
+  },
+  {
+    "name": "Captain Marvel (Carol Danvers)}",
+    "series": "avengers",
+    "stats": null,
+    "img": null
+  },
+  {
+    "name": "Ant-Man (Scott Lang)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 80,
+      "powerhouse": 40,
+      "mystic": 0,
+      "street_level": 65,
+      "cosmic": 30,
+      "trickster": 30,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/f2yuk8.jpg"
+  },
+  {
+    "name": "Vision",
+    "series": "avengers",
+    "stats": null,
+    "img": null
+  },
+  {
+    "name": "Quicksilver",
+    "series": "avengers",
+    "stats": null,
+    "img": null
+  },
+  {
+    "name": "War Machine (James Rhodes)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 70,
+      "powerhouse": 85,
+      "mystic": 0,
+      "street_level": 65,
+      "cosmic": 30,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/0qc6x3.jpg"
+  },
+  {
+    "name": "Falcon (Sam Wilson)}",
+    "series": "avengers",
+    "stats": null,
+    "img": null
+  },
+  {
+    "name": "Winter Soldier (Bucky Barnes)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 75,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 98,
+      "cosmic": 5,
+      "trickster": 30,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/40pcq5.jpg"
+  },
+  {
+    "name": "She-Hulk",
+    "series": "avengers",
+    "stats": {
+      "paragon": 70,
+      "genius": 85,
+      "powerhouse": 92,
+      "mystic": 0,
+      "street_level": 75,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/93x3uu.jpg"
+  },
+  {
+    "name": "Ms. Marvel (Kamala Khan)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 70,
+      "genius": 75,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 20,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/5f0qlh.jpg"
+  },
+  {
+    "name": "Moon Knight",
+    "series": "avengers",
+    "stats": {
+      "paragon": 30,
+      "genius": 60,
+      "powerhouse": 65,
+      "mystic": 60,
+      "street_level": 92,
+      "cosmic": 20,
+      "trickster": 70,
+      "herald": 95
+    },
+    "img": "https://files.catbox.moe/vcer6i.jpg"
+  },
+  {
+    "name": "Luke Cage",
+    "series": "avengers",
+    "stats": {
+      "paragon": 85,
+      "genius": 60,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 5,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/dzlk2o.jpg"
+  },
+  {
+    "name": "Iron Fist",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 60,
+      "powerhouse": 50,
+      "mystic": 75,
+      "street_level": 98,
+      "cosmic": 10,
+      "trickster": 0,
+      "herald": 50
+    },
+    "img": "https://files.catbox.moe/2fnmzj.jpg"
+  },
+  {
+    "name": "Jessica Jones",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 80,
+      "powerhouse": 85,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 0,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/4gwcgb.jpg"
+  },
+  {
+    "name": "Shang-Chi",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 85,
+      "powerhouse": 40,
+      "mystic": 30,
+      "street_level": 100,
+      "cosmic": 10,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/h4hbes.jpg"
+  },
+  {
+    "name": "Wonder Man",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 40,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 40,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/iuh84r.jpg"
+  },
+  {
+    "name": "Hercules",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 30,
+      "powerhouse": 99,
+      "mystic": 40,
+      "street_level": 85,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/cjghbq.jpg"
+  },
+  {
+    "name": "Black Knight (Dane Whitman)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 70,
+      "genius": 70,
+      "powerhouse": 60,
+      "mystic": 50,
+      "street_level": 95,
+      "cosmic": 10,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/psmi6c.jpg"
+  },
+  {
+    "name": "Beta Ray Bill",
+    "series": "avengers",
+    "stats": {
+      "paragon": 85,
+      "genius": 60,
+      "powerhouse": 98,
+      "mystic": 80,
+      "street_level": 85,
+      "cosmic": 90,
+      "trickster": 0,
+      "herald": 10
+    },
+    "img": "https://files.catbox.moe/x4g2h4.jpg"
+  },
+  {
+    "name": "Sentry",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 60,
+      "powerhouse": 100,
+      "mystic": 40,
+      "street_level": 80,
+      "cosmic": 95,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ket2rj.jpg"
+  },
+  {
+    "name": "Hyperion",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 75,
+      "powerhouse": 98,
+      "mystic": 10,
+      "street_level": 75,
+      "cosmic": 85,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/19akh3.jpg"
+  },
+  {
+    "name": "Patriot (Eli Bradley)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 75,
+      "genius": 60,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 80,
+      "cosmic": 0,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/lrh0we.jpg"
+  },
+  {
+    "name": "Stature (Cassie Lang)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 50,
+      "powerhouse": 80,
+      "mystic": 0,
+      "street_level": 50,
+      "cosmic": 10,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/vyb783.jpg"
+  },
+  {
+    "name": "Speed",
+    "series": "avengers",
+    "stats": {
+      "paragon": 30,
+      "genius": 60,
+      "powerhouse": 40,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 10,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/jwowls.jpg"
+  },
+  {
+    "name": "Ironheart (Riri Williams)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 95,
+      "powerhouse": 75,
+      "mystic": 0,
+      "street_level": 50,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/labjgv.jpg"
+  },
+  {
+    "name": "Kate Bishop (Hawkeye)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 75,
+      "powerhouse": 30,
+      "mystic": 0,
+      "street_level": 92,
+      "cosmic": 0,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/r31xs4.jpg"
+  },
+  {
+    "name": "America Chavez",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 50,
+      "powerhouse": 90,
+      "mystic": 20,
+      "street_level": 80,
+      "cosmic": 95,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/nf0h0h.jpg"
+  },
+  {
+    "name": "Wiccan",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 40,
+      "mystic": 98,
+      "street_level": 30,
+      "cosmic": 95,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/jv399j.jpg"
+  },
+  {
+    "name": "Hulkling",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 60,
+      "powerhouse": 90,
+      "mystic": 10,
+      "street_level": 70,
+      "cosmic": 40,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/r6209u.jpg"
+  },
+  {
+    "name": "Nick Fury",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 95,
+      "powerhouse": 30,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 20,
+      "trickster": 50,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/e2wse5.jpg"
+  },
+  {
+    "name": "Phil Coulson",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 85,
+      "powerhouse": 20,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 0,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/uc29he.jpg"
+  },
+  {
+    "name": "Maria Hill",
+    "series": "avengers",
+    "stats": {
+      "paragon": 75,
+      "genius": 85,
+      "powerhouse": 20,
+      "mystic": 0,
+      "street_level": 75,
+      "cosmic": 0,
+      "trickster": 30,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/1npxft.jpg"
+  },
+  {
+    "name": "Quake (Daisy Johnson)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 70,
+      "genius": 75,
+      "powerhouse": 85,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 10,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/o9vcjk.jpg"
+  },
+  {
+    "name": "Squirrel Girl",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 60,
+      "powerhouse": 80,
+      "mystic": 0,
+      "street_level": 100,
+      "cosmic": 5,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/oucnkp.jpg"
+  },
+  {
+    "name": "Howard the Duck",
+    "series": "avengers",
+    "stats": {
+      "paragon": 20,
+      "genius": 65,
+      "powerhouse": 20,
+      "mystic": 10,
+      "street_level": 50,
+      "cosmic": 10,
+      "trickster": 50,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/q0wr7t.jpg"
+  },
+  {
+    "name": "Gwenpool",
+    "series": "avengers",
+    "stats": {
+      "paragon": 10,
+      "genius": 50,
+      "powerhouse": 40,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 80,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/z02z1q.jpg"
+  },
+  {
+    "name": "Blade",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 70,
+      "powerhouse": 70,
+      "mystic": 50,
+      "street_level": 95,
+      "cosmic": 10,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ewjb8c.jpg"
+  },
+  {
+    "name": "Ghost Rider (Johnny Blaze)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 50,
+      "powerhouse": 95,
+      "mystic": 95,
+      "street_level": 80,
+      "cosmic": 60,
+      "trickster": 30,
+      "herald": 80
+    },
+    "img": "https://files.catbox.moe/k0ni65.jpg"
+  },
+  {
+    "name": "Star-Lord",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 75,
+      "powerhouse": 40,
+      "mystic": 10,
+      "street_level": 70,
+      "cosmic": 40,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/2hu04n.jpg"
+  },
+  {
+    "name": "Rocket Raccoon",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 95,
+      "powerhouse": 20,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 30,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/o7a3ly.jpg"
+  },
+  {
+    "name": "Groot",
+    "series": "avengers",
+    "stats": {
+      "paragon": 30,
+      "genius": 30,
+      "powerhouse": 90,
+      "mystic": 20,
+      "street_level": 70,
+      "cosmic": 30,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/hs094o.jpg"
+  },
+  {
+    "name": "Gamora",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 75,
+      "mystic": 0,
+      "street_level": 100,
+      "cosmic": 30,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/74ugpn.jpg"
+  },
+  {
+    "name": "Drax the Destroyer",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 30,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 20,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/bknwhr.jpg"
+  },
+  {
+    "name": "Nebula",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 75,
+      "powerhouse": 70,
+      "mystic": 0,
+      "street_level": 90,
+      "cosmic": 30,
+      "trickster": 70,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ix5usc.jpg"
+  },
+  {
+    "name": "Mantis",
+    "series": "avengers",
+    "stats": {
+      "paragon": 30,
+      "genius": 60,
+      "powerhouse": 40,
+      "mystic": 80,
+      "street_level": 80,
+      "cosmic": 40,
+      "trickster": 5,
+      "herald": 10
+    },
+    "img": "https://files.catbox.moe/erqkrb.jpg"
+  },
+  {
+    "name": "Adam Warlock",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 85,
+      "powerhouse": 90,
+      "mystic": 80,
+      "street_level": 70,
+      "cosmic": 98,
+      "trickster": 30,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/dwhvnf.jpg"
+  },
+  {
+    "name": "Nova (Richard Rider)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 85,
+      "genius": 75,
+      "powerhouse": 85,
+      "mystic": 0,
+      "street_level": 75,
+      "cosmic": 92,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/yxji71.jpg"
+  },
+  {
+    "name": "Yondu",
+    "series": "avengers",
+    "stats": {
+      "paragon": 70,
+      "genius": 70,
+      "powerhouse": 40,
+      "mystic": 0,
+      "street_level": 92,
+      "cosmic": 10,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/d94k1x.jpg"
+  },
+  {
+    "name": "Gladiator (Kallark)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 60,
+      "powerhouse": 99,
+      "mystic": 0,
+      "street_level": 80,
+      "cosmic": 80,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/p19bc8.jpg"
+  },
+  {
+    "name": "Thanos",
+    "series": "avengers",
+    "stats": {
+      "paragon": 95,
+      "genius": 98,
+      "powerhouse": 99,
+      "mystic": 50,
+      "street_level": 90,
+      "cosmic": 95,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/yh2jnt.jpg"
+  },
+  {
+    "name": "Ultron",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 100,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 50,
+      "trickster": 95,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/gy3cle.jpg"
+  },
+  {
+    "name": "Red Skull",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 85,
+      "powerhouse": 50,
+      "mystic": 10,
+      "street_level": 75,
+      "cosmic": 10,
+      "trickster": 95,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/1r4kf6.jpg"
+  },
+  {
+    "name": "Baron Zemo",
+    "series": "avengers",
+    "stats": {
+      "paragon": 85,
+      "genius": 95,
+      "powerhouse": 50,
+      "mystic": 10,
+      "street_level": 85,
+      "cosmic": 10,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/rgyhlq.jpg"
+  },
+  {
+    "name": "Abomination",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 50,
+      "powerhouse": 98,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 10,
+      "trickster": 70,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/5cazup.jpg"
+  },
+  {
+    "name": "Red Hulk (Thunderbolt Ross)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 85,
+      "powerhouse": 98,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 20,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/xlotg7.jpg"
+  },
+  {
+    "name": "M.O.D.O.K.",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 100,
+      "powerhouse": 60,
+      "mystic": 60,
+      "street_level": 10,
+      "cosmic": 20,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/zq0ya2.jpg"
+  },
+  {
+    "name": "Graviton",
+    "series": "avengers",
+    "stats": {
+      "paragon": 30,
+      "genius": 80,
+      "powerhouse": 70,
+      "mystic": 0,
+      "street_level": 30,
+      "cosmic": 85,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/8qqeum.jpg"
+  },
+  {
+    "name": "Mandarin",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 90,
+      "powerhouse": 60,
+      "mystic": 90,
+      "street_level": 85,
+      "cosmic": 40,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/9b0jb4.jpg"
+  },
+  {
+    "name": "Baron Mordo",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 80,
+      "powerhouse": 50,
+      "mystic": 92,
+      "street_level": 50,
+      "cosmic": 60,
+      "trickster": 95,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/axhxjc.jpg"
+  },
+  {
+    "name": "Kang the Conqueror",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 100,
+      "powerhouse": 70,
+      "mystic": 20,
+      "street_level": 70,
+      "cosmic": 95,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/8pcltq.jpg"
+  },
+  {
+    "name": "Black Bolt",
+    "series": "avengers",
+    "stats": {
+      "paragon": 95,
+      "genius": 70,
+      "powerhouse": 80,
+      "mystic": 10,
+      "street_level": 60,
+      "cosmic": 90,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/myoix8.jpg"
+  },
+  {
+    "name": "Medusa",
+    "series": "avengers",
+    "stats": {
+      "paragon": 85,
+      "genius": 80,
+      "powerhouse": 50,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 10,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/nhn2wx.jpg"
+  },
+  {
+    "name": "Crystal",
+    "series": "avengers",
+    "stats": {
+      "paragon": 70,
+      "genius": 60,
+      "powerhouse": 65,
+      "mystic": 40,
+      "street_level": 60,
+      "cosmic": 30,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/xb2y98.jpg"
+  },
+  {
+    "name": "Karnak",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 95,
+      "powerhouse": 40,
+      "mystic": 20,
+      "street_level": 99,
+      "cosmic": 0,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/sqnq6k.jpg"
+  },
+  {
+    "name": "Werewolf by Night",
+    "series": "avengers",
+    "stats": {
+      "paragon": 20,
+      "genius": 40,
+      "powerhouse": 75,
+      "mystic": 50,
+      "street_level": 85,
+      "cosmic": 10,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/bs329g.jpg"
+  },
+  {
+    "name": "Man-Thing",
+    "series": "avengers",
+    "stats": {
+      "paragon": 10,
+      "genius": 10,
+      "powerhouse": 95,
+      "mystic": 90,
+      "street_level": 50,
+      "cosmic": 60,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/rk2otc.jpg"
+  },
+  {
+    "name": "Elsa Bloodstone",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 60,
+      "mystic": 40,
+      "street_level": 90,
+      "cosmic": 10,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/0f79bi.jpg"
+  },
+  {
+    "name": "Cloak",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 50,
+      "powerhouse": 50,
+      "mystic": 80,
+      "street_level": 70,
+      "cosmic": 40,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/vld88d.jpg"
+  },
+  {
+    "name": "Dagger",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 60,
+      "powerhouse": 30,
+      "mystic": 85,
+      "street_level": 70,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/vld88d.jpg"
+  },
+  {
+    "name": "Nico Minoru",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 30,
+      "mystic": 90,
+      "street_level": 40,
+      "cosmic": 20,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/fw66c0.jpg"
+  },
+  {
+    "name": "Karolina Dean",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 60,
+      "powerhouse": 60,
+      "mystic": 20,
+      "street_level": 50,
+      "cosmic": 75,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/dte21n.jpg"
+  },
+  {
+    "name": "Molly Hayes",
+    "series": "avengers",
+    "stats": {
+      "paragon": 20,
+      "genius": 30,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 0,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/5d913f.jpg"
+  },
+  {
+    "name": "Chase Stein",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 75,
+      "powerhouse": 40,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 0,
+      "trickster": 15,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ftvhwv.jpg"
+  },
+  {
+    "name": "Taskmaster",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 80,
+      "powerhouse": 50,
+      "mystic": 0,
+      "street_level": 100,
+      "cosmic": 0,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/adtw2b.jpg"
+  },
+  {
+    "name": "Ghost (Ava Starr)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 20,
+      "genius": 85,
+      "powerhouse": 40,
+      "mystic": 0,
+      "street_level": 75,
+      "cosmic": 10,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ufd4r4.jpg"
+  },
+  {
+    "name": "Wrecking Crew (Wrecker)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 30,
+      "powerhouse": 90,
+      "mystic": 40,
+      "street_level": 60,
+      "cosmic": 0,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/kec4mr.jpg"
+  },
+  {
+    "name": "Shuma-Gorath",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 95,
+      "powerhouse": 95,
+      "mystic": 100,
+      "street_level": 0,
+      "cosmic": 100,
+      "trickster": 100,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/4nirxv.jpg"
+  },
+  {
+    "name": "Beyonder",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 80,
+      "powerhouse": 100,
+      "mystic": 100,
+      "street_level": 10,
+      "cosmic": 100,
+      "trickster": 99,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/zn0uhj.jpg"
+  },
+  {
+    "name": "Ikaris",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 60,
+      "powerhouse": 95,
+      "mystic": 20,
+      "street_level": 75,
+      "cosmic": 70,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/sw223k.jpg"
+  },
+  {
+    "name": "Sersi",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 60,
+      "mystic": 95,
+      "street_level": 50,
+      "cosmic": 70,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/j0bpw3.jpg"
+  },
+  {
+    "name": "Thena",
+    "series": "avengers",
+    "stats": {
+      "paragon": 85,
+      "genius": 80,
+      "powerhouse": 80,
+      "mystic": 30,
+      "street_level": 100,
+      "cosmic": 60,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/h0pgzu.jpg"
+  },
+  {
+    "name": "Vulcan (Gabriel Summers)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 80,
+      "genius": 60,
+      "powerhouse": 85,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 95,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/1rdy0s.jpg"
+  },
+  {
+    "name": "Dark Phoenix",
+    "series": "avengers",
+    "stats": {
+      "paragon": 20,
+      "genius": 60,
+      "powerhouse": 100,
+      "mystic": 100,
+      "street_level": 30,
+      "cosmic": 100,
+      "trickster": 90,
+      "herald": 100
+    },
+    "img": "https://files.catbox.moe/zcm22i.jpg"
+  },
+  {
+    "name": "Guardian (Alpha Flight)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 85,
+      "genius": 70,
+      "powerhouse": 70,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 20,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/yvw5s3.jpg"
+  },
+  {
+    "name": "Sasquatch",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 80,
+      "powerhouse": 95,
+      "mystic": 20,
+      "street_level": 70,
+      "cosmic": 10,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ut96a9.jpg"
+  },
+  {
+    "name": "Crossbones",
+    "series": "avengers",
+    "stats": {
+      "paragon": 20,
+      "genius": 60,
+      "powerhouse": 65,
+      "mystic": 0,
+      "street_level": 90,
+      "cosmic": 0,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/sq4nri.jpg"
+  },
+  {
+    "name": "Bullseye",
+    "series": "avengers",
+    "stats": {
+      "paragon": 10,
+      "genius": 60,
+      "powerhouse": 30,
+      "mystic": 0,
+      "street_level": 98,
+      "cosmic": 0,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/3kzre7.jpg"
+  },
+  {
+    "name": "Dormammu",
+    "series": "avengers",
+    "stats": {
+      "paragon": 95,
+      "genius": 90,
+      "powerhouse": 95,
+      "mystic": 100,
+      "street_level": 20,
+      "cosmic": 98,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/tpxx0n.jpg"
+  },
+  {
+    "name": "Mephisto",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 100,
+      "powerhouse": 85,
+      "mystic": 100,
+      "street_level": 30,
+      "cosmic": 90,
+      "trickster": 100,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/i8v9pz.jpg"
+  },
+  {
+    "name": "Enchantress (Amora)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 85,
+      "powerhouse": 60,
+      "mystic": 90,
+      "street_level": 30,
+      "cosmic": 60,
+      "trickster": 85,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/3akqwd.jpg"
+  },
+  {
+    "name": "Hela",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 80,
+      "powerhouse": 95,
+      "mystic": 95,
+      "street_level": 85,
+      "cosmic": 90,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/mp4vvy.jpg"
+  },
+  {
+    "name": "Fin Fang Foom",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 60,
+      "powerhouse": 98,
+      "mystic": 50,
+      "street_level": 20,
+      "cosmic": 30,
+      "trickster": 70,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/zm2zo5.jpg"
+  },
+  {
+    "name": "Spider-Man (Peter Parker)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 65,
+      "genius": 95,
+      "powerhouse": 60,
+      "mystic": 5,
+      "street_level": 98,
+      "cosmic": 10,
+      "trickster": 1,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/gobp77.jpg"
+  },
+  {
+    "name": "Wolverine (Logan)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 99,
+      "cosmic": 0,
+      "trickster": 15,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/3tr9jp.jpg"
+  },
+  {
+    "name": "Deadpool",
+    "series": "avengers",
+    "stats": {
+      "paragon": 10,
+      "genius": 50,
+      "powerhouse": 98,
+      "mystic": 10,
+      "street_level": 95,
+      "cosmic": 20,
+      "trickster": 99,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/katt2j.jpg"
+  },
+  {
+    "name": "Namor",
+    "series": "avengers",
+    "stats": {
+      "paragon": 90,
+      "genius": 75,
+      "powerhouse": 90,
+      "mystic": 20,
+      "street_level": 85,
+      "cosmic": 30,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/i144y2.jpg"
+  },
+  {
+    "name": "Beast (Hank McCoy)",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 98,
+      "powerhouse": 75,
+      "mystic": 10,
+      "street_level": 80,
+      "cosmic": 20,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/opt2t2.jpg"
+  },
+  {
+    "name": "Quicksilver",
+    "series": "avengers",
+    "stats": null,
+    "img": null
+  },
+  {
+    "name": "Scarlet Witch",
+    "series": "avengers",
+    "stats": {
+      "paragon": 40,
+      "genius": 60,
+      "powerhouse": 50,
+      "mystic": 100,
+      "street_level": 30,
+      "cosmic": 95,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/41zhpp.jpg"
+  },
+  {
+    "name": "Silver Surfer",
+    "series": "avengers",
+    "stats": {
+      "paragon": 60,
+      "genius": 80,
+      "powerhouse": 90,
+      "mystic": 30,
+      "street_level": 60,
+      "cosmic": 100,
+      "trickster": 5,
+      "herald": 100
+    },
+    "img": "https://files.catbox.moe/by3lnm.jpg"
+  },
+  {
+    "name": "Morbius",
+    "series": "avengers",
+    "stats": {
+      "paragon": 20,
+      "genius": 85,
+      "powerhouse": 65,
+      "mystic": 30,
+      "street_level": 80,
+      "cosmic": 0,
+      "trickster": 50,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/wxioau.jpg"
+  },
+  {
+    "name": "Sandman",
+    "series": "avengers",
+    "stats": {
+      "paragon": 30,
+      "genius": 40,
+      "powerhouse": 90,
+      "mystic": 0,
+      "street_level": 65,
+      "cosmic": 0,
+      "trickster": 50,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/vj9ery.jpg"
+  },
+  {
+    "name": "Electro",
+    "series": "avengers",
+    "stats": {
+      "paragon": 10,
+      "genius": 50,
+      "powerhouse": 80,
+      "mystic": 0,
+      "street_level": 50,
+      "cosmic": 10,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/s726vp.jpg"
+  },
+  {
+    "name": "Kraven the Hunter",
+    "series": "avengers",
+    "stats": {
+      "paragon": 50,
+      "genius": 70,
+      "powerhouse": 75,
+      "mystic": 20,
+      "street_level": 90,
+      "cosmic": 0,
+      "trickster": 30,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/eeq53d.jpg"
+  },
+  {
+    "name": "Mister Fantastic (Reed Richards)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 85,
+      "genius": 100,
+      "powerhouse": 70,
+      "mystic": 10,
+      "street_level": 50,
+      "cosmic": 60,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/wmkbip.jpg"
+  },
+  {
+    "name": "Invisible Woman (Sue Storm)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 90,
+      "genius": 85,
+      "powerhouse": 90,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 50,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/new46b.jpg"
+  },
+  {
+    "name": "Human Torch (Johnny Storm)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 50,
+      "genius": 50,
+      "powerhouse": 60,
+      "mystic": 0,
+      "street_level": 75,
+      "cosmic": 65,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ytggq0.jpg"
+  },
+  {
+    "name": "The Thing (Ben Grimm)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 75,
+      "genius": 60,
+      "powerhouse": 98,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 40,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/32ha2i.jpg"
+  },
+  {
+    "name": "Silver Surfer",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 60,
+      "genius": 80,
+      "powerhouse": 90,
+      "mystic": 30,
+      "street_level": 60,
+      "cosmic": 100,
+      "trickster": 5,
+      "herald": 100
+    },
+    "img": "https://files.catbox.moe/by3lnm.jpg"
+  },
+  {
+    "name": "Namor",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 90,
+      "genius": 75,
+      "powerhouse": 90,
+      "mystic": 20,
+      "street_level": 85,
+      "cosmic": 30,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/i144y2.jpg"
+  },
+  {
+    "name": "Doctor Doom",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 98,
+      "genius": 100,
+      "powerhouse": 85,
+      "mystic": 95,
+      "street_level": 70,
+      "cosmic": 80,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/wx0wf6.jpg"
+  },
+  {
+    "name": "Super-Skrull (Kl'rt)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 70,
+      "genius": 75,
+      "powerhouse": 90,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 60,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/n9ppcx.jpg"
+  },
+  {
+    "name": "Annihilus",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 90,
+      "genius": 70,
+      "powerhouse": 90,
+      "mystic": 10,
+      "street_level": 60,
+      "cosmic": 85,
+      "trickster": 100,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/kj6od4.jpg"
+  },
+  {
+    "name": "Galactus",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 100,
+      "genius": 100,
+      "powerhouse": 100,
+      "mystic": 60,
+      "street_level": 10,
+      "cosmic": 100,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/0hy4np.jpg"
+  },
+  {
+    "name": "Fin Fang Foom",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 40,
+      "genius": 60,
+      "powerhouse": 98,
+      "mystic": 50,
+      "street_level": 20,
+      "cosmic": 30,
+      "trickster": 70,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/zm2zo5.jpg"
+  },
+  {
+    "name": "She-Hulk",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 70,
+      "genius": 85,
+      "powerhouse": 92,
+      "mystic": 0,
+      "street_level": 75,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/93x3uu.jpg"
+  },
+  {
+    "name": "Black Panther (T'Challa)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 95,
+      "genius": 95,
+      "powerhouse": 70,
+      "mystic": 40,
+      "street_level": 98,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/asvamo.jpg"
+  },
+  {
+    "name": "Spider-Man (Peter Parker)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 65,
+      "genius": 95,
+      "powerhouse": 60,
+      "mystic": 5,
+      "street_level": 98,
+      "cosmic": 10,
+      "trickster": 1,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/gobp77.jpg"
+  },
+  {
+    "name": "Wolverine (Logan)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 99,
+      "cosmic": 0,
+      "trickster": 15,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/3tr9jp.jpg"
+  },
+  {
+    "name": "Hulk (Bruce Banner)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 20,
+      "genius": 95,
+      "powerhouse": 100,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 30,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/l01sy8.jpg"
+  },
+  {
+    "name": "Ghost Rider (Johnny Blaze)",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 40,
+      "genius": 50,
+      "powerhouse": 95,
+      "mystic": 95,
+      "street_level": 80,
+      "cosmic": 60,
+      "trickster": 30,
+      "herald": 80
+    },
+    "img": "https://files.catbox.moe/k0ni65.jpg"
+  },
+  {
+    "name": "Medusa",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 85,
+      "genius": 80,
+      "powerhouse": 50,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 10,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/nhn2wx.jpg"
+  },
+  {
+    "name": "Crystal",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 70,
+      "genius": 60,
+      "powerhouse": 65,
+      "mystic": 40,
+      "street_level": 60,
+      "cosmic": 30,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/xb2y98.jpg"
+  },
+  {
+    "name": "Black Bolt",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 95,
+      "genius": 70,
+      "powerhouse": 80,
+      "mystic": 10,
+      "street_level": 60,
+      "cosmic": 90,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/myoix8.jpg"
+  },
+  {
+    "name": "Shuma-Gorath",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 80,
+      "genius": 95,
+      "powerhouse": 95,
+      "mystic": 100,
+      "street_level": 0,
+      "cosmic": 100,
+      "trickster": 100,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/4nirxv.jpg"
+  },
+  {
+    "name": "Beyonder",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 50,
+      "genius": 80,
+      "powerhouse": 100,
+      "mystic": 100,
+      "street_level": 10,
+      "cosmic": 100,
+      "trickster": 99,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/zn0uhj.jpg"
+  },
+  {
+    "name": "Dormammu",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 95,
+      "genius": 90,
+      "powerhouse": 95,
+      "mystic": 100,
+      "street_level": 20,
+      "cosmic": 98,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/tpxx0n.jpg"
+  },
+  {
+    "name": "Mephisto",
+    "series": "fantastic Four",
+    "stats": {
+      "paragon": 90,
+      "genius": 100,
+      "powerhouse": 85,
+      "mystic": 100,
+      "street_level": 30,
+      "cosmic": 90,
+      "trickster": 100,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/i8v9pz.jpg"
+  },
+  {
+    "name": "Wolverine (Logan)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 99,
+      "cosmic": 0,
+      "trickster": 15,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/3tr9jp.jpg"
+  },
+  {
+    "name": "Professor X",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 95,
+      "genius": 100,
+      "powerhouse": 10,
+      "mystic": 90,
+      "street_level": 5,
+      "cosmic": 50,
+      "trickster": 25,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/gryrcn.jpg"
+  },
+  {
+    "name": "Magneto",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 95,
+      "genius": 90,
+      "powerhouse": 85,
+      "mystic": 10,
+      "street_level": 60,
+      "cosmic": 80,
+      "trickster": 65,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/id3hn2.jpg"
+  },
+  {
+    "name": "Storm (Ororo Munroe)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 92,
+      "genius": 80,
+      "powerhouse": 65,
+      "mystic": 70,
+      "street_level": 75,
+      "cosmic": 80,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/gip7ty.jpg"
+  },
+  {
+    "name": "Jean Grey (Phoenix)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 70,
+      "genius": 80,
+      "powerhouse": 75,
+      "mystic": 95,
+      "street_level": 50,
+      "cosmic": 100,
+      "trickster": 40,
+      "herald": 80
+    },
+    "img": "https://files.catbox.moe/632lai.jpg"
+  },
+  {
+    "name": "Cyclops",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 98,
+      "genius": 90,
+      "powerhouse": 50,
+      "mystic": 0,
+      "street_level": 80,
+      "cosmic": 20,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/3r0e05.jpg"
+  },
+  {
+    "name": "Deadpool",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 10,
+      "genius": 50,
+      "powerhouse": 98,
+      "mystic": 10,
+      "street_level": 95,
+      "cosmic": 20,
+      "trickster": 99,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/katt2j.jpg"
+  },
+  {
+    "name": "Gambit",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 50,
+      "genius": 60,
+      "powerhouse": 40,
+      "mystic": 10,
+      "street_level": 90,
+      "cosmic": 10,
+      "trickster": 70,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/hh95ny.jpg"
+  },
+  {
+    "name": "Rogue",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 60,
+      "genius": 50,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 80,
+      "cosmic": 30,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/tk7679.jpg"
+  },
+  {
+    "name": "Nightcrawler",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 65,
+      "genius": 60,
+      "powerhouse": 30,
+      "mystic": 20,
+      "street_level": 98,
+      "cosmic": 10,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/syq0c3.jpg"
+  },
+  {
+    "name": "Colossus",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 70,
+      "genius": 50,
+      "powerhouse": 98,
+      "mystic": 5,
+      "street_level": 70,
+      "cosmic": 10,
+      "trickster": 0,
+      "herald": 10
+    },
+    "img": "https://files.catbox.moe/v3yzhe.jpg"
+  },
+  {
+    "name": "Beast (Hank McCoy)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 60,
+      "genius": 98,
+      "powerhouse": 75,
+      "mystic": 10,
+      "street_level": 80,
+      "cosmic": 20,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/opt2t2.jpg"
+  },
+  {
+    "name": "Iceman (Bobby Drake)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 50,
+      "genius": 60,
+      "powerhouse": 90,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 95,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/m77mys.jpg"
+  },
+  {
+    "name": "Kitty Pryde",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 85,
+      "genius": 80,
+      "powerhouse": 20,
+      "mystic": 0,
+      "street_level": 85,
+      "cosmic": 10,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/0qtx5u.jpg"
+  },
+  {
+    "name": "Psylocke (Betsy Braddock)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 40,
+      "mystic": 60,
+      "street_level": 95,
+      "cosmic": 20,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/negj17.jpg"
+  },
+  {
+    "name": "Cable",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 85,
+      "genius": 90,
+      "powerhouse": 80,
+      "mystic": 80,
+      "street_level": 85,
+      "cosmic": 50,
+      "trickster": 10,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/98kiup.jpg"
+  },
+  {
+    "name": "Bishop",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 60,
+      "genius": 75,
+      "powerhouse": 30,
+      "mystic": 0,
+      "street_level": 92,
+      "cosmic": 0,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/r31xs4.jpg"
+  },
+  {
+    "name": "Emma Frost",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 85,
+      "genius": 92,
+      "powerhouse": 85,
+      "mystic": 90,
+      "street_level": 40,
+      "cosmic": 20,
+      "trickster": 50,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/oqtqiu.jpg"
+  },
+  {
+    "name": "X-23 (Laura Kinney)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 50,
+      "genius": 60,
+      "powerhouse": 85,
+      "mystic": 0,
+      "street_level": 98,
+      "cosmic": 0,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/b2nyll.jpg"
+  },
+  {
+    "name": "Archangel",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 50,
+      "genius": 60,
+      "powerhouse": 75,
+      "mystic": 10,
+      "street_level": 85,
+      "cosmic": 20,
+      "trickster": 40,
+      "herald": 60
+    },
+    "img": "https://files.catbox.moe/7bm90j.jpg"
+  },
+  {
+    "name": "Havok (Alex Summers)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 80,
+      "genius": 70,
+      "powerhouse": 75,
+      "mystic": 0,
+      "street_level": 65,
+      "cosmic": 50,
+      "trickster": 15,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/j6bw49.jpg"
+  },
+  {
+    "name": "Polaris (Lorna Dane)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 75,
+      "genius": 75,
+      "powerhouse": 80,
+      "mystic": 0,
+      "street_level": 50,
+      "cosmic": 60,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/1u0po1.jpg"
+  },
+  {
+    "name": "Magik (Illyana Rasputin)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 60,
+      "genius": 70,
+      "powerhouse": 60,
+      "mystic": 98,
+      "street_level": 85,
+      "cosmic": 80,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/s0pciw.jpg"
+  },
+  {
+    "name": "Domino",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 40,
+      "genius": 60,
+      "powerhouse": 40,
+      "mystic": 50,
+      "street_level": 90,
+      "cosmic": 0,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ukk1ya.jpg"
+  },
+  {
+    "name": "Apocalypse",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 90,
+      "genius": 95,
+      "powerhouse": 98,
+      "mystic": 60,
+      "street_level": 80,
+      "cosmic": 60,
+      "trickster": 80,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/jogriu.jpg"
+  },
+  {
+    "name": "Mister Sinister",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 40,
+      "genius": 99,
+      "powerhouse": 80,
+      "mystic": 50,
+      "street_level": 50,
+      "cosmic": 20,
+      "trickster": 95,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/owj8my.jpg"
+  },
+  {
+    "name": "Sabretooth",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 20,
+      "genius": 50,
+      "powerhouse": 90,
+      "mystic": 0,
+      "street_level": 92,
+      "cosmic": 0,
+      "trickster": 85,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/5j1vj5.jpg"
+  },
+  {
+    "name": "Mystique",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 60,
+      "genius": 90,
+      "powerhouse": 40,
+      "mystic": 0,
+      "street_level": 90,
+      "cosmic": 0,
+      "trickster": 100,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ca5mmh.jpg"
+  },
+  {
+    "name": "Juggernaut",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 30,
+      "genius": 20,
+      "powerhouse": 100,
+      "mystic": 40,
+      "street_level": 60,
+      "cosmic": 10,
+      "trickster": 40,
+      "herald": 80
+    },
+    "img": "https://files.catbox.moe/zmxyq9.jpg"
+  },
+  {
+    "name": "Sentinel",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 0,
+      "genius": 80,
+      "powerhouse": 90,
+      "mystic": 0,
+      "street_level": 20,
+      "cosmic": 10,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/wa68hc.jpg"
+  },
+  {
+    "name": "Nimrod",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 10,
+      "genius": 100,
+      "powerhouse": 95,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 30,
+      "trickster": 0,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/qxlcj0.jpg"
+  },
+  {
+    "name": "Onslaught",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 80,
+      "genius": 90,
+      "powerhouse": 95,
+      "mystic": 98,
+      "street_level": 40,
+      "cosmic": 90,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/svghwf.jpg"
+  },
+  {
+    "name": "The Leader",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 50,
+      "genius": 100,
+      "powerhouse": 20,
+      "mystic": 30,
+      "street_level": 10,
+      "cosmic": 20,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/07v6qg.jpg"
+  },
+  {
+    "name": "Spider-Man (Peter Parker)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 65,
+      "genius": 95,
+      "powerhouse": 60,
+      "mystic": 5,
+      "street_level": 98,
+      "cosmic": 10,
+      "trickster": 1,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/gobp77.jpg"
+  },
+  {
+    "name": "Hulk (Bruce Banner)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 20,
+      "genius": 95,
+      "powerhouse": 100,
+      "mystic": 0,
+      "street_level": 70,
+      "cosmic": 30,
+      "trickster": 40,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/l01sy8.jpg"
+  },
+  {
+    "name": "Black Panther (T'Challa)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 95,
+      "genius": 95,
+      "powerhouse": 70,
+      "mystic": 40,
+      "street_level": 98,
+      "cosmic": 20,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/asvamo.jpg"
+  },
+  {
+    "name": "Doctor Strange",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 75,
+      "genius": 95,
+      "powerhouse": 60,
+      "mystic": 100,
+      "street_level": 50,
+      "cosmic": 85,
+      "trickster": 10,
+      "herald": 70
+    },
+    "img": "https://files.catbox.moe/u6p7at.jpg"
+  },
+  {
+    "name": "Scarlet Witch",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 40,
+      "genius": 60,
+      "powerhouse": 50,
+      "mystic": 100,
+      "street_level": 30,
+      "cosmic": 95,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/41zhpp.jpg"
+  },
+  {
+    "name": "Quicksilver",
+    "series": "X-Men",
+    "stats": null,
+    "img": null
+  },
+  {
+    "name": "Namor",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 90,
+      "genius": 75,
+      "powerhouse": 90,
+      "mystic": 20,
+      "street_level": 85,
+      "cosmic": 30,
+      "trickster": 60,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/i144y2.jpg"
+  },
+  {
+    "name": "Silver Surfer",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 60,
+      "genius": 80,
+      "powerhouse": 90,
+      "mystic": 30,
+      "street_level": 60,
+      "cosmic": 100,
+      "trickster": 5,
+      "herald": 100
+    },
+    "img": "https://files.catbox.moe/by3lnm.jpg"
+  },
+  {
+    "name": "Gladiator (Kallark)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 90,
+      "genius": 60,
+      "powerhouse": 99,
+      "mystic": 0,
+      "street_level": 80,
+      "cosmic": 80,
+      "trickster": 20,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/p19bc8.jpg"
+  },
+  {
+    "name": "Vulcan (Gabriel Summers)",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 80,
+      "genius": 60,
+      "powerhouse": 85,
+      "mystic": 0,
+      "street_level": 60,
+      "cosmic": 95,
+      "trickster": 90,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/1rdy0s.jpg"
+  },
+  {
+    "name": "Dark Phoenix",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 20,
+      "genius": 60,
+      "powerhouse": 100,
+      "mystic": 100,
+      "street_level": 30,
+      "cosmic": 100,
+      "trickster": 90,
+      "herald": 100
+    },
+    "img": "https://files.catbox.moe/zcm22i.jpg"
+  },
+  {
+    "name": "Sasquatch",
+    "series": "X-Men",
+    "stats": {
+      "paragon": 50,
+      "genius": 80,
+      "powerhouse": 95,
+      "mystic": 20,
+      "street_level": 70,
+      "cosmic": 10,
+      "trickster": 5,
+      "herald": 0
+    },
+    "img": "https://files.catbox.moe/ut96a9.jpg"
+  }
+]
