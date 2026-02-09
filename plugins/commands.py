@@ -178,7 +178,7 @@ async def leaderboard_cmd(c, m):
     txt_lines = [f"🏆 <b>Leaderboard</b> — Page {page}\n"]
     rank = start + 1
     for name, rating, wins in entries:
-        txt_lines.append(f"{rank}. {html.escape(str(name))} — {rating} pts ({wins} wins)")
+        txt_lines.append(f"{rank}. {html.escape(str(name))} — {rating} pts")
         rank += 1
 
     # navigation
@@ -204,5 +204,5 @@ async def leaderboard_cmd(c, m):
         row.append(InlineKeyboardButton("Next ➡️", callback_data=f"leader_{page+1}"))
     if row:
         kb.append(row)
-
+    
     await m.reply_text("\n".join(txt_lines), reply_markup=InlineKeyboardMarkup(kb) if kb else None, parse_mode=ParseMode.HTML)
