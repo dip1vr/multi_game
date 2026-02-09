@@ -150,7 +150,7 @@ async def leaderboard_cmd(c, m):
     # Fetch leaderboard entries
     entries = []
     try:
-        if database.USE_MONGO and database.COL_LEADERBOARD:
+        if database.USE_MONGO is not None and database.COL_LEADERBOARD is not None:
             docs = list(database.COL_LEADERBOARD.find({}).sort("rating", -1).skip(start).limit(per_page))
             for d in docs:
                 uid = d.get("user_id")
@@ -204,8 +204,5 @@ async def leaderboard_cmd(c, m):
         row.append(InlineKeyboardButton("Next ➡️", callback_data=f"leader_{page+1}"))
     if row:
         kb.append(row)
-
-    # Add toggle button to view by wins
-    kb.append([InlineKeyboardButton("Most Wins", callback_data="lb_toggle_wins")])
 
     await m.reply_text("\n".join(txt_lines), reply_markup=InlineKeyboardMarkup(kb) if kb else None, parse_mode=ParseMode.HTML)
