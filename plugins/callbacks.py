@@ -8,6 +8,7 @@ import html
 import global_state
 import game_engine
 import ui
+import database
 # --- FIX: Split imports correctly ---
 from config import STAT_MAP, POKEMON_ROLES
 from global_state import SERIES_MAP, ANIME_CHARACTERS, POKEMON_LIST, POKEMON_DATA
@@ -103,7 +104,7 @@ async def callbacks(c, q: CallbackQuery):
             # fetch entries by rating
             entries = []
             try:
-                if database.USE_MONGO and database.COL_LEADERBOARD:
+                if database.USE_MONGO is not None and database.COL_LEADERBOARD is not None:
                     docs = list(database.COL_LEADERBOARD.find({}).sort("rating", -1).skip(start).limit(per_page))
                     for d in docs:
                         name = d.get("name") or str(d.get("user_id"))
@@ -130,7 +131,7 @@ async def callbacks(c, q: CallbackQuery):
             # determine total pages if possible
             total_pages = None
             try:
-                if database.USE_MONGO and database.COL_LEADERBOARD:
+                if database.USE_MONGO is not None and database.COL_LEADERBOARD is not None:
                     total = database.COL_LEADERBOARD.count_documents({})
                     total_pages = (total + per_page - 1) // per_page
                 else:
@@ -172,7 +173,7 @@ async def callbacks(c, q: CallbackQuery):
 
             entries = []
             try:
-                if database.USE_MONGO and database.COL_LEADERBOARD:
+                if database.USE_MONGO is not None and database.COL_LEADERBOARD is not None:
                     docs = list(database.COL_LEADERBOARD.find({}).sort("wins", -1).skip(start).limit(per_page))
                     for d in docs:
                         name = d.get("name") or str(d.get("user_id"))
@@ -184,7 +185,8 @@ async def callbacks(c, q: CallbackQuery):
                         sorted_users = sorted(data.items(), key=lambda x: x[1].get("wins", 0), reverse=True)
                         for uid, stats in sorted_users[start:end]:
                             entries.append((stats.get("name") or uid, stats.get("rating", 0), stats.get("wins", 0)))
-            except Exception:
+            except Exception as e:
+                print(e)
                 return await q.answer("Failed to load leaderboard.")
 
             if not entries:
@@ -199,7 +201,7 @@ async def callbacks(c, q: CallbackQuery):
             # nav
             total_pages = None
             try:
-                if database.USE_MONGO and database.COL_LEADERBOARD:
+                if database.USE_MONGO is not None and database.COL_LEADERBOARD is not None:
                     total = database.COL_LEADERBOARD.count_documents({})
                     total_pages = (total + per_page - 1) // per_page
                 else:
@@ -527,4 +529,3 @@ async def callbacks(c, q: CallbackQuery):
         elif action == "pbattle":
              if uid not in [game['p1']['id'], game['p2']['id']]: return await q.answer("Spectator mode only.")
              await game_engine.simulate_pokemon_battle(c, q.message, game)
-
