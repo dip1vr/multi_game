@@ -3,7 +3,7 @@ import os
 # --- CREDENTIALS ---
 API_ID = 25695711
 API_HASH = "f20065cc26d4a31bf0efc0b44edaffa9"
-BOT_TOKEN = "7550717066:AAG5NDFPzS3W_81OhqKPKZVfP_iJNhAj5mI"
+BOT_TOKEN = "8322954992:AAG_F5HDr7ajcKlCJvXxAzqVR_bZ-D0fusQ"
 MONGO_URI = "mongodb+srv://yesvashisht2005_db_user:yash2005@cluster0.nd8dam5.mongodb.net/?appName=Cluster0"
 MONGO_DB_NAME = "anime_bot"
 
