@@ -11,7 +11,7 @@ import ui
 import database
 # --- FIX: Split imports correctly ---
 from config import STAT_MAP, POKEMON_ROLES
-from global_state import SERIES_MAP, ANIME_CHARACTERS, POKEMON_LIST, POKEMON_DATA
+from global_state import SERIES_MAP, ANIME_CHARACTERS, POKEMON_LIST, POKEMON_DATA, CHAR_IMAGES
 
 async def show_anime_draw(c, m, game, gid):
     turn_id = game["turn"]
@@ -144,10 +144,6 @@ async def callbacks(c, q: CallbackQuery):
 
             kb = []
             row = []
-            if page > 1:
-                row.append(InlineKeyboardButton("⬅️ Prev", callback_data=f"leader_{page-1}"))
-            if total_pages and page < total_pages:
-                row.append(InlineKeyboardButton("Next ➡️", callback_data=f"leader_{page+1}"))
             if row:
                 kb.append(row)
 
@@ -214,10 +210,6 @@ async def callbacks(c, q: CallbackQuery):
 
             kb = []
             row = []
-            if page > 1:
-                row.append(InlineKeyboardButton("⬅️ Prev", callback_data=f"lb_toggle_wins_{page-1}"))
-            if total_pages and page < total_pages:
-                row.append(InlineKeyboardButton("Next ➡️", callback_data=f"lb_toggle_wins_{page+1}"))
             if row:
                 kb.append(row)
 
@@ -469,8 +461,17 @@ async def callbacks(c, q: CallbackQuery):
             if uid != game["turn"]: return await q.answer("Not your turn!", show_alert=True)
             if game.get("current_draw"): return await q.answer("Already drawn!", show_alert=True)
 
-            # Filter logic
-            available = [p for p in POKEMON_LIST if p not in game["used_players"]] 
+            # Filter logic - apply region and legendary status filters
+            available = [p for p in POKEMON_LIST if p not in game["used_players"]]
+            
+            # Apply region filter
+            if game.get("filters", {}).get("regions"):
+                available = [p for p in available if POKEMON_DATA[p]["region"] in game["filters"]["regions"]]
+            
+            # Apply legendary status filter
+            if game.get("filters", {}).get("legendary_status") is not None:
+                legendary_filter = game["filters"]["legendary_status"]
+                available = [p for p in available if POKEMON_DATA[p]["is_legendary"] == legendary_filter]
             
             if not available: return await q.answer("None left!", show_alert=True)
             pokemon = random.choice(available)
@@ -488,8 +489,11 @@ async def callbacks(c, q: CallbackQuery):
                 kb.append([InlineKeyboardButton(f"🗑 Skip ({game[pkey]['skips']})", callback_data=f"pskip_{gid}")])
             
             p_name = game[pkey]["name"]
+            img_url = CHAR_IMAGES.get(f"{pokemon} | Pokemon")
             txt = f"{ui.pokemon_get_team_display(game)}\n✨ <b>{p_name}</b> Pulled: <b>{pokemon}</b>"
-            await ui.ensure_display_message(c, q.message.chat.id, game, txt, kb)
+            if img_url:
+                txt = f"{img_url}\n{txt}"
+            await ui.ensure_display_message(c, q.message.chat.id, game, txt, kb, preview=True)
 
         elif action == "pset":
             if uid != game["turn"]: return await q.answer("Not your turn!", show_alert=True)
