@@ -75,6 +75,16 @@ async def pokemon_draft_cmd(c, m):
         elif arg.lower() == "0l": filters_map["legendary_status"] = False
         else: filters_map["regions"].append(arg.capitalize())
 
+    # Validate filter has enough Pokemon (need 14 minimum for 2 players × 7 slots)
+    available = POKEMON_LIST.copy()
+    if filters_map["regions"]:
+        available = [p for p in available if POKEMON_DATA[p]["region"] in filters_map["regions"]]
+    if filters_map["legendary_status"] is not None:
+        available = [p for p in available if POKEMON_DATA[p]["is_legendary"] == filters_map["legendary_status"]]
+    
+    if len(available) < 14:
+        return await m.reply(f"❌ Not enough Pokémon! ({len(available)}/14 needed)")
+
     game_id = f"{m.chat.id}_{int(time.time())}_{random.randint(100,999)}"
     game = {
         "game_id": game_id, "status": "waiting", "mode": "pdraft", "turn": p1.id,
