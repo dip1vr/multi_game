@@ -125,7 +125,7 @@ async def callbacks(c, q: CallbackQuery):
             txt_lines = [f"🏆 <b>Leaderboard — Points</b> — Page {page}\n"]
             rank = start + 1
             for name, rating, wins in entries:
-                txt_lines.append(f"{rank}. {html.escape(str(name))} — {rating} pts ({wins} wins)")
+                txt_lines.append(f"{rank}. {html.escape(str(name))} — {rating} pts ")
                 rank += 1
 
             # determine total pages if possible
@@ -195,7 +195,7 @@ async def callbacks(c, q: CallbackQuery):
             txt_lines = [f"🏆 <b>Leaderboard — Most Wins</b> — Page {page}\n"]
             rank = start + 1
             for name, rating, wins in entries:
-                txt_lines.append(f"{rank}. {html.escape(str(name))} — {wins} wins ({rating} pts)")
+                txt_lines.append(f"{rank}. {html.escape(str(name))} — {wins} wins ")
                 rank += 1
 
             # nav
