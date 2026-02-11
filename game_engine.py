@@ -103,12 +103,12 @@ async def simulate_anime_battle(client, message, game):
             log += f"{i}. <b>{r1}</b>: "
             if s1 > s2:
                 score1 += pts
-                log += f"🔵 {html.escape(c1_display)} def. 🔴 {html.escape(c2_display)} (+{pts} Pts)\n\n"
+                log += f"🔵 {html.escape(n1)} def. 🔴 {html.escape(n2)} (+{pts} Pts)\n\n"
             elif s2 > s1:
                 score2 += pts
-                log += f"🔴 {html.escape(c2_display)} def. 🔵 {html.escape(c1_display)} (+ {pts} Pts)\n\n"
+                log += f"🔴 {html.escape(n2)} def. 🔵 {html.escape(n1)} (+ {pts} Pts)\n\n"
             else:
-                log += f"⚖️ Draw ({html.escape(c1_display)} vs {html.escape(c2_display)})\n\n"
+                log += f"⚖️ Draw ({html.escape(n1)} vs {html.escape(n2)})\n\n"
         else:
             log += f"{i}. {r1}: Missing Character (Draw)\n"
 
