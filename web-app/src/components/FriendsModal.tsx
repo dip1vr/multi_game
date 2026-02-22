@@ -419,6 +419,13 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
                                                 const hasSent = outgoingRequests.has(user.id);
                                                 const hasReceived = requests.some(req => req.senderId === user.id);
 
+                                                if (user.id === currentUserId) {
+                                                    return (
+                                                        <div className="px-3 py-1 bg-white/5 rounded-lg text-[10px] font-bold text-gray-400 uppercase tracking-widest border border-white/10">
+                                                            You
+                                                        </div>
+                                                    );
+                                                }
                                                 if (isFriend) {
                                                     return (
                                                         <button disabled className="p-2 text-emerald-400 bg-emerald-500/10 rounded-lg border border-emerald-500/30 opacity-50 cursor-not-allowed" title="Already Friends">

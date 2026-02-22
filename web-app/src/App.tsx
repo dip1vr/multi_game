@@ -157,7 +157,10 @@ const App: React.FC = () => {
 
             // Auto-Migration: Populate missing displayNameLowercase for existing users
             if (dbName && !data.displayNameLowercase) {
-              setDoc(userRef, { displayNameLowercase: dbName.toLowerCase() }, { merge: true }).catch(console.error);
+              console.log("[Migration] User needs migration:", uid, dbName);
+              setDoc(userRef, { displayNameLowercase: dbName.toLowerCase() }, { merge: true })
+                .then(() => console.log("[Migration] Success for", uid))
+                .catch(err => console.error("[Migration] Error for", uid, err));
             }
 
             // 5. Upgrade Photo URL if linked Google recently
