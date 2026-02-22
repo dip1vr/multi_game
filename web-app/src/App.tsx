@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Users, Trash2, Shield, Sword, UserPlus, Trophy,
-  Crown, Zap, Activity, ChevronDown, Check, Handshake, Edit2, Loader2,
+  Crown, Zap, Activity, ChevronDown, Check, Handshake, Edit2,
   LogOut, Info, ShieldAlert, MessageSquare, XCircle
 } from 'lucide-react';
 import { db, auth, googleProvider } from './firebase';

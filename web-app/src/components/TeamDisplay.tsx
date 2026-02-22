@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Users, UserPlus, Crown, Target, Shield, Heart, Sword, Zap, Activity, ShieldAlert } from 'lucide-react';
+import { Users, UserPlus, Crown, Target, Shield, Heart, Sword, Zap, Activity } from 'lucide-react';
 import { Player } from '../types';
 
 export const roleIconsMapping: Record<string, React.ReactNode> = {
