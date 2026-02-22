@@ -167,10 +167,11 @@ export const calculateBattle = (
         const n1 = p1Team["HP"]?.name || "P1 HP";
         const n2 = p2Team["HP"]?.name || "P2 HP";
 
-        log.push(`❤️ HP Clash: 🔵 ${n1} (${h1} HP) vs 🔴 ${n2} (${h2} HP)`);
-        if (h1 > h2) { s1 += 1; log.push(`   -> 🔵 Point for ${p1Name}`); }
-        else if (h2 > h1) { s2 += 1; log.push(`   -> 🔴 Point for ${p2Name}`); }
-        else log.push(`   -> Push`);
+        log.push(`❤️ [VITALITY CHECK]`);
+        log.push(`   🔵 ${n1} (HP: ${h1}) vs 🔴 ${n2} (HP: ${h2})`);
+        if (h1 > h2) { s1 += 1; log.push(`   -> 🔵 ${p1Name} secures the HP point (+1)`); }
+        else if (h2 > h1) { s2 += 1; log.push(`   -> 🔴 ${p2Name} secures the HP point (+1)`); }
+        else log.push(`   -> It's a stalemate (No points)`);
 
         const t1 = p1Team["Type"];
         const t2 = p2Team["Type"];
@@ -178,7 +179,7 @@ export const calculateBattle = (
             const types1 = t1.types || [];
             const types2 = t2.types || [];
 
-            // Physical
+            // Physical Assault
             const atk1 = p1Team["Atk"]?.stats.attack || 50;
             const def2 = p2Team["Def"]?.stats.defense || 50;
             const atk2 = p2Team["Atk"]?.stats.attack || 50;
@@ -193,25 +194,28 @@ export const calculateBattle = (
             const turns1P = Math.ceil(h2 / (dmg1P || 1));
             const turns2P = Math.ceil(h1 / (dmg2P || 1));
 
-            log.push(`⚔️ Physical: 🔵 ${p1Team["Atk"]?.name} (${dmg1P} dmg) vs 🔴 ${p2Team["Atk"]?.name} (${dmg2P} dmg)`);
+            log.push(`⚔️ [PHYSICAL ASSAULT]`);
+            log.push(`   🔵 ${p1Team["Atk"]?.name} (Atk) hits 🔴 ${p2Team["Def"]?.name} (Def) for ${dmg1P} dmg${mult1P > 1 ? " (🔥 SUPER EFFECTIVE)" : mult1P < 1 ? " (❄️ NOT VERY EFFECTIVE)" : ""}`);
+            log.push(`   🔴 ${p2Team["Atk"]?.name} (Atk) hits 🔵 ${p1Team["Def"]?.name} (Def) for ${dmg2P} dmg${mult2P > 1 ? " (🔥 SUPER EFFECTIVE)" : mult2P < 1 ? " (❄️ NOT VERY EFFECTIVE)" : ""}`);
 
             if (turns1P < turns2P) {
                 s1 += 1;
-                log.push(`   -> 🔵 ${p1Name} wins in ${turns1P} hits (vs ${turns2P})`);
+                log.push(`   -> 🔵 ${p1Name} blitzes! Wins in ${turns1P} hits (+1)`);
             }
             else if (turns2P < turns1P) {
                 s2 += 1;
-                log.push(`   -> 🔴 ${p2Name} wins in ${turns2P} hits (vs ${turns1P})`);
+                log.push(`   -> 🔴 ${p2Name} blitzes! Wins in ${turns2P} hits (+1)`);
             }
             else {
                 const spe1 = p1Team["Spe"]?.stats.speed || 0;
                 const spe2 = p2Team["Spe"]?.stats.speed || 0;
-                if (spe1 > spe2) { s1 += 1; log.push(`   -> 🔵 ${p1Name} wins by Speed (${spe1} vs ${spe2})`); }
-                else if (spe2 > spe1) { s2 += 1; log.push(`   -> 🔴 ${p2Name} wins by Speed (${spe2} vs ${spe1})`); }
+                log.push(`   -> 同時撃破! [SPEED TIEBREAKER]: 🔵 ${spe1} vs 🔴 ${spe2}`);
+                if (spe1 > spe2) { s1 += 1; log.push(`   -> 🔵 ${p1Name} wins by raw initiative (+1)`); }
+                else if (spe2 > spe1) { s2 += 1; log.push(`   -> 🔴 ${p2Name} wins by raw initiative (+1)`); }
                 else log.push(`   -> Double KO (No points)`);
             }
 
-            // Special
+            // Special Surge
             const spa1 = p1Team["SpA"]?.stats["special-attack"] || 50;
             const spd2 = p2Team["SpD"]?.stats["special-defense"] || 50;
             const spa2 = p2Team["SpA"]?.stats["special-attack"] || 50;
@@ -226,22 +230,25 @@ export const calculateBattle = (
             const turns1S = Math.ceil(h2 / (dmg1S || 1));
             const turns2S = Math.ceil(h1 / (dmg2S || 1));
 
-            log.push(`🔮 Special: 🔵 ${p1Team["SpA"]?.name} (${dmg1S} dmg) vs 🔴 ${p2Team["SpA"]?.name} (${dmg2S} dmg)`);
+            log.push(`🔮 [SPECIAL SURGE]`);
+            log.push(`   🔵 ${p1Team["SpA"]?.name} (SpA) hits 🔴 ${p2Team["SpD"]?.name} (SpD) for ${dmg1S} dmg${mult1S > 1 ? " (⚡ CRITICAL SYNC)" : mult1S < 1 ? " (🛡️ RESISTED)" : ""}`);
+            log.push(`   🔴 ${p2Team["SpA"]?.name} (SpA) hits 🔵 ${p1Team["SpD"]?.name} (SpD) for ${dmg2S} dmg${mult2S > 1 ? " (⚡ CRITICAL SYNC)" : mult2S < 1 ? " (🛡️ RESISTED)" : ""}`);
 
             if (turns1S < turns2S) {
                 s1 += 1;
-                log.push(`   -> 🔵 ${p1Name} wins in ${turns1S} hits (vs ${turns2S})`);
+                log.push(`   -> 🔵 ${p1Name} overwhelms! Wins in ${turns1S} hits (+1)`);
             }
             else if (turns2S < turns1S) {
                 s2 += 1;
-                log.push(`   -> 🔴 ${p2Name} wins in ${turns2S} hits (vs ${turns1S})`);
+                log.push(`   -> 🔴 ${p2Name} overwhelms! Wins in ${turns2S} hits (+1)`);
             }
             else {
                 const spe1 = p1Team["Spe"]?.stats.speed || 0;
                 const spe2 = p2Team["Spe"]?.stats.speed || 0;
-                if (spe1 > spe2) { s1 += 1; log.push(`   -> 🔵 ${p1Name} wins by Speed (${spe1} vs ${spe2})`); }
-                else if (spe2 > spe1) { s2 += 1; log.push(`   -> 🔴 ${p2Name} wins by Speed (${spe2} vs ${spe1})`); }
-                else log.push(`   -> Double KO (No points)`);
+                log.push(`   -> Exhaustion! [SPEED TIEBREAKER]: 🔵 ${spe1} vs 🔴 ${spe2}`);
+                if (spe1 > spe2) { s1 += 1; log.push(`   -> 🔵 ${p1Name} strikes first in the chaos (+1)`); }
+                else if (spe2 > spe1) { s2 += 1; log.push(`   -> 🔴 ${p2Name} strikes first in the chaos (+1)`); }
+                else log.push(`   -> Neutralized (No points)`);
             }
         }
     }

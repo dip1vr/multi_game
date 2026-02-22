@@ -58,9 +58,39 @@ export interface GameState {
   p2: Player;
   turn: "p1" | "p2";
   currentDraw: Character | null;
-  status: "setup" | "drafting" | "ready" | "battle" | "finished";
+  nextDraws: Character[];
+  turnStartTime: number;
+  status: "setup" | "waiting_for_player" | "drafting" | "ready" | "battle" | "finished";
   winner: string | null;
   p1Score?: number;
   p2Score?: number;
+  p1Misses: number;
+  p2Misses: number;
   battleLog: string[];
 }
+
+export type PlayerRole = "p1" | "p2" | null;
+
+export interface Room {
+  id: string;
+  host: string;
+  hostId: string;
+  guest: string | null;
+  guestId?: string | null;
+  gameState: GameState;
+  createdAt: number;
+  isPublic: boolean;
+  intendedPublic?: boolean;
+  latestEmoji?: {
+    senderId: string;
+    emoji: string;
+    timestamp: number;
+  } | null;
+  chat?: {
+    senderId: string;
+    senderName: string;
+    text: string;
+    timestamp: number;
+  }[];
+}
+
