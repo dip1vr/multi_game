@@ -194,7 +194,8 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
             const usersRef = collection(db, 'users');
             const q = query(
                 usersRef,
-                where('displayName', '==', term),
+                where('displayName', '>=', term),
+                where('displayName', '<=', term + '\uf8ff'),
                 limit(10)
             );
             const snapshot = await getDocs(q);
@@ -205,8 +206,27 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
                 }
             });
             setSearchResults(results);
+
+            // Fallback: If no exact case results, try case-insensitive search
             if (results.length === 0) {
-                setSearchError("No players found with that exact name.");
+                const lowerTerm = term.toLowerCase();
+                const q2 = query(
+                    usersRef,
+                    where('displayNameLowercase', '>=', lowerTerm),
+                    where('displayNameLowercase', '<=', lowerTerm + '\uf8ff'),
+                    limit(10)
+                );
+                const snapshot2 = await getDocs(q2);
+                snapshot2.forEach(docSnap => {
+                    if (docSnap.id !== currentUserId) {
+                        results.push({ id: docSnap.id, ...docSnap.data() });
+                    }
+                });
+                setSearchResults(results);
+            }
+
+            if (results.length === 0) {
+                setSearchError("No players found with that name.");
             }
         } catch (err) {
             console.error("Search error", err);

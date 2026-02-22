@@ -187,6 +187,25 @@ const GlobalChat: React.FC<GlobalChatProps> = ({ currentUserId, currentUsername 
                     }
                 });
                 setSearchResults(results);
+
+                // Fallback: If no exact case results, try case-insensitive search
+                if (results.length === 0) {
+                    const lowerTerm = term.toLowerCase();
+                    const q2 = query(
+                        usersRef,
+                        where('displayNameLowercase', '>=', lowerTerm),
+                        where('displayNameLowercase', '<=', lowerTerm + '\uf8ff'),
+                        limit(10)
+                    );
+                    const snapshot2 = await getDocs(q2);
+                    snapshot2.forEach(docSnap => {
+                        if (docSnap.id !== currentUserId) {
+                            results.push({ id: docSnap.id, ...docSnap.data() });
+                        }
+                    });
+                    setSearchResults(results);
+                }
+
                 if (results.length === 0) {
                     setSearchError("No players found.");
                 }

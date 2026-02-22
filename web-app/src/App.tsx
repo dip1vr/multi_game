@@ -167,6 +167,7 @@ const App: React.FC = () => {
               losses: 0,
               draws: 0,
               isGuest: currentUser.isAnonymous,
+              displayNameLowercase: (currentUser.displayName || "").toLowerCase()
             };
             await setDoc(userRef, newStats, { merge: true });
             setUserStats({ wins: 0, losses: 0, draws: 0 });
@@ -180,7 +181,10 @@ const App: React.FC = () => {
             if (localName && localName !== "Player") {
               resolvedName = localName;
               // Sync up to Db
-              setDoc(userRef, { displayName: localName }, { merge: true }).catch(console.error);
+              setDoc(userRef, {
+                displayName: localName,
+                displayNameLowercase: localName.toLowerCase()
+              }, { merge: true }).catch(console.error);
             }
           }
 
@@ -287,7 +291,10 @@ const App: React.FC = () => {
       if (authUser && authUser.isAnonymous) {
         try {
           const userRef = doc(db, 'users', authUser.uid);
-          await setDoc(userRef, { displayName: username.trim() }, { merge: true });
+          await setDoc(userRef, {
+            displayName: username.trim(),
+            displayNameLowercase: username.trim().toLowerCase()
+          }, { merge: true });
         } catch (e) { }
       }
     }
@@ -303,7 +310,10 @@ const App: React.FC = () => {
       if (authUser) {
         try {
           const userRef = doc(db, 'users', authUser.uid);
-          await setDoc(userRef, { displayName: tempUsername.trim() }, { merge: true });
+          await setDoc(userRef, {
+            displayName: tempUsername.trim(),
+            displayNameLowercase: tempUsername.trim().toLowerCase()
+          }, { merge: true });
         } catch (e) { }
       }
     }
