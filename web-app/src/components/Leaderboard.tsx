@@ -216,11 +216,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <div className="flex items-center gap-2">
-                                                <h3 className={`font-black uppercase tracking-widest truncate ${isCurrentUser ? 'text-purple-400' : 'text-gray-200'}`}>
-                                                    {user.displayName}
+                                                <h3 className={`font-black uppercase tracking-widest truncate text-xs sm:text-base ${isCurrentUser ? 'text-purple-400' : 'text-gray-200'}`}>
+                                                    {user.displayName || 'LEGENDARY COMMANDER'}
                                                 </h3>
                                                 {isCurrentUser && (
-                                                    <span className="text-[9px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded font-black uppercase tracking-widest">You</span>
+                                                    <span className="text-[8px] sm:text-[9px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded font-black uppercase tracking-widest whitespace-nowrap">You</span>
                                                 )}
                                                 {!isCurrentUser && currentUserId && (
                                                     <button
@@ -246,18 +246,18 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
                                                 )}
                                             </div>
                                         </div>
-                                        <div className="flex gap-4 sm:gap-6 shrink-0 text-right pr-2">
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest">W</span>
-                                                <span className="text-emerald-400 font-black text-sm">{user.wins || 0}</span>
+                                        <div className="flex gap-2 sm:gap-6 shrink-0 text-right pr-1 sm:pr-2">
+                                            <div className="flex flex-col items-center sm:items-end">
+                                                <span className="text-[8px] sm:text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest">W</span>
+                                                <span className="text-emerald-400 font-black text-xs sm:text-sm">{user.wins || 0}</span>
                                             </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] text-rose-500/70 font-bold uppercase tracking-widest">L</span>
-                                                <span className="text-rose-400 font-black text-sm">{user.losses || 0}</span>
+                                            <div className="flex flex-col items-center sm:items-end">
+                                                <span className="text-[8px] sm:text-[10px] text-rose-500/70 font-bold uppercase tracking-widest">L</span>
+                                                <span className="text-rose-400 font-black text-xs sm:text-sm">{user.losses || 0}</span>
                                             </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] text-gray-500/70 font-bold uppercase tracking-widest">D</span>
-                                                <span className="text-gray-400 font-black text-sm">{user.draws || 0}</span>
+                                            <div className="flex flex-col items-center sm:items-end">
+                                                <span className="text-[8px] sm:text-[10px] text-gray-500/70 font-bold uppercase tracking-widest">D</span>
+                                                <span className="text-gray-400 font-black text-xs sm:text-sm">{user.draws || 0}</span>
                                             </div>
                                         </div>
                                     </div>

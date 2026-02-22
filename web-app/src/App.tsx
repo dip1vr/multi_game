@@ -1511,10 +1511,10 @@ const App: React.FC = () => {
                   {/* Move Surrender button to top right for better access */}
                   <button
                     onClick={handleInGameSurrender}
-                    className="p-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg border border-rose-500/30 transition-all flex items-center justify-center gap-2 font-black uppercase tracking-widest text-[10px]"
+                    className="p-1.5 sm:p-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg border border-rose-500/30 transition-all flex items-center justify-center gap-1 sm:gap-2 font-black uppercase tracking-widest text-[9px] sm:text-[10px]"
                     title="Surrender Match"
                   >
-                    <XCircle size={14} /> Surrender
+                    <XCircle size={12} className="sm:w-3.5 sm:h-3.5" /> Surrender
                   </button>
                 </div>
 
@@ -1790,10 +1790,10 @@ const App: React.FC = () => {
       {/* Match Chat Interface (Fixed Bottom Left) */}
       <AnimatePresence>
         {roomId && (gameState.status === "drafting" || gameState.status === "ready") && (
-          <div className="fixed bottom-4 left-4 sm:left-6 z-[60] flex flex-col items-start shadow-2xl">
+          <div className="fixed bottom-2 left-2 sm:bottom-4 sm:left-6 z-[60] flex flex-col items-start">
             <AnimatePresence>
               {isChatOpen && (
-                <motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="bg-gray-900/90 backdrop-blur-xl border border-white/10 w-72 h-80 sm:w-80 rounded-2xl mb-3 flex flex-col overflow-hidden shadow-2xl origin-bottom-left">
+                <motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: 0.95 }} className="bg-gray-900/95 backdrop-blur-2xl border border-white/10 w-[240px] h-64 sm:w-80 sm:h-80 rounded-2xl mb-2 flex flex-col overflow-hidden shadow-2xl origin-bottom-left">
                   <div className="bg-black/40 p-3 text-xs font-black tracking-widest uppercase text-gray-400 border-b border-white/5 flex justify-between items-center">
                     <span className="flex items-center gap-2"><MessageSquare size={14} className="text-purple-400" /> Match Chat</span>
                     <button onClick={() => setIsChatOpen(false)} className="hover:text-white transition-colors"><ChevronDown size={14} /></button>
