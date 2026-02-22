@@ -155,6 +155,11 @@ const App: React.FC = () => {
               draws: data?.draws || 0
             });
 
+            // Auto-Migration: Populate missing displayNameLowercase for existing users
+            if (dbName && !data.displayNameLowercase) {
+              setDoc(userRef, { displayNameLowercase: dbName.toLowerCase() }, { merge: true }).catch(console.error);
+            }
+
             // 5. Upgrade Photo URL if linked Google recently
             if (!currentUser.isAnonymous && currentUser.photoURL && data.photoURL !== currentUser.photoURL) {
               setDoc(userRef, { photoURL: currentUser.photoURL, displayName: currentUser.displayName }, { merge: true }).catch(console.error);

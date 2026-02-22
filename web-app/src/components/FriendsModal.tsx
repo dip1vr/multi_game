@@ -201,9 +201,7 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
             const snapshot = await getDocs(q);
             const results: any[] = [];
             snapshot.forEach(docSnap => {
-                if (docSnap.id !== currentUserId) {
-                    results.push({ id: docSnap.id, ...docSnap.data() });
-                }
+                results.push({ id: docSnap.id, ...docSnap.data() });
             });
             setSearchResults(results);
 
@@ -218,9 +216,7 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
                 );
                 const snapshot2 = await getDocs(q2);
                 snapshot2.forEach(docSnap => {
-                    if (docSnap.id !== currentUserId) {
-                        results.push({ id: docSnap.id, ...docSnap.data() });
-                    }
+                    results.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 setSearchResults(results);
             }

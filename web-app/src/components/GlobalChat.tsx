@@ -182,9 +182,7 @@ const GlobalChat: React.FC<GlobalChatProps> = ({ currentUserId, currentUsername 
                 const snapshot = await getDocs(q);
                 const results: any[] = [];
                 snapshot.forEach(docSnap => {
-                    if (docSnap.id !== currentUserId) {
-                        results.push({ id: docSnap.id, ...docSnap.data() });
-                    }
+                    results.push({ id: docSnap.id, ...docSnap.data() });
                 });
                 setSearchResults(results);
 
@@ -199,9 +197,7 @@ const GlobalChat: React.FC<GlobalChatProps> = ({ currentUserId, currentUsername 
                     );
                     const snapshot2 = await getDocs(q2);
                     snapshot2.forEach(docSnap => {
-                        if (docSnap.id !== currentUserId) {
-                            results.push({ id: docSnap.id, ...docSnap.data() });
-                        }
+                        results.push({ id: docSnap.id, ...docSnap.data() });
                     });
                     setSearchResults(results);
                 }
