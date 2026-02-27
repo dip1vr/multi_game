@@ -344,6 +344,21 @@ const App: React.FC = () => {
   const handleSaveUsername = async (e: React.FormEvent) => {
     e.preventDefault();
     if (username.trim().length > 0) {
+      if (BOT_NAMES.map(n => n.toLowerCase()).includes(username.trim().toLowerCase())) {
+        alert("This codename is reserved for bots. Please choose another.");
+        return;
+      }
+
+      const q = query(collection(db, 'users'), where('displayNameLowercase', '==', username.trim().toLowerCase()));
+      const snap = await getDocs(q);
+
+      const isTaken = !snap.empty && snap.docs[0].id !== authUser?.uid;
+
+      if (isTaken) {
+        alert("Codename is already taken. Please choose another one.");
+        return;
+      }
+
       localStorage.setItem('multi_battle_username', username.trim());
       setIsUsernameSet(true);
 
@@ -363,6 +378,21 @@ const App: React.FC = () => {
   const handleUpdateUsername = async (e: React.FormEvent) => {
     e.preventDefault();
     if (tempUsername.trim().length > 0) {
+      if (BOT_NAMES.map(n => n.toLowerCase()).includes(tempUsername.trim().toLowerCase())) {
+        alert("This codename is reserved for bots. Please choose another.");
+        return;
+      }
+
+      const q = query(collection(db, 'users'), where('displayNameLowercase', '==', tempUsername.trim().toLowerCase()));
+      const snap = await getDocs(q);
+
+      const isTaken = !snap.empty && snap.docs[0].id !== authUser?.uid;
+
+      if (isTaken) {
+        alert("Codename is already taken. Please choose another one.");
+        return;
+      }
+
       localStorage.setItem('multi_battle_username', tempUsername.trim());
       setUsername(tempUsername.trim());
       setIsEditingUsername(false);
@@ -482,25 +512,58 @@ const App: React.FC = () => {
   useEffect(() => {
     if (roomId) return;
 
-    // Initial random value between 700 and 1500
-    setFakeActivePlayers(Math.floor(Math.random() * (1500 - 700 + 1)) + 700);
+    const statsRef = doc(db, 'stats', 'activePlayers');
 
-    const interval = setInterval(() => {
-      setFakeActivePlayers(prev => {
-        // Change by a random amount between -15 and +15
-        const change = Math.floor(Math.random() * 31) - 15;
-        let newValue = prev + change;
+    // 1. Listen for real-time updates from Firebase
+    const unsub = onSnapshot(statsRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        setFakeActivePlayers(data.count || 1000);
+      } else {
+        // Initialize if first time
+        setDoc(statsRef, {
+          count: Math.floor(Math.random() * (1500 - 700 + 1)) + 700,
+          lastUpdated: serverTimestamp()
+        }).catch(console.error);
+      }
+    });
 
-        // Keep within 700-1500 bounds
-        if (newValue < 700) newValue = 700 + Math.floor(Math.random() * 20);
-        if (newValue > 1500) newValue = 1500 - Math.floor(Math.random() * 20);
+    // 2. Distributed Updater: Every client checks if data is stale (>5s)
+    // Only one client will succeed in updating due to the 5s window
+    const interval = setInterval(async () => {
+      if (!authUser) return;
 
-        return newValue;
-      });
+      try {
+        const snap = await getDoc(statsRef);
+        if (snap.exists()) {
+          const data = snap.data();
+          const lastUpdated = (data.lastUpdated as any)?.toMillis() || 0;
+          const now = Date.now();
+
+          if (now - lastUpdated > 5000) {
+            const prevCount = data.count || 1000;
+            const change = Math.floor(Math.random() * 31) - 15;
+            let newValue = prevCount + change;
+
+            if (newValue < 700) newValue = 700 + Math.floor(Math.random() * 20);
+            if (newValue > 1500) newValue = 1500 - Math.floor(Math.random() * 20);
+
+            await updateDoc(statsRef, {
+              count: newValue,
+              lastUpdated: serverTimestamp()
+            });
+          }
+        }
+      } catch (e) {
+        // Silent catch for race conditions or permission issues
+      }
     }, 5000);
 
-    return () => clearInterval(interval);
-  }, [roomId]);
+    return () => {
+      unsub();
+      clearInterval(interval);
+    };
+  }, [roomId, authUser]);
 
   useEffect(() => {
     if (!roomId) return;
