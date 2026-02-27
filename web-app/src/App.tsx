@@ -54,7 +54,7 @@ const BOT_NAMES = [
 
 const generateBotRooms = (): Room[] => {
   const bots: Room[] = [];
-  const count = 15;
+  const count = Math.floor(Math.random() * 6) + 10; // Between 10 and 15
   const shuffledNames = [...BOT_NAMES].sort(() => 0.5 - Math.random());
   const modes: GameMode[] = ["Anime", "Marvel", "Pokemon"];
 
