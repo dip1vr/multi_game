@@ -964,11 +964,12 @@ const App: React.FC = () => {
       setTimeLeft(remaining);
 
       // Auto-assign logic if time runs out and it's our turn
-      const isBotTurn = (gameState.turn === "p1" && hostId?.startsWith("BOT_ID_")) ||
-        (gameState.turn === "p2" && guestId?.startsWith("BOT_ID_"));
+      const isOurTurn = gameState.turn === localRole;
+      const opponentIsBot = localRole === "p1" ? guestId?.startsWith("BOT_ID_") : hostId?.startsWith("BOT_ID_");
+      const isBotTurn = gameState.turn !== localRole && opponentIsBot;
 
-      // If time runs out, or if it's bot's turn wait 2 secs (remaining <= 28)
-      if ((remaining === 0 && gameState.turn === localRole) || (isBotTurn && remaining <= 28)) {
+      // If time runs out, or if it's bot's turn wait ~1.5 secs (remaining <= 28)
+      if ((isOurTurn && remaining === 0) || (isBotTurn && remaining <= 28)) {
         clearInterval(interval);
 
         if (isBotTurn) {
