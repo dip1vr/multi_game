@@ -447,6 +447,7 @@ const App: React.FC = () => {
   const EMOJIS = ["🔥", "💀", "🤡", "🥶", "🤯", "🤣", "👍", "👎"];
   const [openRooms, setOpenRooms] = useState<Room[]>([]);
   const [botRooms, setBotRooms] = useState<Room[]>([]);
+  const [fakeActivePlayers, setFakeActivePlayers] = useState<number>(0);
   const [roomChat, setRoomChat] = useState<{ senderId: string, senderName: string, text: string, timestamp: number }[]>([]);
   const [chatMessage, setChatMessage] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -475,8 +476,30 @@ const App: React.FC = () => {
     });
 
     setBotRooms(generateBotRooms());
-
     return () => unsub();
+  }, [roomId]);
+
+  useEffect(() => {
+    if (roomId) return;
+
+    // Initial random value between 700 and 1500
+    setFakeActivePlayers(Math.floor(Math.random() * (1500 - 700 + 1)) + 700);
+
+    const interval = setInterval(() => {
+      setFakeActivePlayers(prev => {
+        // Change by a random amount between -15 and +15
+        const change = Math.floor(Math.random() * 31) - 15;
+        let newValue = prev + change;
+
+        // Keep within 700-1500 bounds
+        if (newValue < 700) newValue = 700 + Math.floor(Math.random() * 20);
+        if (newValue > 1500) newValue = 1500 - Math.floor(Math.random() * 20);
+
+        return newValue;
+      });
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [roomId]);
 
   useEffect(() => {
@@ -1370,7 +1393,15 @@ const App: React.FC = () => {
                   className="bg-[#0a0a0c]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl relative"
                 >
                   <div className="p-8">
-                    <h2 className="text-3xl font-black mb-8 italic tracking-tighter text-center">MULTIPLAYER</h2>
+                    <div className="flex flex-col items-center justify-center mb-6">
+                      <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-2">
+                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
+                        <span className="text-emerald-400 font-black text-[10px] tracking-[0.2em] uppercase">
+                          {fakeActivePlayers.toLocaleString()} Active Players Mode
+                        </span>
+                      </div>
+                      <h2 className="text-3xl font-black italic tracking-tighter text-center">MULTIPLAYER</h2>
+                    </div>
 
                     <div className="grid grid-cols-2 gap-4 auto-rows-fr">
                       <button
