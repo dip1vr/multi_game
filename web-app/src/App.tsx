@@ -44,6 +44,52 @@ const generateRoomCode = () => {
 // TeamDisplay moved to src/components/TeamDisplay.tsx
 
 
+const BOT_NAMES = ["Shadow", "Ash", "Goku", "Naruto", "Saitama", "Luffy", "Light", "Zero", "Nova", "Echo", "Alpha", "Omega", "Blade", "Viper", "Titan", "Rogue", "Ghost", "Sniper", "Raven", "Rex", "Leon", "Kira", "Zane", "Sora", "Jin", "Kai", "Ryu", "Ken", "King", "Duke"];
+
+const generateBotRooms = (): Room[] => {
+  const bots: Room[] = [];
+  const count = 15;
+  const shuffledNames = [...BOT_NAMES].sort(() => 0.5 - Math.random());
+  const modes: GameMode[] = ["Anime", "Marvel", "Pokemon"];
+
+  for (let i = 0; i < count; i++) {
+    const mode = modes[Math.floor(Math.random() * modes.length)];
+    let series = "All";
+    if (mode === "Anime") {
+      const seriesList = Array.from(new Set(datasets.Anime.map((c: any) => c.series).filter(Boolean)));
+      if (Math.random() > 0.5) series = seriesList[Math.floor(Math.random() * seriesList.length)] as string;
+    } else if (mode === "Pokemon") {
+      const regionList = Array.from(new Set(datasets.Pokemon.map((c: any) => c.region).filter(Boolean)));
+      if (Math.random() > 0.5) series = regionList[Math.floor(Math.random() * regionList.length)] as string;
+    }
+
+    bots.push({
+      id: `BOT-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
+      host: `[BOT] ${shuffledNames[i]}`,
+      hostId: `BOT_ID_${shuffledNames[i]}`,
+      guest: null,
+      gameState: {
+        config: { mode, series },
+        p1: INITIAL_PLAYER(`[BOT] ${shuffledNames[i]}`),
+        p2: INITIAL_PLAYER("Player 2"),
+        turn: "p1",
+        currentDraw: null,
+        nextDraws: [],
+        turnStartTime: 0,
+        status: "setup",
+        winner: null,
+        p1Misses: 0,
+        p2Misses: 0,
+        battleLog: []
+      },
+      createdAt: Date.now() - Math.floor(Math.random() * 100000),
+      isPublic: true,
+      intendedPublic: true
+    });
+  }
+  return bots;
+};
+
 const App: React.FC = () => {
   const [localRole, setLocalRole] = useState<PlayerRole>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
@@ -394,6 +440,7 @@ const App: React.FC = () => {
   const lastEmojiTime = useRef<number>(0);
   const EMOJIS = ["🔥", "💀", "🤡", "🥶", "🤯", "🤣", "👍", "👎"];
   const [openRooms, setOpenRooms] = useState<Room[]>([]);
+  const [botRooms, setBotRooms] = useState<Room[]>([]);
   const [roomChat, setRoomChat] = useState<{ senderId: string, senderName: string, text: string, timestamp: number }[]>([]);
   const [chatMessage, setChatMessage] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -420,6 +467,8 @@ const App: React.FC = () => {
       });
       setOpenRooms(rooms);
     });
+
+    setBotRooms(generateBotRooms());
 
     return () => unsub();
   }, [roomId]);
@@ -504,6 +553,41 @@ const App: React.FC = () => {
     if (!codeToJoin) return;
     setLoadingAction(actionName);
     try {
+      if (codeToJoin.startsWith('BOT-')) {
+        const botRoom = botRooms.find(r => r.id === codeToJoin);
+        if (!botRoom) {
+          alert("Bot room no longer available!");
+          setLoadingAction(null);
+          return;
+        }
+
+        const newCode = generateRoomCode();
+        const initialGameState: GameState = {
+          ...botRoom.gameState,
+          p2: INITIAL_PLAYER(username) as Player,
+          status: "drafting",
+          turn: Math.random() > 0.5 ? "p1" : "p2",
+          turnStartTime: Date.now()
+        };
+        const newRoom: Room = {
+          id: newCode,
+          host: botRoom.host,
+          hostId: botRoom.hostId,
+          guest: username,
+          guestId: localUserId,
+          gameState: initialGameState,
+          createdAt: Date.now(),
+          isPublic: false,
+          intendedPublic: false
+        };
+        await setDoc(doc(db, "games", newCode), newRoom);
+
+        setRoomId(newCode);
+        setLocalRole("p2");
+        setLoadingAction(null);
+        return;
+      }
+
       const roomRef = doc(db, "games", codeToJoin.toUpperCase());
       const snap = await getDoc(roomRef);
       if (snap.exists()) {
@@ -783,9 +867,9 @@ const App: React.FC = () => {
 
   const roles = getRolesForMode(gameState.config.mode);
 
-  const assignRole = (role: string) => {
+  const assignRole = (role: string, force: boolean = false) => {
     if (!gameState.currentDraw) return;
-    if (gameState.turn !== localRole) return; // Prevent out-of-turn assignment
+    if (!force && gameState.turn !== localRole) return; // Prevent out-of-turn assignment
 
     const currentPlayerKey = gameState.turn;
     const opponentPlayerKey = gameState.turn === "p1" ? "p2" : "p1";
@@ -838,8 +922,8 @@ const App: React.FC = () => {
     updateFirestoreState(newState);
   };
 
-  const skipTurn = () => {
-    if (gameState.turn !== localRole) return;
+  const skipTurn = (force: boolean = false) => {
+    if (!force && gameState.turn !== localRole) return;
     const currentPlayer = gameState[gameState.turn];
     if (currentPlayer.skips <= 0) return;
 
@@ -874,8 +958,25 @@ const App: React.FC = () => {
       setTimeLeft(remaining);
 
       // Auto-assign logic if time runs out and it's our turn
-      if (remaining === 0 && gameState.turn === localRole) {
+      const isBotTurn = (gameState.turn === "p1" && hostId?.startsWith("BOT_ID_")) ||
+        (gameState.turn === "p2" && guestId?.startsWith("BOT_ID_"));
+
+      // If time runs out, or if it's bot's turn wait 2 secs (remaining <= 28)
+      if ((remaining === 0 && gameState.turn === localRole) || (isBotTurn && remaining <= 28)) {
         clearInterval(interval);
+
+        if (isBotTurn) {
+          const botRole = gameState.turn;
+          const currentPlayer = gameState[botRole];
+          const availableRoles = roles.filter(r => !currentPlayer.team[r]);
+          if (availableRoles.length > 0) {
+            const randomRole = availableRoles[Math.floor(Math.random() * availableRoles.length)];
+            assignRole(randomRole, true);
+          } else {
+            skipTurn(true);
+          }
+          return;
+        }
 
         // Timeout strike logic
         const currentMisses = localRole === 'p1' ? (gameState.p1Misses || 0) : (gameState.p2Misses || 0);
@@ -897,7 +998,7 @@ const App: React.FC = () => {
         // Increment miss count but continue draft
         updateFirestoreState({ [missField]: newMisses });
 
-        const currentPlayer = gameState[localRole];
+        const currentPlayer = gameState[localRole as "p1" | "p2"];
         const availableRoles = roles.filter(r => !currentPlayer.team[r]);
 
         if (availableRoles.length > 0) {
@@ -1344,17 +1445,17 @@ const App: React.FC = () => {
                 </motion.div>
               </div>
 
-              {!roomId && openRooms.length > 0 && (
+              {!roomId && (openRooms.length > 0 || botRooms.length > 0) && (
                 <div className="max-w-lg mx-auto w-full mt-0 bg-[#0a0a0c]/80 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/50"></div>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
                       <Activity size={16} className="text-emerald-400" /> LIVE OPEN MATCHES
                     </h3>
-                    <span className="bg-emerald-500/20 text-emerald-400 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">{openRooms.length} Available</span>
+                    <span className="bg-emerald-500/20 text-emerald-400 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">{(openRooms.length + botRooms.length)} Available</span>
                   </div>
                   <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
-                    {openRooms.map((room) => {
+                    {[...openRooms, ...botRooms].map((room) => {
                       const isJoiningThisRoom = loadingAction === `joining-${room.id}`;
                       return (
                         <button
@@ -1586,7 +1687,7 @@ const App: React.FC = () => {
                           </div>
 
                           <button
-                            onClick={skipTurn}
+                            onClick={() => skipTurn()}
                             disabled={gameState[gameState.turn].skips <= 0 || gameState.turn !== localRole}
                             className={`w-full flex items-center justify-center gap-1.5 py-1.5 sm:py-2 rounded-lg text-[9px] font-black transition-all uppercase tracking-[0.2em] shadow-lg border
                             ${gameState[gameState.turn].skips > 0 && gameState.turn === localRole

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trophy, Medal, X, Activity, User, UserPlus } from 'lucide-react';
 import { db } from '../firebase';
-import { collection, query, orderBy, limit, getDocs, getCountFromServer, where, onSnapshot, setDoc, doc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, limit, getDocs, getCountFromServer, where, onSnapshot, setDoc, doc, serverTimestamp, documentId } from 'firebase/firestore';
 
 interface LeaderboardUser {
     id: string;
@@ -30,6 +30,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
 
         const fetchLeaderboard = async () => {
             setLoading(true);
+            const startTime = Date.now();
+
             try {
                 const usersRef = collection(db, 'users');
 
@@ -45,8 +47,8 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
                     // Fetch Current User Rank if logged in
                     if (currentUserId) {
                         // Find stats for current user
-                        const currentUserDoc = topUsers.find(u => u.id === currentUserId);
-                        let stats = currentUserDoc;
+                        const topUserIndex = topUsers.findIndex(u => u.id === currentUserId);
+                        let stats = topUserIndex !== -1 ? topUsers[topUserIndex] : null;
 
                         if (!stats) {
                             // Unlikely to be in top 20, fetch their doc directly
@@ -59,14 +61,42 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
 
                         if (stats) {
                             setCurrentUserStats(stats);
-                            // Calculate rank by counting how many users have more wins
-                            const countQuery = query(usersRef, where('wins', '>', stats.wins));
-                            const snapshot = await getCountFromServer(countQuery);
-                            // Rank is number of people with strictly more wins + 1
-                            setCurrentUserRank(snapshot.data().count + 1);
+
+                            if (topUserIndex !== -1) {
+                                // User is in top 20, show their exact position
+                                setCurrentUserRank(topUserIndex + 1);
+                            } else {
+                                // Calculate rank by counting how many users have strictly more wins
+                                const countQuery = query(usersRef, where('wins', '>', stats.wins || 0));
+                                const snapshot = await getCountFromServer(countQuery);
+                                const higherWinsCount = snapshot.data().count;
+
+                                // For users with the same amount of wins, we need to count those who come BEFORE 
+                                // this user in the implicit tie-breaker sort.
+                                // orderBy('wins', 'desc') implicitly uses __name__ (documentId) 'desc' as the tie-breaker.
+                                // Therefore, document IDs greater than the current user's ID come before them.
+                                const equalQuery = query(
+                                    usersRef,
+                                    where('wins', '==', stats.wins || 0),
+                                    where(documentId(), '>', stats.id)
+                                );
+                                const equalSnapshot = await getCountFromServer(equalQuery);
+                                const equalWinsBeforeCount = equalSnapshot.data().count;
+
+                                // Exact accurate rank
+                                setCurrentUserRank(higherWinsCount + equalWinsBeforeCount + 1);
+                            }
                         }
                     }
-                    setLoading(false);
+
+                    // Enforce a minimum loading time of 1500ms to show the animation
+                    const elapsedTime = Date.now() - startTime;
+                    const remainingTime = Math.max(0, 1500 - elapsedTime);
+
+                    setTimeout(() => {
+                        setLoading(false);
+                    }, remainingTime);
+
                 }, (error) => {
                     console.error("Error fetching leaderboard live:", error);
                     setLoading(false);
