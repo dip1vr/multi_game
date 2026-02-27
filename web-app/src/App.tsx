@@ -860,7 +860,9 @@ const App: React.FC = () => {
   }, [gameState.status, gameState.config.mode, gameState.config.series, pool.length, gameState.p1.team, gameState.p2.team, gameState.currentDraw?.name, gameState.nextDraws?.length]);
 
   useEffect(() => {
-    if (localRole !== "p1") return; // Only host handles generating chars
+    // Only host handles generating chars, UNLESS the host is a bot, then p2 handles it
+    const isHostBot = hostId?.startsWith("BOT_ID_");
+    if (localRole !== "p1" && !isHostBot) return;
 
     if (gameState.status === "drafting" && pool.length > 0) {
       const updates = replenishQueue();
