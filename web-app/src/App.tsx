@@ -44,7 +44,13 @@ const generateRoomCode = () => {
 // TeamDisplay moved to src/components/TeamDisplay.tsx
 
 
-const BOT_NAMES = ["Shadow", "Ash", "Goku", "Naruto", "Saitama", "Luffy", "Light", "Zero", "Nova", "Echo", "Alpha", "Omega", "Blade", "Viper", "Titan", "Rogue", "Ghost", "Sniper", "Raven", "Rex", "Leon", "Kira", "Zane", "Sora", "Jin", "Kai", "Ryu", "Ken", "King", "Duke"];
+const BOT_NAMES = [
+  "Shadow", "Nova", "Echo", "Alpha", "Omega", "Blade", "Viper", "Titan", "Rogue", "Ghost",
+  "Sniper", "Raven", "Rex", "Leon", "Kira", "Zane", "Sora", "Jin", "Kai", "Ryu",
+  "Ken", "King", "Duke", "Maverick", "Phoenix", "Hunter", "Storm", "Blaze", "Frost", "Iron",
+  "Atlas", "Zeus", "Ares", "Diana", "Bruce", "Clark", "Arthur", "Barry", "Victor", "Hal",
+  "Peter", "Tony", "Steve", "Thor", "Natasha", "Clint", "Wanda", "Vision", "Sam", "Bucky"
+];
 
 const generateBotRooms = (): Room[] => {
   const bots: Room[] = [];
@@ -65,12 +71,12 @@ const generateBotRooms = (): Room[] => {
 
     bots.push({
       id: `BOT-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
-      host: `[BOT] ${shuffledNames[i]}`,
+      host: shuffledNames[i],
       hostId: `BOT_ID_${shuffledNames[i]}`,
       guest: null,
       gameState: {
         config: { mode, series },
-        p1: INITIAL_PLAYER(`[BOT] ${shuffledNames[i]}`),
+        p1: INITIAL_PLAYER(shuffledNames[i]),
         p2: INITIAL_PLAYER("Player 2"),
         turn: "p1",
         currentDraw: null,
