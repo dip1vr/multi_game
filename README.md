@@ -1,6 +1,6 @@
 # Multi-Game Draft Bot
 
-This repository contains the code for the **Multi-Game Draft**, a web-based platform inspired by the concept of "Play At :- AnimeDuel.in". The system allows users to draft characters from different franchises (anime, Pokemon, Marvel, etc.) and compete in various multiplayer game modes. It provides an engaging, interactive experience mirroring the online draft game linked above.
+This repository contains the code for the **Multi-Game Draft**, a web-based platform inspired by the concept of "Play At :- [AnimeDuel.in](https://www.animeduel.in/)". The system allows users to draft characters from different franchises (anime, Pokemon, Marvel, etc.) and compete in various multiplayer game modes. It provides an engaging, interactive experience mirroring the online draft game linked above.
 
 ## 🚀 Features
 
