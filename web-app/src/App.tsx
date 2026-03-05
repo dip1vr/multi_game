@@ -7,10 +7,10 @@ import {
 } from 'lucide-react';
 import { db, auth, googleProvider } from './firebase';
 import {
-  doc, setDoc, onSnapshot, getDoc, updateDoc, collection,
+  doc, setDoc, onSnapshot, getDoc, updateDoc, deleteDoc, collection,
   query, where, limit, increment, getDocs, serverTimestamp, addDoc, arrayUnion
 } from 'firebase/firestore';
-import { signInWithPopup, signInAnonymously, onAuthStateChanged, signOut, linkWithPopup, User as FirebaseAuthUser } from 'firebase/auth';
+import { signInWithPopup, signInWithRedirect, getRedirectResult, signInAnonymously, onAuthStateChanged, signOut, linkWithPopup, linkWithRedirect, User as FirebaseAuthUser } from 'firebase/auth';
 
 import { datasets } from './dataStore';
 import { Character, GameState, Player, GameMode, PlayerRole, Room } from './types';
@@ -117,7 +117,11 @@ const App: React.FC = () => {
   const [pendingRequestsCount, setPendingRequestsCount] = useState<number>(0);
   const [processedGameId, setProcessedGameId] = useState<string | null>(null);
   const [userStats, setUserStats] = useState<{ wins: number, losses: number, draws: number } | null>(null);
+  const [userPhotoURL, setUserPhotoURL] = useState<string | null>(localStorage.getItem('multi_battle_avatar'));
   const [matchToReconnect, setMatchToReconnect] = useState<Room | null>(null);
+  const [friendIds, setFriendIds] = useState<Set<string>>(new Set());
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState<boolean>(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
 
   // Listen for incoming Game Invites + Friend Requests count
@@ -140,9 +144,22 @@ const App: React.FC = () => {
       setPendingRequestsCount(snapshot.size);
     });
 
+    // Listen for Friends list to hide "Add Friend" buttons
+    const friendsQuery = query(collection(db, 'friends'), where('userIds', 'array-contains', localUserId));
+    const unsubFriends = onSnapshot(friendsQuery, (snapshot) => {
+      const ids = new Set<string>();
+      snapshot.forEach(docSnap => {
+        const data = docSnap.data();
+        const fId = data.userIds?.find((id: string) => id !== localUserId);
+        if (fId) ids.add(fId);
+      });
+      setFriendIds(ids);
+    });
+
     return () => {
       unsubInvites();
       unsubReqs();
+      unsubFriends();
     };
   }, [localUserId]);
 
@@ -206,6 +223,14 @@ const App: React.FC = () => {
               losses: data?.losses || 0,
               draws: data?.draws || 0
             });
+            const pfp = data?.photoURL || null;
+            if (pfp && pfp !== "") {
+              setUserPhotoURL(pfp);
+              localStorage.setItem('multi_battle_avatar', pfp);
+            } else {
+              setUserPhotoURL(null);
+              localStorage.removeItem('multi_battle_avatar');
+            }
 
             // Auto-Migration: Populate missing displayNameLowercase for existing users
             if (dbName && !data.displayNameLowercase) {
@@ -215,9 +240,9 @@ const App: React.FC = () => {
                 .catch(err => console.error("[Migration] Error for", uid, err));
             }
 
-            // 5. Upgrade Photo URL if linked Google recently
-            if (!currentUser.isAnonymous && currentUser.photoURL && data.photoURL !== currentUser.photoURL) {
-              setDoc(userRef, { photoURL: currentUser.photoURL, displayName: currentUser.displayName }, { merge: true }).catch(console.error);
+            // 5. Upgrade Photo URL if NONE exists yet
+            if (currentUser.photoURL && !data.photoURL) {
+              setDoc(userRef, { photoURL: currentUser.photoURL }, { merge: true }).catch(console.error);
             }
           } else {
             const newStats = {
@@ -266,7 +291,7 @@ const App: React.FC = () => {
                 getDoc(doc(db, "games", savedRoomId)).then(roomSnap => {
                   if (roomSnap.exists()) {
                     const roomData = roomSnap.data() as Room;
-                    const activeStates = ["drafting", "ready"];
+                    const activeStates = ["drafting", "ready", "setup", "waiting_for_player"];
                     if (activeStates.includes(roomData.gameState.status)) {
                       setMatchToReconnect(roomData);
                     } else {
@@ -298,6 +323,22 @@ const App: React.FC = () => {
     };
   }, []);
 
+  // Handle Redirect Result (Auth / Link)
+  useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          console.log("[Auth] Successfully signed in via redirect:", result.user.displayName);
+        }
+      })
+      .catch((error) => {
+        console.error("[Auth] Redirect sign-in error:", error);
+        if (error.code !== 'auth/popup-closed-by-user') {
+          alert(`Sign-in failed: ${error.message}`);
+        }
+      });
+  }, []);
+
   // Persist Current Match Info
   useEffect(() => {
     if (roomId && localRole) {
@@ -307,24 +348,38 @@ const App: React.FC = () => {
   }, [roomId, localRole]);
 
   const handleLogin = async () => {
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
+
     try {
       if (auth.currentUser && auth.currentUser.isAnonymous) {
         try {
-          await linkWithPopup(auth.currentUser, googleProvider);
+          if (isMobile) {
+            await linkWithRedirect(auth.currentUser, googleProvider);
+          } else {
+            await linkWithPopup(auth.currentUser, googleProvider);
+          }
         } catch (linkError: any) {
           if (linkError.code === 'auth/credential-already-in-use') {
             // Account already linked elsewhere, just normal sign-in
-            await signInWithPopup(auth, googleProvider);
+            if (isMobile) {
+              await signInWithRedirect(auth, googleProvider);
+            } else {
+              await signInWithPopup(auth, googleProvider);
+            }
           } else {
             throw linkError;
           }
         }
       } else {
-        await signInWithPopup(auth, googleProvider);
+        if (isMobile) {
+          await signInWithRedirect(auth, googleProvider);
+        } else {
+          await signInWithPopup(auth, googleProvider);
+        }
       }
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Failed to sign in with Google.");
+    } catch (error: any) {
+      console.error("Login Error Details:", error);
+      alert(`Sign in failed. Error: ${error.code || 'Unknown'}`);
     }
   };
 
@@ -336,6 +391,86 @@ const App: React.FC = () => {
       setUsername("");
     } catch (error) {
       console.error("Logout failed:", error);
+    }
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !authUser) return;
+
+    setIsUploadingAvatar(true);
+
+    try {
+      // 1. Client-side Compression
+      const compressedBlob = await new Promise<Blob>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = (event) => {
+          const img = new Image();
+          img.src = event.target?.result as string;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 250;
+            const MAX_HEIGHT = 250;
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              }
+            } else {
+              if (height > MAX_HEIGHT) {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return reject('Failed to get canvas context');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((blob) => {
+              if (blob) resolve(blob);
+              else reject('Failed to create blob');
+            }, 'image/jpeg', 0.8);
+          };
+          img.onerror = () => reject('Failed to load image');
+        };
+        reader.onerror = () => reject('Failed to read file');
+      });
+
+      // 2. Upload Compressed Blob to ImgBB
+      const formData = new FormData();
+      formData.append('image', compressedBlob, 'avatar.jpg');
+
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=87ac08b1fe96f1eec8ec5a764548dd56`, {
+        method: 'POST',
+        body: formData
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        const imageUrl = result.data.url;
+        // Optimistic Update
+        setUserPhotoURL(imageUrl);
+        localStorage.setItem('multi_battle_avatar', imageUrl);
+
+        const userRef = doc(db, 'users', authUser.uid);
+        await updateDoc(userRef, { photoURL: imageUrl });
+        console.log("Avatar updated successfully (compressed):", imageUrl);
+      } else {
+        alert("Upload failed: " + (result.error?.message || "Unknown error"));
+      }
+    } catch (error) {
+      console.error("Failed to process/upload avatar:", error);
+      alert("Failed to upload avatar. Please try a different image.");
+    } finally {
+      setIsUploadingAvatar(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
     }
   };
 
@@ -499,8 +634,13 @@ const App: React.FC = () => {
 
     const unsub = onSnapshot(q, (snapshot) => {
       const rooms: Room[] = [];
+      const now = Date.now();
       snapshot.forEach((docSnap) => {
-        rooms.push(docSnap.data() as Room);
+        const data = docSnap.data() as Room;
+        // Filter out rooms older than 5 minutes (300,000 ms) AND hide own rooms
+        if (now - data.createdAt < 300000 && data.hostId !== localUserId) {
+          rooms.push(data);
+        }
       });
       setOpenRooms(rooms);
     });
@@ -719,6 +859,23 @@ const App: React.FC = () => {
     setRoomId(matchToReconnect.id);
     setLocalRole(savedRole);
     setMatchToReconnect(null);
+  };
+
+  const handleCancelMatch = async () => {
+    if (!matchToReconnect) return;
+    if (!window.confirm("Are you sure you want to cancel this match?")) return;
+
+    setLoadingAction('canceling');
+    try {
+      await deleteDoc(doc(db, "games", matchToReconnect.id));
+      localStorage.removeItem('multi_battle_roomid');
+      localStorage.removeItem('multi_battle_role');
+      setMatchToReconnect(null);
+    } catch (err) {
+      console.error("Failed to cancel match:", err);
+    } finally {
+      setLoadingAction(null);
+    }
   };
 
   const handleSurrender = async () => {
@@ -957,7 +1114,7 @@ const App: React.FC = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [gameState.status, gameState.currentDraw?.name, gameState.nextDraws?.length, pool, localRole]);
+  }, [gameState.status, gameState.currentDraw?.name, gameState.nextDraws?.length, pool, localRole, hostId, guestId]);
 
   const roles = getRolesForMode(gameState.config.mode);
 
@@ -1042,6 +1199,48 @@ const App: React.FC = () => {
   };
 
   const [timeLeft, setTimeLeft] = useState<number>(30);
+  const [roomExpiryTimeLeft, setRoomExpiryTimeLeft] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!matchToReconnect || matchToReconnect.hostId !== localUserId) {
+      setRoomExpiryTimeLeft(null);
+      return;
+    }
+
+    if (!["setup", "waiting_for_player"].includes(matchToReconnect.gameState.status)) {
+      setRoomExpiryTimeLeft(null);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      const now = Date.now();
+      const elapsed = now - matchToReconnect.createdAt;
+      const remaining = Math.max(0, 300 - Math.floor(elapsed / 1000));
+      setRoomExpiryTimeLeft(remaining);
+
+      if (remaining === 0) {
+        clearInterval(interval);
+        handleCancelMatchSilent(matchToReconnect.id);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [matchToReconnect, localUserId]);
+
+  const handleCancelMatchSilent = async (rid: string) => {
+    setLoadingAction('canceling');
+    try {
+      await deleteDoc(doc(db, "games", rid));
+      localStorage.removeItem('multi_battle_roomid');
+      localStorage.removeItem('multi_battle_role');
+      setMatchToReconnect(null);
+    } catch (err) {
+      console.error("Failed to cancel match:", err);
+    } finally {
+      setLoadingAction(null);
+    }
+  };
 
   useEffect(() => {
     if (gameState.status !== "drafting") return;
@@ -1057,7 +1256,7 @@ const App: React.FC = () => {
       const isBotTurn = gameState.turn !== localRole && opponentIsBot;
 
       // If time runs out, or if it's bot's turn wait ~1.5 secs (remaining <= 28)
-      if ((isOurTurn && remaining === 0) || (isBotTurn && remaining <= 28)) {
+      if (((isOurTurn && remaining === 0) || (isBotTurn && remaining <= 28)) && gameState.currentDraw) {
         clearInterval(interval);
 
         if (isBotTurn) {
@@ -1106,7 +1305,7 @@ const App: React.FC = () => {
     }, 100);
 
     return () => clearInterval(interval);
-  }, [gameState.status, gameState.turnStartTime, gameState.turn, localRole, roles]);
+  }, [gameState.status, gameState.turnStartTime, gameState.turn, localRole, roles, hostId, guestId, gameState.currentDraw?.name]);
 
   // Record Game Result
   useEffect(() => {
@@ -1208,8 +1407,8 @@ const App: React.FC = () => {
             onClick={() => setShowProfileMenu(p => !p)}
             title="User Profile"
           >
-            {authUser && authUser.photoURL ? (
-              <img src={authUser.photoURL} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-110 group-hover:blur-[2px]" />
+            {userPhotoURL && userPhotoURL !== "" ? (
+              <img src={userPhotoURL} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-110 group-hover:blur-[2px]" />
             ) : (
               <UserPlus size={22} className="text-gray-500 group-hover:text-blue-400 transition-colors" />
             )}
@@ -1227,14 +1426,33 @@ const App: React.FC = () => {
                 className="absolute top-full right-0 mt-4 w-72 bg-gray-900/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col origin-top-right ring-1 ring-white/5"
               >
                 <div className="p-6 flex flex-col items-center border-b border-white/5 bg-black/20">
-                  <div className="w-20 h-20 rounded-2xl bg-black/60 border border-white/10 flex items-center justify-center overflow-hidden shadow-inner mb-4 relative group">
-                    {authUser && authUser.photoURL ? (
-                      <img src={authUser.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                  <div
+                    onClick={() => !isUploadingAvatar && fileInputRef.current?.click()}
+                    className="w-20 h-20 rounded-2xl bg-black/60 border border-white/10 flex items-center justify-center overflow-hidden shadow-inner mb-4 relative group cursor-pointer"
+                  >
+                    {userPhotoURL && userPhotoURL !== "" ? (
+                      <img src={userPhotoURL} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-110" />
                     ) : (
                       <UserPlus size={32} className="text-gray-500" />
                     )}
+                    {isUploadingAvatar && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10 transition-opacity">
+                        <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <Edit2 size={24} className="text-white" />
+                    </div>
                     {!authUser && <div className="absolute inset-0 bg-black/40 flex items-center justify-center"><span className="text-[9px] font-black uppercase tracking-widest text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">Guest</span></div>}
                   </div>
+
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleAvatarUpload}
+                  />
 
                   <span className="text-xl font-black text-white tracking-widest uppercase truncate w-full text-center leading-none">{username}</span>
                   <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1.5">Codename</span>
@@ -1331,7 +1549,7 @@ const App: React.FC = () => {
             >
               <div className="w-full max-w-lg mx-auto space-y-6">
                 {/* Active Match Reconnection Alert */}
-                <AnimatePresence>
+                <AnimatePresence mode="wait">
                   {matchToReconnect && (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9, y: -20 }}
@@ -1346,9 +1564,19 @@ const App: React.FC = () => {
                           <Activity size={32} className="text-purple-400 animate-pulse" />
                         </div>
 
-                        <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-2">Battle in Progress!</h3>
+                        <h3 className="text-2xl font-black text-white italic tracking-tighter uppercase mb-2">
+                          {matchToReconnect.hostId === localUserId ? "Your Live Match" : "Battle in Progress!"}
+                        </h3>
+                        {roomExpiryTimeLeft !== null && (
+                          <div className="mb-4 flex items-center gap-2 px-3 py-1 bg-rose-500/10 border border-rose-500/30 rounded-full animate-pulse">
+                            <Activity size={12} className="text-rose-400" />
+                            <span className="text-[10px] font-black text-rose-400 uppercase tracking-widest">Expires in: {Math.floor(roomExpiryTimeLeft / 60)}:{(roomExpiryTimeLeft % 60).toString().padStart(2, '0')}</span>
+                          </div>
+                        )}
                         <p className="text-gray-300 text-sm font-bold uppercase tracking-widest mb-8 px-4 leading-relaxed">
-                          We found an unfinished match. You can jump back in or surrender now.
+                          {matchToReconnect.hostId === localUserId
+                            ? "You have an open match. Join back or cancel it below."
+                            : "We found an unfinished match. You can jump back in or surrender now."}
                         </p>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
@@ -1356,19 +1584,19 @@ const App: React.FC = () => {
                             onClick={handleContinueMatch}
                             className="py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase tracking-[0.2em] rounded-2xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:scale-[1.03] active:scale-95 text-xs flex items-center justify-center gap-2"
                           >
-                            <Zap size={16} className="fill-current" /> Continue Battle
+                            <Zap size={16} className="fill-current" /> {matchToReconnect.hostId === localUserId ? "REJOIN MATCH" : "Continue Battle"}
                           </button>
                           <button
-                            onClick={handleSurrender}
-                            disabled={loadingAction === 'surrendering'}
+                            onClick={["setup", "waiting_for_player"].includes(matchToReconnect.gameState.status) && matchToReconnect.hostId === localUserId ? handleCancelMatch : handleSurrender}
+                            disabled={loadingAction === 'surrendering' || loadingAction === 'canceling'}
                             className="py-4 bg-gray-800/80 hover:bg-rose-900/40 text-gray-400 hover:text-rose-400 border border-white/5 hover:border-rose-500/30 font-black uppercase tracking-[0.2em] rounded-2xl transition-all active:scale-95 text-xs flex items-center justify-center gap-2"
                           >
-                            {loadingAction === 'surrendering' ? (
+                            {loadingAction === 'surrendering' || loadingAction === 'canceling' ? (
                               <div className="relative w-4 h-4">
                                 <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border-2 border-white/20 border-t-rose-400 rounded-full" />
                               </div>
                             ) : <XCircle size={16} />}
-                            {loadingAction === 'surrendering' ? 'ENDING...' : 'Surrender'}
+                            {loadingAction === 'surrendering' ? 'ENDING...' : loadingAction === 'canceling' ? 'CANCELING...' : (["setup", "waiting_for_player"].includes(matchToReconnect.gameState.status) && matchToReconnect.hostId === localUserId ? 'Cancel Match' : 'Surrender')}
                           </button>
                         </div>
 
@@ -1609,7 +1837,15 @@ const App: React.FC = () => {
               className="w-full flex-1 flex flex-col"
             >
               {localRole === "p1" ? (
-                <SetupScreen onStart={startDraft} />
+                <div className="flex flex-col flex-1">
+                  {roomExpiryTimeLeft !== null && (
+                    <div className="flex items-center justify-center gap-2 py-2 bg-rose-500/10 border-b border-rose-500/20">
+                      <Activity size={12} className="text-rose-400" />
+                      <span className="text-[10px] font-black text-rose-400 uppercase tracking-widest">Setup Phase - Room expires in: {Math.floor(roomExpiryTimeLeft / 60)}:{(roomExpiryTimeLeft % 60).toString().padStart(2, '0')}</span>
+                    </div>
+                  )}
+                  <SetupScreen onStart={startDraft} />
+                </div>
               ) : (
                 <div className="flex flex-col items-center justify-center py-20">
                   <div className="relative w-24 h-24 mb-10">
@@ -1669,6 +1905,19 @@ const App: React.FC = () => {
                   <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Share Room Code</p>
                   <p className="text-4xl font-black text-white tracking-[0.3em] font-mono">{roomId}</p>
                 </div>
+
+                {roomExpiryTimeLeft !== null && (
+                  <div className="mt-8 flex flex-col items-center gap-2">
+                    <div className="w-48 h-1 bg-white/5 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: "100%" }}
+                        animate={{ width: `${(roomExpiryTimeLeft / 300) * 100}%` }}
+                        className="h-full bg-rose-500"
+                      />
+                    </div>
+                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-[0.2em]">Match expires in: {Math.floor(roomExpiryTimeLeft / 60)}:{(roomExpiryTimeLeft % 60).toString().padStart(2, '0')}</p>
+                  </div>
+                )}
               </div>
             </motion.div>
           )}
@@ -1690,7 +1939,7 @@ const App: React.FC = () => {
                   isLeft={localRole === 'p1' ? false : true}
                   roles={roles}
                   isLocal={false}
-                  showAddFriend={!!opponentId}
+                  showAddFriend={!!opponentId && !friendIds.has(opponentId)}
                   onAddFriend={handleSendFriendRequest}
                   misses={localRole === 'p1' ? (gameState.p2Misses || 0) : (gameState.p1Misses || 0)}
                 />
@@ -1837,26 +2086,9 @@ const App: React.FC = () => {
               <div className="flex justify-center items-center gap-8 mb-8 text-xl font-black italic tracking-widest opacity-80 relative">
                 <span className="text-blue-400 flex items-center gap-2">
                   {gameState.p1.name}: {gameState.p1Score || 0} pts
-                  {localRole === "p2" && localUserId && (
+                  {localRole === "p2" && localUserId && opponentId && !friendIds.has(opponentId) && (
                     <button
-                      onClick={async () => {
-                        try {
-                          const usersSnap = await getDocs(query(collection(db, 'users'), where('displayName', '==', gameState.p1.name), limit(1)));
-                          if (!usersSnap.empty) {
-                            const targetId = usersSnap.docs[0].id;
-                            await setDoc(doc(collection(db, 'friendRequests')), {
-                              senderId: localUserId,
-                              senderName: username,
-                              receiverId: targetId,
-                              status: 'pending',
-                              timestamp: serverTimestamp()
-                            });
-                            alert("Friend request sent!");
-                          }
-                        } catch (e) {
-                          console.error("Failed to send request", e);
-                        }
-                      }}
+                      onClick={handleSendFriendRequest}
                       title="Add Friend"
                       className="p-2 ml-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-lg transition-colors border border-emerald-500/30"
                     >
@@ -1866,26 +2098,9 @@ const App: React.FC = () => {
                 </span>
                 <span className="text-gray-600">VS</span>
                 <span className="text-red-400 flex items-center gap-2">
-                  {localRole === "p1" && localUserId && (
+                  {localRole === "p1" && localUserId && opponentId && !friendIds.has(opponentId) && (
                     <button
-                      onClick={async () => {
-                        try {
-                          const usersSnap = await getDocs(query(collection(db, 'users'), where('displayName', '==', gameState.p2.name), limit(1)));
-                          if (!usersSnap.empty) {
-                            const targetId = usersSnap.docs[0].id;
-                            await setDoc(doc(collection(db, 'friendRequests')), {
-                              senderId: localUserId,
-                              senderName: username,
-                              receiverId: targetId,
-                              status: 'pending',
-                              timestamp: serverTimestamp()
-                            });
-                            alert("Friend request sent!");
-                          }
-                        } catch (e) {
-                          console.error("Failed to send request", e);
-                        }
-                      }}
+                      onClick={handleSendFriendRequest}
                       title="Add Friend"
                       className="p-2 mr-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 rounded-lg transition-colors border border-emerald-500/30"
                     >
@@ -1979,6 +2194,7 @@ const App: React.FC = () => {
           <Leaderboard
             currentUserId={localUserId}
             currentUsername={username}
+            friendIds={friendIds}
             onClose={() => setShowLeaderboard(false)}
           />
         )}

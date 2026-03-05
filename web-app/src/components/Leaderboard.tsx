@@ -17,9 +17,10 @@ interface LeaderboardProps {
     onClose: () => void;
     currentUserId: string | null;
     currentUsername: string;
+    friendIds: Set<string>;
 }
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, currentUsername }) => {
+const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, currentUsername, friendIds }) => {
     const [leaders, setLeaders] = useState<LeaderboardUser[]>([]);
     const [currentUserRank, setCurrentUserRank] = useState<number | null>(null);
     const [currentUserStats, setCurrentUserStats] = useState<LeaderboardUser | null>(null);
@@ -252,7 +253,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
                                                 {isCurrentUser && (
                                                     <span className="text-[8px] sm:text-[9px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded font-black uppercase tracking-widest whitespace-nowrap">You</span>
                                                 )}
-                                                {!isCurrentUser && currentUserId && (
+                                                {!isCurrentUser && currentUserId && !friendIds.has(user.id) && (
                                                     <button
                                                         onClick={async () => {
                                                             try {
