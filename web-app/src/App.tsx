@@ -1561,7 +1561,7 @@ const App: React.FC = () => {
         />
       )}
 
-      <div className={`w-full max-w-5xl flex-1 flex flex-col min-h-0 ${isAppView ? 'overflow-hidden' : ''}`}>
+      <div className={`w-full max-w-4xl flex-1 flex flex-col min-h-0 ${isAppView ? 'overflow-hidden' : ''}`}>
         {/* Hide giant header if we are drafting to save space */}
         {!isAppView && (
           <header className="text-center mb-12 relative shrink-0 pt-12">
@@ -1598,7 +1598,7 @@ const App: React.FC = () => {
               transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
               className="w-full flex-1 flex flex-col gap-6"
             >
-              <div className="w-full max-w-lg mx-auto space-y-6">
+              <div className="w-full max-w-4xl mx-auto space-y-6">
                 {/* Active Match Reconnection Alert */}
                 <AnimatePresence mode="wait">
                   {matchToReconnect && (
@@ -1664,7 +1664,7 @@ const App: React.FC = () => {
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-gray-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-[0_0_50px_rgba(0,0,0,0.3)] relative overflow-hidden group"
+                  className="bg-gray-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-4 sm:p-6 shadow-[0_0_50px_rgba(0,0,0,0.3)] relative overflow-hidden group"
                 >
                   <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-purple-500/30 rounded-tl-[1.5rem] pointer-events-none"></div>
                   <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-purple-500/30 rounded-tr-[1.5rem] pointer-events-none"></div>
@@ -1674,7 +1674,7 @@ const App: React.FC = () => {
                   <div className="flex flex-col gap-6 relative z-10 w-full">
 
                     {/* Top Row: Avatar, Info & Stats */}
-                    <div className="flex flex-col lg:flex-row items-center justify-between gap-6 w-full bg-black/40 backdrop-blur-md p-6 rounded-3xl border border-white/5 shadow-[inset_0_0_30px_rgba(0,0,0,0.5)]">
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-6 w-full bg-black/40 backdrop-blur-md p-4 sm:p-6 rounded-3xl border border-white/5 shadow-[inset_0_0_30px_rgba(0,0,0,0.5)]">
 
                       {/* Left Side: Avatar & Info */}
                       <div className="flex flex-col sm:flex-row items-center gap-6">
@@ -1701,7 +1701,7 @@ const App: React.FC = () => {
                             </form>
                           ) : (
                             <div className="flex items-center gap-3 group/name cursor-pointer" onClick={() => { setTempUsername(username); setIsEditingUsername(true); }}>
-                              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white italic tracking-tighter uppercase leading-none drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] font-orbitron group-hover/name:text-purple-100 transition-colors">{username}</h2>
+                              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white italic tracking-tighter uppercase leading-none drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] font-orbitron group-hover/name:text-purple-100 transition-colors">{username}</h2>
                               <button aria-label="Edit Username" className="p-2 sm:p-2.5 bg-white/5 group-hover/name:bg-purple-500/30 text-gray-500 group-hover/name:text-purple-300 border border-white/10 group-hover/name:border-purple-500/60 rounded-xl transition-all shadow-sm shrink-0">
                                 <Edit2 size={18} className="group-hover/name:drop-shadow-[0_0_12px_rgba(168,85,247,1)]" />
                               </button>

@@ -68,10 +68,10 @@ const MatchItem = React.memo(({
     return (
         <div
             ref={itemRef}
-            className="group relative flex items-center justify-between overflow-hidden rounded-[1.5rem] border border-white/10 hover:border-emerald-500/40 transition-[border-color,transform,box-shadow,opacity] duration-300 h-24 sm:h-28 bg-[#0a0a0e]"
+            className="group relative flex items-center justify-between overflow-hidden rounded-[1.5rem] border border-white/10 hover:border-emerald-500/40 transition-[border-color,transform,box-shadow,opacity] duration-300 h-20 sm:h-28 bg-[#0a0a0e]"
             style={{
                 contentVisibility: 'auto',
-                containIntrinsicSize: '112px',
+                containIntrinsicSize: '80px',
                 willChange: 'transform',
                 transform: 'translate3d(0,0,0)'
             }}
@@ -90,7 +90,7 @@ const MatchItem = React.memo(({
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
             <div className="relative flex items-center gap-4 p-4">
-                <div className="relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border border-white/10 bg-black/40 shadow-lg">
+                <div className="relative shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-white/10 bg-black/40 shadow-lg">
                     {avatarImg ? (
                         <img
                             src={avatarImg}
@@ -113,7 +113,7 @@ const MatchItem = React.memo(({
                 </div>
                 <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="text-white font-black uppercase text-base tracking-wider leading-none truncate max-w-[140px]">{room.host}</span>
+                        <span className="text-white font-black uppercase text-sm sm:text-base tracking-wider leading-none truncate max-w-[120px] sm:max-w-[140px]">{room.host}</span>
 
                     </div>
                     <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-gray-400">
@@ -127,11 +127,11 @@ const MatchItem = React.memo(({
                     </div>
                 </div>
             </div>
-            <div className="relative pr-6">
+            <div className="relative pr-4 sm:pr-6 shrink-0">
                 <button
                     onClick={() => joinRoomWithCode(room.id, `joining-${room.id}`)}
                     disabled={loadingAction !== null || matchToReconnect !== null}
-                    className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-800 disabled:text-gray-500 text-gray-900 font-black text-[10px] tracking-[0.2em] uppercase rounded-full shadow-lg active:scale-95 transition-all"
+                    className="px-4 sm:px-6 py-2 sm:py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-800 disabled:text-gray-500 text-gray-900 font-black text-[9px] sm:text-[10px] tracking-[0.2em] uppercase rounded-full shadow-lg active:scale-95 transition-all"
                 >
                     {isJoiningThisRoom ? (
                         <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-4 h-4 border-2 border-gray-900/30 border-t-gray-900 rounded-full" />
@@ -180,7 +180,7 @@ const Lobby: React.FC<LobbyProps> = ({
                         className="bg-gray-900/30 backdrop-blur-xl rounded-3xl border border-white/10 shadow-3xl relative overflow-hidden flex-1"
                     >
                         <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
-                        <div className="p-8">
+                        <div className="p-4 sm:p-8">
                             <div className="flex flex-col items-center justify-center mb-6">
                                 <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-2">
                                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
@@ -267,7 +267,7 @@ const Lobby: React.FC<LobbyProps> = ({
 
                 {/* Live Matches List */}
                 <div className="h-full flex flex-col">
-                    <div className="bg-[#0a0a0c]/80 backdrop-blur-xl p-8 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden flex-1 flex flex-col">
+                    <div className="bg-[#0a0a0c]/80 backdrop-blur-xl p-4 sm:p-8 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden flex-1 flex flex-col">
                         <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500/50"></div>
                         <div className="flex items-center justify-between mb-8">
                             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
