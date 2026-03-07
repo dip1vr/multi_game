@@ -60,7 +60,7 @@ export interface GameState {
   currentDraw: Character | null;
   nextDraws: Character[];
   turnStartTime: number;
-  status: "setup" | "waiting_for_player" | "drafting" | "ready" | "battle" | "finished";
+  status: "setup" | "waiting_for_player" | "matchmaking" | "drafting" | "ready" | "battle" | "finished";
   winner: string | null;
   p1Score?: number;
   p2Score?: number;
@@ -75,8 +75,10 @@ export interface Room {
   id: string;
   host: string;
   hostId: string;
+  hostPhotoURL?: string | null;
   guest: string | null;
   guestId?: string | null;
+  guestPhotoURL?: string | null;
   gameState: GameState;
   createdAt: number;
   isPublic: boolean;

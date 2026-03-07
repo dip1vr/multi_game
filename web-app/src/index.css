@@ -6,7 +6,11 @@ body {
   margin: 0;
   background-color: #0a0a0c;
   color: white;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.font-orbitron {
+  font-family: 'Orbitron', sans-serif;
 }
 
 /* Custom scrollbar for premium feel */

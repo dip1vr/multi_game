@@ -21,3 +21,16 @@ const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 export { app, analytics, db, auth, googleProvider, signInAnonymously };
+
+// Allow bfcache by disabling Firestore network when hidden
+if (typeof document !== 'undefined') {
+    document.addEventListener('visibilitychange', () => {
+        import('firebase/firestore').then(({ enableNetwork, disableNetwork }) => {
+            if (document.visibilityState === 'hidden') {
+                disableNetwork(db).catch(console.error);
+            } else {
+                enableNetwork(db).catch(console.error);
+            }
+        });
+    });
+}

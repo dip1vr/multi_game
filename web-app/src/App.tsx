@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo, Suspense, lazy } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Users, Trash2, Shield, Sword, UserPlus, Trophy,
-  Crown, Zap, Activity, ChevronDown, Check, Handshake, Edit2,
-  LogOut, Info, ShieldAlert, MessageSquare, XCircle
+  Users, Trash2, UserPlus, Trophy,
+  Zap, Activity, ChevronDown, Check, Edit2,
+  ShieldAlert, MessageSquare, XCircle, ArrowLeft
 } from 'lucide-react';
 import { db, auth, googleProvider } from './firebase';
 import {
@@ -12,15 +12,23 @@ import {
 } from 'firebase/firestore';
 import { signInWithPopup, signInWithRedirect, getRedirectResult, signInAnonymously, onAuthStateChanged, signOut, linkWithPopup, linkWithRedirect, User as FirebaseAuthUser } from 'firebase/auth';
 
-import { datasets } from './dataStore';
+import { loadDataset } from './dataStore';
 import { Character, GameState, Player, GameMode, PlayerRole, Room } from './types';
 import { getRolesForMode, calculateBattle } from './gameLogic';
 import { SetupScreen } from './components/SetupScreen';
 import { TeamDisplay, roleIconsMapping } from './components/TeamDisplay';
-import Leaderboard from './components/Leaderboard';
-import FriendsModal from './components/FriendsModal';
-import GlobalChat from './components/GlobalChat';
-
+const Leaderboard = lazy(() => import('./components/Leaderboard'));
+const GlobalChat = lazy(() => import('./components/GlobalChat'));
+const FriendsModal = lazy(() => import('./components/FriendsModal'));
+import { useSocial } from './context/SocialContext';
+import GamingBackground from './components/GamingBackground';
+import AuthOverlay from './components/AuthOverlay';
+import TopProfileBar from './components/TopProfileBar';
+import AboutModal from './components/AboutModal';
+import PrivacyPolicyModal from './components/PrivacyPolicyModal';
+import MatchInviteOverlay from './components/MatchInviteOverlay';
+import Lobby from './components/Lobby';
+import { generateRoomCode, generateBotRooms, getDeterministicRoomImage, BOT_NAMES } from './utils/roomUtils';
 
 const INITIAL_PLAYER = (name: string): Player => ({
   name,
@@ -28,100 +36,53 @@ const INITIAL_PLAYER = (name: string): Player => ({
   skips: 2,
 });
 
-const generateRoomCode = () => {
-  return Math.random().toString(36).substring(2, 7).toUpperCase();
-};
 
-// roleIconsMapping moved to src/components/TeamDisplay.tsx
-
-
-// SearchableSelect moved to src/components/SearchableSelect.tsx
-
-
-// SetupScreen moved to src/components/SetupScreen.tsx
-
-
-// TeamDisplay moved to src/components/TeamDisplay.tsx
-
-
-const BOT_NAMES = [
-  "Shadow", "Nova", "Echo", "Alpha", "Omega", "Blade", "Viper", "Titan", "Rogue", "Ghost",
-  "Sniper", "Raven", "Rex", "Leon", "Kira", "Zane", "Sora", "Jin", "Kai", "Ryu",
-  "Ken", "King", "Duke", "Maverick", "Phoenix", "Hunter", "Storm", "Blaze", "Frost", "Iron",
-  "Atlas", "Zeus", "Ares", "Diana", "Bruce", "Clark", "Arthur", "Barry", "Victor", "Hal",
-  "Peter", "Tony", "Steve", "Thor", "Natasha", "Clint", "Wanda", "Vision", "Sam", "Bucky"
-];
-
-const generateBotRooms = (): Room[] => {
-  const bots: Room[] = [];
-  const count = Math.floor(Math.random() * 6) + 10; // Between 10 and 15
-  const shuffledNames = [...BOT_NAMES].sort(() => 0.5 - Math.random());
-  const modes: GameMode[] = ["Anime", "Marvel", "Pokemon"];
-
-  for (let i = 0; i < count; i++) {
-    const mode = modes[Math.floor(Math.random() * modes.length)];
-    let series = "All";
-    if (mode === "Anime") {
-      const seriesList = Array.from(new Set(datasets.Anime.map((c: any) => c.series).filter(Boolean)));
-      if (Math.random() > 0.5) series = seriesList[Math.floor(Math.random() * seriesList.length)] as string;
-    } else if (mode === "Pokemon") {
-      const regionList = Array.from(new Set(datasets.Pokemon.map((c: any) => c.region).filter(Boolean)));
-      if (Math.random() > 0.5) series = regionList[Math.floor(Math.random() * regionList.length)] as string;
-    }
-
-    bots.push({
-      id: `BOT-${Math.random().toString(36).substring(2, 9).toUpperCase()}`,
-      host: shuffledNames[i],
-      hostId: `BOT_ID_${shuffledNames[i]}`,
-      guest: null,
-      gameState: {
-        config: { mode, series },
-        p1: INITIAL_PLAYER(shuffledNames[i]),
-        p2: INITIAL_PLAYER("Player 2"),
-        turn: "p1",
-        currentDraw: null,
-        nextDraws: [],
-        turnStartTime: 0,
-        status: "setup",
-        winner: null,
-        p1Misses: 0,
-        p2Misses: 0,
-        battleLog: []
-      },
-      createdAt: Date.now() - Math.floor(Math.random() * 100000),
-      isPublic: true,
-      intendedPublic: true
-    });
-  }
-  return bots;
-};
 
 const App: React.FC = () => {
+  const [charactersPool, setCharactersPool] = useState<Record<string, any[]>>({});
+
+  useEffect(() => {
+    // Background load initial anime data
+    loadDataset('Anime').then(data => {
+      setCharactersPool(prev => ({ ...prev, Anime: data }));
+    });
+  }, []);
+
+
+
   const [localRole, setLocalRole] = useState<PlayerRole>(null);
   const [roomId, setRoomId] = useState<string | null>(null);
   const [joinCode, setJoinCode] = useState<string>('');
 
   const [username, setUsername] = useState<string>('');
-  const [localUserId, setLocalUserId] = useState<string>('');
+  const [localUserId, setLocalUserId] = useState<string>(localStorage.getItem('multi_battle_userid') || '');
   const [isUsernameSet, setIsUsernameSet] = useState<boolean>(false);
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(true);
   const [isEditingUsername, setIsEditingUsername] = useState<boolean>(false);
   const [tempUsername, setTempUsername] = useState<string>('');
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
+  const [visibleMatchesCount, setVisibleMatchesCount] = useState<number>(4);
+  const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+
+  // Social Data from Context
+  const { incomingRequests, friends } = useSocial();
+  const friendIds = new Set(friends.map(f => f.friendId));
 
   // Auth & Leaderboard State
   const [authUser, setAuthUser] = useState<FirebaseAuthUser | null>(null);
   const [showLeaderboard, setShowLeaderboard] = useState<boolean>(false);
   const [showFriendsModal, setShowFriendsModal] = useState<boolean>(false);
+  const [showAboutModal, setShowAboutModal] = useState<boolean>(false);
+  const [showPrivacyModal, setShowPrivacyModal] = useState<boolean>(false);
   const [incomingInvite, setIncomingInvite] = useState<any>(null);
-  const [pendingRequestsCount, setPendingRequestsCount] = useState<number>(0);
   const [processedGameId, setProcessedGameId] = useState<string | null>(null);
   const [userStats, setUserStats] = useState<{ wins: number, losses: number, draws: number } | null>(null);
   const [userPhotoURL, setUserPhotoURL] = useState<string | null>(localStorage.getItem('multi_battle_avatar'));
   const [matchToReconnect, setMatchToReconnect] = useState<Room | null>(null);
-  const [friendIds, setFriendIds] = useState<Set<string>>(new Set());
   const [isUploadingAvatar, setIsUploadingAvatar] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const scrollThrottleRef = useRef<number>(0);
 
 
   // Listen for incoming Game Invites + Friend Requests count
@@ -138,28 +99,8 @@ const App: React.FC = () => {
       setIncomingInvite(latestInvite);
     });
 
-    // Listen for incoming Friend Requests to show a badge
-    const reqsQuery = query(collection(db, 'friendRequests'), where('receiverId', '==', localUserId), where('status', '==', 'pending'));
-    const unsubReqs = onSnapshot(reqsQuery, (snapshot) => {
-      setPendingRequestsCount(snapshot.size);
-    });
-
-    // Listen for Friends list to hide "Add Friend" buttons
-    const friendsQuery = query(collection(db, 'friends'), where('userIds', 'array-contains', localUserId));
-    const unsubFriends = onSnapshot(friendsQuery, (snapshot) => {
-      const ids = new Set<string>();
-      snapshot.forEach(docSnap => {
-        const data = docSnap.data();
-        const fId = data.userIds?.find((id: string) => id !== localUserId);
-        if (fId) ids.add(fId);
-      });
-      setFriendIds(ids);
-    });
-
     return () => {
       unsubInvites();
-      unsubReqs();
-      unsubFriends();
     };
   }, [localUserId]);
 
@@ -209,6 +150,8 @@ const App: React.FC = () => {
 
       if (currentUser) {
         const uid = currentUser.uid;
+        setLocalUserId(uid);
+        localStorage.setItem('multi_battle_userid', uid);
         const userRef = doc(db, 'users', uid);
 
         // 1. Listen Document Live for Existing Data
@@ -306,6 +249,7 @@ const App: React.FC = () => {
             setUsername("");
             setIsUsernameSet(false);
           }
+          setIsAuthLoading(false);
         });
       } else {
         // Automatically attempt anonymous login if no session is found
@@ -313,6 +257,7 @@ const App: React.FC = () => {
           await signInAnonymously(auth);
         } catch (e) {
           console.error("Anonymous auth failed", e);
+          setIsAuthLoading(false);
         }
       }
     });
@@ -346,6 +291,11 @@ const App: React.FC = () => {
       localStorage.setItem('multi_battle_role', localRole);
     }
   }, [roomId, localRole]);
+
+  // Reset once-only matchmaking flag whenever we enter a new room
+  useEffect(() => {
+    matchmakingShownRef.current = false;
+  }, [roomId]);
 
   const handleLogin = async () => {
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth <= 768;
@@ -385,6 +335,17 @@ const App: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      if (roomId) {
+        try {
+          if (localRole === 'p1') {
+            await deleteDoc(doc(db, "games", roomId));
+          } else if (localRole === 'p2') {
+            await updateDoc(doc(db, "games", roomId), { guest: null, guestId: null, guestPhotoURL: null });
+          }
+        } catch (e) {
+          console.error("Failed to cleanup room on logout", e);
+        }
+      }
       await signOut(auth);
       setRoomId(null);
       setIsUsernameSet(false);
@@ -510,6 +471,43 @@ const App: React.FC = () => {
     }
   };
 
+  const handleBackToLobby = async () => {
+    if (localRole === 'p1' && roomId) {
+      try {
+        await deleteDoc(doc(db, "games", roomId));
+        console.log("Room deleted successfully on cancellation:", roomId);
+      } catch (err) {
+        console.error("Failed to delete room on cancellation:", err);
+      }
+    } else if (localRole === 'p2' && roomId) {
+      try {
+        await updateDoc(doc(db, "games", roomId), { guest: null, guestId: null, guestPhotoURL: null });
+      } catch (err) {
+        console.error("Failed to update room on cancellation:", err);
+      }
+    }
+    setRoomId(null);
+    setLocalRole(null);
+    localStorage.removeItem('multi_battle_roomid');
+    localStorage.removeItem('multi_battle_role');
+    setGameState({
+      config: { mode: "Anime", series: null },
+      p1: INITIAL_PLAYER("Player 1"),
+      p2: INITIAL_PLAYER("Player 2"),
+      turn: "p1",
+      currentDraw: null,
+      nextDraws: [],
+      turnStartTime: 0,
+      status: "setup",
+      winner: null,
+      p1Misses: 0,
+      p2Misses: 0,
+      battleLog: [],
+    });
+    setPool([]);
+    setUsedIndices(new Set());
+  };
+
   const handleUpdateUsername = async (e: React.FormEvent) => {
     e.preventDefault();
     if (tempUsername.trim().length > 0) {
@@ -577,6 +575,7 @@ const App: React.FC = () => {
           id: code,
           host: username,
           hostId: localUserId,
+          hostPhotoURL: userPhotoURL,
           guest: null,
           gameState: initialGameState,
           createdAt: Date.now(),
@@ -606,6 +605,10 @@ const App: React.FC = () => {
   const [guestPlayer, setGuestPlayer] = useState<string | null>(null);
   const [hostId, setHostId] = useState<string | null>(null);
   const [guestId, setGuestId] = useState<string | null>(null);
+  const [hostPhotoURLState, setHostPhotoURLState] = useState<string | null>(null);
+  const [guestPhotoURLState, setGuestPhotoURLState] = useState<string | null>(null);
+  const [showMatchmakingAnim, setShowMatchmakingAnim] = useState(false);
+  const matchmakingShownRef = useRef(false); // prevents re-trigger on subsequent snapshots
   const [activeEmoji, setActiveEmoji] = useState<{ emoji: string, id: number } | null>(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const lastEmojiTime = useRef<number>(0);
@@ -617,6 +620,7 @@ const App: React.FC = () => {
   const [chatMessage, setChatMessage] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [roomCreatedAt, setRoomCreatedAt] = useState<number | null>(null);
 
   useEffect(() => {
     if (isChatOpen) chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -645,7 +649,7 @@ const App: React.FC = () => {
       setOpenRooms(rooms);
     });
 
-    setBotRooms(generateBotRooms());
+    setBotRooms(generateBotRooms(INITIAL_PLAYER));
     return () => unsub();
   }, [roomId]);
 
@@ -694,8 +698,9 @@ const App: React.FC = () => {
             });
           }
         }
-      } catch (e) {
+      } catch (err) {
         // Silent catch for race conditions or permission issues
+        console.error("Silent error:", err);
       }
     }, 5000);
 
@@ -707,14 +712,18 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (!roomId) return;
+    // Reset the once-only guard synchronously each time roomId (or localRole) changes
+    matchmakingShownRef.current = false;
     const unsub = onSnapshot(doc(db, "games", roomId), (docSnapshot) => {
       if (docSnapshot.exists()) {
         const data = docSnapshot.data() as Room;
-        setGameState(data.gameState);
-        setGuestPlayer(data.guest);
-        setHostId(data.hostId);
+        setGuestPlayer(data.guest || null);
+        setHostId(data.hostId || null);
         setGuestId(data.guestId || null);
+        setHostPhotoURLState(data.hostPhotoURL || null);
+        setGuestPhotoURLState(data.guestPhotoURL || null);
         setRoomChat(data.chat || []);
+        setRoomCreatedAt(data.createdAt || null);
 
         if (data.latestEmoji && data.latestEmoji.timestamp > lastEmojiTime.current) {
           lastEmojiTime.current = data.latestEmoji.timestamp;
@@ -725,15 +734,58 @@ const App: React.FC = () => {
           }
         }
 
-        // Auto-start draft if we were waiting for player
-        if (data.guest && localRole === "p1" && data.gameState.status === "waiting_for_player") {
-          updateFirestoreState({
-            status: "drafting",
-            turn: Math.random() > 0.5 ? "p1" : "p2",
-            turnStartTime: Date.now(),
+        // Host: when guest joins, immediately push "matchmaking" status to Firestore
+        // so BOTH players react at the exact same time
+        if (data.guest && localRole === "p1" && data.gameState.status === "waiting_for_player" && !matchmakingShownRef.current) {
+          matchmakingShownRef.current = true;
+          // Update guest name locally so it shows in the VS screen immediately
+          setGameState(prev => ({ ...prev, p2: { ...prev.p2, name: data.guest! } }));
+          // Push matchmaking status – both players' snapshots will pick this up simultaneously
+          updateFirestoreState({ status: "matchmaking" });
+          // After 3s, start the real draft
+          setTimeout(() => {
+            updateFirestoreState({
+              status: "drafting",
+              turn: Math.random() > 0.5 ? "p1" : "p2",
+              turnStartTime: Date.now(),
+              p1Misses: 0,
+              p2Misses: 0,
+            });
+          }, 3000);
+        }
+
+        // Both players: show the animation overlay while Firestore status is "matchmaking"
+        if (data.gameState.status === "matchmaking") {
+          setShowMatchmakingAnim(true);
+        } else {
+          setShowMatchmakingAnim(false);
+        }
+
+        setGameState(data.gameState);
+      } else {
+        // Room was deleted by the host or otherwise removed
+        if (localRole === 'p2') {
+          alert("The match was closed by the host.");
+          setRoomId(null);
+          setLocalRole(null);
+          localStorage.removeItem('multi_battle_roomid');
+          localStorage.removeItem('multi_battle_role');
+          setGameState({
+            config: { mode: "Anime", series: null },
+            p1: INITIAL_PLAYER("Player 1"),
+            p2: INITIAL_PLAYER("Player 2"),
+            turn: "p1",
+            currentDraw: null,
+            nextDraws: [],
+            turnStartTime: 0,
+            status: "setup",
+            winner: null,
             p1Misses: 0,
             p2Misses: 0,
+            battleLog: [],
           });
+          setPool([]);
+          setUsedIndices(new Set());
         }
       }
     });
@@ -764,6 +816,7 @@ const App: React.FC = () => {
         id: code,
         host: username,
         hostId: localUserId,
+        hostPhotoURL: userPhotoURL,
         guest: null,
         gameState: initialGameState,
         createdAt: Date.now(),
@@ -794,10 +847,10 @@ const App: React.FC = () => {
         }
 
         const newCode = generateRoomCode();
-        const initialGameState: GameState = {
+        const draftState: GameState = {
           ...botRoom.gameState,
           p2: INITIAL_PLAYER(username) as Player,
-          status: "drafting",
+          status: "matchmaking" as const,
           turn: Math.random() > 0.5 ? "p1" : "p2",
           turnStartTime: Date.now()
         };
@@ -805,9 +858,11 @@ const App: React.FC = () => {
           id: newCode,
           host: botRoom.host,
           hostId: botRoom.hostId,
+          hostPhotoURL: botRoom.hostPhotoURL || null,
           guest: username,
           guestId: localUserId,
-          gameState: initialGameState,
+          guestPhotoURL: userPhotoURL || null,
+          gameState: draftState,
           createdAt: Date.now(),
           isPublic: false,
           intendedPublic: false
@@ -817,6 +872,16 @@ const App: React.FC = () => {
         setRoomId(newCode);
         setLocalRole("p2");
         setLoadingAction(null);
+
+        // Transition to drafting after matchmaking animation duration
+        setTimeout(async () => {
+          try {
+            await updateDoc(doc(db, "games", newCode), {
+              'gameState.status': 'drafting',
+              'gameState.turnStartTime': Date.now()
+            });
+          } catch (_) { }
+        }, 3000);
         return;
       }
 
@@ -833,6 +898,7 @@ const App: React.FC = () => {
         await updateDoc(roomRef, {
           guest: username,
           guestId: localUserId,
+          guestPhotoURL: userPhotoURL || null,
           'gameState.p2.name': username
         });
         setRoomId(codeToJoin.toUpperCase());
@@ -871,6 +937,22 @@ const App: React.FC = () => {
       localStorage.removeItem('multi_battle_roomid');
       localStorage.removeItem('multi_battle_role');
       setMatchToReconnect(null);
+      setGameState({
+        config: { mode: "Anime", series: null },
+        p1: INITIAL_PLAYER("Player 1"),
+        p2: INITIAL_PLAYER("Player 2"),
+        turn: "p1",
+        currentDraw: null,
+        nextDraws: [],
+        turnStartTime: 0,
+        status: "setup",
+        winner: null,
+        p1Misses: 0,
+        p2Misses: 0,
+        battleLog: [],
+      });
+      setPool([]);
+      setUsedIndices(new Set());
     } catch (err) {
       console.error("Failed to cancel match:", err);
     } finally {
@@ -900,9 +982,11 @@ const App: React.FC = () => {
     }
   };
 
-  const handleInGameSurrender = async () => {
+  const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false);
+
+  const confirmInGameSurrender = async () => {
+    setShowSurrenderConfirm(false);
     if (!roomId) return;
-    if (!window.confirm("Are you sure you want to surrender? You will lose this match.")) return;
 
     setLoadingAction('surrendering');
     try {
@@ -918,6 +1002,10 @@ const App: React.FC = () => {
     } finally {
       setLoadingAction(null);
     }
+  };
+
+  const handleInGameSurrender = () => {
+    setShowSurrenderConfirm(true);
   };
 
   const [pool, setPool] = useState<Character[]>([]);
@@ -984,8 +1072,14 @@ const App: React.FC = () => {
     }
   };
 
-  const startDraft = (mode: GameMode, series: string | null) => {
-    let chars = datasets[mode] as any[];
+  const startDraft = async (mode: GameMode, series: string | null) => {
+    let chars = charactersPool[mode];
+    if (!chars) {
+      setLoadingAction('loading-data');
+      chars = await loadDataset(mode);
+      setCharactersPool(prev => ({ ...prev, [mode]: chars }));
+      setLoadingAction(null);
+    }
 
     if (series && series !== "All") {
       if (mode === "Pokemon") {
@@ -1023,8 +1117,12 @@ const App: React.FC = () => {
       if (roomId) {
         const roomRef = doc(db, "games", roomId);
         getDoc(roomRef).then((snap) => {
-          if (snap.exists() && snap.data().intendedPublic) {
-            updateDoc(roomRef, { isPublic: true });
+          if (snap.exists()) {
+            const updates: any = { createdAt: Date.now() };
+            if (snap.data().intendedPublic) {
+              updates.isPublic = true;
+            }
+            updateDoc(roomRef, updates);
           }
         }).catch(console.error);
       }
@@ -1032,7 +1130,8 @@ const App: React.FC = () => {
   };
 
   const replenishQueue = () => {
-    let needed = 4 - (gameState.nextDraws?.length || 0);
+    const currentNextCount = gameState.nextDraws?.length || 0;
+    let needed = 4 - currentNextCount;
     if (!gameState.currentDraw) needed += 1;
     if (needed <= 0) return null;
 
@@ -1040,7 +1139,9 @@ const App: React.FC = () => {
     const newUsed = new Set(usedIndices);
 
     for (let i = 0; i < needed; i++) {
-      if (newUsed.size >= pool.length) break;
+      if (newUsed.size >= pool.length) {
+        newUsed.clear(); // Recycling characters if the pool exhausts to prevent lockups
+      }
       let index;
       let attempts = 0;
       do {
@@ -1070,36 +1171,45 @@ const App: React.FC = () => {
 
   // Recovery Effect for Pool and Used Indices
   useEffect(() => {
-    if ((gameState.status === 'drafting' || gameState.status === 'ready') && pool.length === 0 && gameState.config.mode) {
-      console.log("[Recovery] Rebuilding character pool and used indices...");
-      let chars = datasets[gameState.config.mode] as any[];
-      const series = gameState.config.series;
-      if (series && series !== "All") {
-        if (gameState.config.mode === "Pokemon") {
-          chars = chars.filter(c => c.region === series);
-        } else {
-          chars = chars.filter(c => c.series === series);
+    const runRecovery = async () => {
+      if ((gameState.status === 'drafting' || gameState.status === 'ready') && pool.length === 0 && gameState.config.mode) {
+        console.log("[Recovery] Rebuilding character pool and used indices...");
+
+        let chars: any[] = charactersPool[gameState.config.mode];
+        if (!chars) {
+          chars = await loadDataset(gameState.config.mode);
+          setCharactersPool(prev => ({ ...prev, [gameState.config.mode]: chars }));
         }
+
+        const series = gameState.config.series;
+        if (series && series !== "All") {
+          if (gameState.config.mode === "Pokemon") {
+            chars = chars.filter((c: any) => c.region === series);
+          } else {
+            chars = chars.filter((c: any) => c.series === series);
+          }
+        }
+        chars = chars.filter((c: any) => c.stats !== null);
+        setPool(chars);
+
+        // Reconstruct used indices to prevent duplicates
+        const used = new Set<number>();
+        const allPickedNames = new Set([
+          ...Object.values(gameState.p1.team).map((c: any) => c?.name),
+          ...Object.values(gameState.p2.team).map((c: any) => c?.name),
+          gameState.currentDraw?.name,
+          ...(gameState.nextDraws || []).map((c: any) => c?.name)
+        ].filter(Boolean));
+
+        chars.forEach((c: any, idx: number) => {
+          if (allPickedNames.has(c.name)) {
+            used.add(idx);
+          }
+        });
+        setUsedIndices(used);
       }
-      chars = chars.filter(c => c.stats !== null);
-      setPool(chars);
-
-      // Reconstruct used indices to prevent duplicates
-      const used = new Set<number>();
-      const allPickedNames = new Set([
-        ...Object.values(gameState.p1.team).map(c => c?.name),
-        ...Object.values(gameState.p2.team).map(c => c?.name),
-        gameState.currentDraw?.name,
-        ...(gameState.nextDraws || []).map(c => c?.name)
-      ].filter(Boolean));
-
-      chars.forEach((c, idx) => {
-        if (allPickedNames.has(c.name)) {
-          used.add(idx);
-        }
-      });
-      setUsedIndices(used);
-    }
+    };
+    runRecovery();
   }, [gameState.status, gameState.config.mode, gameState.config.series, pool.length, gameState.p1.team, gameState.p2.team, gameState.currentDraw?.name, gameState.nextDraws?.length]);
 
   useEffect(() => {
@@ -1116,7 +1226,7 @@ const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameState.status, gameState.currentDraw?.name, gameState.nextDraws?.length, pool, localRole, hostId, guestId]);
 
-  const roles = getRolesForMode(gameState.config.mode);
+  const roles = useMemo(() => getRolesForMode(gameState.config.mode), [gameState.config.mode]);
 
   const assignRole = (role: string, force: boolean = false) => {
     if (!gameState.currentDraw) return;
@@ -1176,7 +1286,12 @@ const App: React.FC = () => {
   const skipTurn = (force: boolean = false) => {
     if (!force && gameState.turn !== localRole) return;
     const currentPlayer = gameState[gameState.turn];
-    if (currentPlayer.skips <= 0) return;
+
+    // If the team is completely full, they must discard the card (burn it)
+    // This doesn't cost a skip point.
+    const isBoardFull = Object.keys(currentPlayer.team).length === roles.length;
+
+    if (!isBoardFull && currentPlayer.skips <= 0) return;
 
     let nextChar = null;
     let nextQueue = gameState.nextDraws || [];
@@ -1186,8 +1301,8 @@ const App: React.FC = () => {
       nextQueue = nextQueue.slice(1);
     }
 
-    let newState: Partial<GameState> = {
-      [gameState.turn]: { ...currentPlayer, skips: currentPlayer.skips - 1 },
+    const newState: Partial<GameState> = {
+      [gameState.turn]: { ...currentPlayer, skips: isBoardFull ? currentPlayer.skips : currentPlayer.skips - 1 },
       turn: gameState.turn === "p1" ? "p2" : "p1",
       currentDraw: nextChar,
       nextDraws: nextQueue,
@@ -1202,31 +1317,46 @@ const App: React.FC = () => {
   const [roomExpiryTimeLeft, setRoomExpiryTimeLeft] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!matchToReconnect || matchToReconnect.hostId !== localUserId) {
+    const activeDoc = roomId
+      ? { id: roomId, status: gameState.status, role: localRole, createdAt: roomCreatedAt }
+      : matchToReconnect
+        ? { id: matchToReconnect.id, status: matchToReconnect.gameState.status, role: matchToReconnect.hostId === localUserId ? 'p1' : 'p2', createdAt: matchToReconnect.createdAt }
+        : null;
+
+    if (!activeDoc || activeDoc.role !== 'p1' || !activeDoc.createdAt) {
       setRoomExpiryTimeLeft(null);
       return;
     }
 
-    if (!["setup", "waiting_for_player"].includes(matchToReconnect.gameState.status)) {
+    if (!["setup", "waiting_for_player"].includes(activeDoc.status)) {
       setRoomExpiryTimeLeft(null);
       return;
     }
 
     const interval = setInterval(() => {
       const now = Date.now();
-      const elapsed = now - matchToReconnect.createdAt;
+      const elapsed = now - activeDoc.createdAt!;
       const remaining = Math.max(0, 300 - Math.floor(elapsed / 1000));
       setRoomExpiryTimeLeft(remaining);
 
       if (remaining === 0) {
         clearInterval(interval);
-        handleCancelMatchSilent(matchToReconnect.id);
+        handleCancelMatchSilent(activeDoc.id);
       }
     }, 1000);
 
+    const now = Date.now();
+    const elapsed = now - activeDoc.createdAt!;
+    const remaining = Math.max(0, 300 - Math.floor(elapsed / 1000));
+    setRoomExpiryTimeLeft(remaining);
+
+    if (remaining === 0) {
+      handleCancelMatchSilent(activeDoc.id);
+    }
+
     return () => clearInterval(interval);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [matchToReconnect, localUserId]);
+
+  }, [roomId, localRole, roomCreatedAt, gameState.status, matchToReconnect, localUserId]);
 
   const handleCancelMatchSilent = async (rid: string) => {
     setLoadingAction('canceling');
@@ -1235,6 +1365,22 @@ const App: React.FC = () => {
       localStorage.removeItem('multi_battle_roomid');
       localStorage.removeItem('multi_battle_role');
       setMatchToReconnect(null);
+      setGameState({
+        config: { mode: "Anime", series: null },
+        p1: INITIAL_PLAYER("Player 1"),
+        p2: INITIAL_PLAYER("Player 2"),
+        turn: "p1",
+        currentDraw: null,
+        nextDraws: [],
+        turnStartTime: 0,
+        status: "setup",
+        winner: null,
+        p1Misses: 0,
+        p2Misses: 0,
+        battleLog: [],
+      });
+      setPool([]);
+      setUsedIndices(new Set());
     } catch (err) {
       console.error("Failed to cancel match:", err);
     } finally {
@@ -1256,10 +1402,12 @@ const App: React.FC = () => {
       const isBotTurn = gameState.turn !== localRole && opponentIsBot;
 
       // If time runs out, or if it's bot's turn wait ~1.5 secs (remaining <= 28)
-      if (((isOurTurn && remaining === 0) || (isBotTurn && remaining <= 28)) && gameState.currentDraw) {
+      if ((isOurTurn && remaining === 0) || (isBotTurn && remaining <= 28)) {
         clearInterval(interval);
 
         if (isBotTurn) {
+          if (!gameState.currentDraw) return; // Wait for replenishment
+
           const botRole = gameState.turn;
           const currentPlayer = gameState[botRole];
           const availableRoles = roles.filter(r => !currentPlayer.team[r]);
@@ -1269,6 +1417,11 @@ const App: React.FC = () => {
           } else {
             skipTurn(true);
           }
+          return;
+        }
+
+        if (!gameState.currentDraw) {
+          skipTurn(true);
           return;
         }
 
@@ -1335,197 +1488,94 @@ const App: React.FC = () => {
     }
   }, [gameState.status, roomId, processedGameId, authUser, username, gameState.winner]);
 
-  if (!isUsernameSet) {
+  if (isAuthLoading) {
     return (
-      <div className="min-h-screen bg-[#050507] text-[#e0e0e6] p-4 flex items-center justify-center font-sans selection:bg-purple-500/30">
+      <div className="min-h-[100dvh] flex items-center justify-center font-sans bg-[#050510]">
+        <GamingBackground />
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="max-w-md w-full mx-auto bg-gray-900/40 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl text-center relative overflow-hidden"
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          className="flex flex-col items-center gap-6"
         >
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-rose-500"></div>
-          <div className="inline-block p-4 rounded-full bg-white/5 border border-white/10 mb-6">
-            <UserPlus size={40} className="text-purple-400" />
+          <div className="relative w-16 h-16 flex items-center justify-center">
+            <div className="absolute inset-0 border-4 border-purple-500/30 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-purple-400 border-t-transparent border-r-transparent rounded-full animate-spin"></div>
+            <Activity className="text-purple-400 w-6 h-6 animate-pulse" />
           </div>
-          <h2 className="text-3xl font-black mb-2 italic tracking-tighter text-white">IDENTIFY YOURSELF</h2>
-          <p className="text-gray-400 text-sm mb-8 font-medium">Enter a codename to display in multiplayer matches.</p>
-
-          <form onSubmit={handleSaveUsername} className="space-y-4">
-            <input
-              autoFocus
-              type="text"
-              placeholder="ENTER USERNAME..."
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              className="w-full bg-black/40 border border-white/10 text-center text-xl font-black tracking-widest uppercase rounded-xl py-4 focus:outline-none focus:border-purple-500/50 transition-colors"
-              maxLength={15}
-            />
-            <button
-              type="submit"
-              disabled={username.trim().length === 0}
-              className="w-full flex items-center justify-center gap-3 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl font-black text-lg tracking-widest hover:scale-[1.02] transition-transform shadow-xl text-white disabled:opacity-50 disabled:cursor-not-allowed mb-4"
-            >
-              PLAY AS GUEST
-            </button>
-
-            <div className="relative flex items-center py-2">
-              <div className="flex-grow border-t border-white/10"></div>
-              <span className="flex-shrink-0 mx-4 text-gray-500 text-xs font-bold uppercase tracking-widest">Or</span>
-              <div className="flex-grow border-t border-white/10"></div>
-            </div>
-
-            <button
-              type="button"
-              onClick={handleLogin}
-              className="w-full flex items-center justify-center gap-3 py-4 bg-white text-gray-900 rounded-2xl font-black text-lg tracking-widest hover:scale-[1.02] transition-transform shadow-xl uppercase mt-4"
-            >
-              <svg className="w-6 h-6" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
-                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
-                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
-                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335" />
-              </svg>
-              SIGN IN WITH GOOGLE
-            </button>
-            <p className="text-gray-500 text-[10px] text-center uppercase tracking-widest font-bold mt-2">Sign in to track your stats on the leaderboard!</p>
-          </form>
+          <span className="text-white font-black tracking-[0.3em] text-sm uppercase font-orbitron animate-pulse opacity-80">Synchronizing...</span>
         </motion.div>
       </div>
     );
   }
 
+  if (!isUsernameSet) {
+    return (
+      <AuthOverlay
+        username={username}
+        setUsername={setUsername}
+        onSaveUsername={handleSaveUsername}
+        onLogin={handleLogin}
+      />
+    );
+  }
+
   const isAppView = gameState.status === "drafting" || gameState.status === "ready";
 
+  const handleScrollMatches = (e: React.UIEvent<HTMLDivElement>) => {
+    const now = Date.now();
+    if (now - scrollThrottleRef.current < 150) return; // 150ms throttle
+    scrollThrottleRef.current = now;
+
+    const target = e.target as HTMLDivElement;
+    const { scrollTop, scrollHeight, clientHeight } = target;
+    // adding a larger threshold to make it trigger easier
+    if (scrollHeight - Math.ceil(scrollTop) <= clientHeight + 100) {
+      if (!isLoadingMore && visibleMatchesCount < openRooms.length + botRooms.length) {
+        setIsLoadingMore(true);
+        setTimeout(() => {
+          setVisibleMatchesCount(prev => prev + 4);
+          setIsLoadingMore(false);
+        }, 800); // Simulated delay for loading effect
+      }
+    }
+  };
+
   return (
-    <div className={`${isAppView ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] overflow-x-hidden overflow-y-auto'} relative w-full bg-[#050507] text-[#e0e0e6] p-2 sm:p-4 font-sans selection:bg-purple-500/30 flex flex-col items-center`}>
+    <main className={`${isAppView ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] overflow-x-hidden overflow-y-auto'} relative w-full text-[#e0e0e6] p-2 sm:p-4 font-sans selection:bg-purple-500/30 flex flex-col items-center`}>
+      <GamingBackground />
 
-      {/* Top Right Profile */}
       {!roomId && (
-        <div className="absolute top-4 right-4 md:top-6 md:right-6 z-50 flex flex-col items-end">
-          <div
-            className="relative w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-black/60 border border-white/10 flex items-center justify-center shrink-0 overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.5)] group cursor-pointer backdrop-blur-md"
-            onClick={() => setShowProfileMenu(p => !p)}
-            title="User Profile"
-          >
-            {userPhotoURL && userPhotoURL !== "" ? (
-              <img src={userPhotoURL} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-110 group-hover:blur-[2px]" />
-            ) : (
-              <UserPlus size={22} className="text-gray-500 group-hover:text-blue-400 transition-colors" />
-            )}
-            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
-              <ChevronDown size={20} className={`text-white transition-transform duration-300 ${showProfileMenu ? 'rotate-180' : ''}`} />
-            </div>
-          </div>
-
-          <AnimatePresence>
-            {showProfileMenu && (
-              <motion.div
-                initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                className="absolute top-full right-0 mt-4 w-72 bg-gray-900/95 backdrop-blur-2xl border border-white/10 rounded-3xl shadow-2xl overflow-hidden flex flex-col origin-top-right ring-1 ring-white/5"
-              >
-                <div className="p-6 flex flex-col items-center border-b border-white/5 bg-black/20">
-                  <div
-                    onClick={() => !isUploadingAvatar && fileInputRef.current?.click()}
-                    className="w-20 h-20 rounded-2xl bg-black/60 border border-white/10 flex items-center justify-center overflow-hidden shadow-inner mb-4 relative group cursor-pointer"
-                  >
-                    {userPhotoURL && userPhotoURL !== "" ? (
-                      <img src={userPhotoURL} alt="Avatar" className="w-full h-full object-cover transition-transform group-hover:scale-110" />
-                    ) : (
-                      <UserPlus size={32} className="text-gray-500" />
-                    )}
-                    {isUploadingAvatar && (
-                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10 transition-opacity">
-                        <div className="w-6 h-6 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Edit2 size={24} className="text-white" />
-                    </div>
-                    {!authUser && <div className="absolute inset-0 bg-black/40 flex items-center justify-center"><span className="text-[9px] font-black uppercase tracking-widest text-amber-500 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">Guest</span></div>}
-                  </div>
-
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    className="hidden"
-                    accept="image/*"
-                    onChange={handleAvatarUpload}
-                  />
-
-                  <span className="text-xl font-black text-white tracking-widest uppercase truncate w-full text-center leading-none">{username}</span>
-                  <span className="text-[10px] text-gray-500 uppercase tracking-widest font-bold mt-1.5">Codename</span>
-
-                  {/* Stats List */}
-                  <div className="flex items-center gap-4 mt-5 select-none w-full justify-center">
-                    <div className="flex flex-col items-center gap-1" title="Wins">
-                      <span className="text-emerald-400 font-black text-xl leading-none drop-shadow-sm">{userStats?.wins || 0}</span>
-                      <span className="text-[9px] text-emerald-500/70 font-bold uppercase tracking-widest">Wins</span>
-                    </div>
-                    <div className="w-px h-6 bg-white/10 shrink-0"></div>
-                    <div className="flex flex-col items-center gap-1" title="Losses">
-                      <span className="text-rose-400 font-black text-xl leading-none drop-shadow-sm">{userStats?.losses || 0}</span>
-                      <span className="text-[9px] text-rose-500/70 font-bold uppercase tracking-widest">Losses</span>
-                    </div>
-                    <div className="w-px h-6 bg-white/10 shrink-0"></div>
-                    <div className="flex flex-col items-center gap-1" title="Draws">
-                      <span className="text-gray-400 font-black text-xl leading-none drop-shadow-sm">{userStats?.draws || 0}</span>
-                      <span className="text-[9px] text-gray-500/70 font-bold uppercase tracking-widest">Draws</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-2 flex flex-col gap-1">
-                  {/* Google Sign In Call to Action for Guests */}
-                  {authUser?.isAnonymous && (
-                    <button onClick={() => { handleLogin(); setShowProfileMenu(false); }} className="flex items-center flex-wrap gap-x-3 gap-y-1 px-4 py-3 bg-white/5 hover:bg-white/10 rounded-2xl transition-colors text-left text-sm font-bold text-white w-full group mb-1 border border-white/5">
-                      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" className="w-4 h-4 bg-white/10 p-1 rounded-full group-hover:bg-white/20 transition-colors" alt="G" />
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-[11px] leading-none uppercase tracking-widest font-black">Login with Google</span>
-                        <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Keep your progress & rank</span>
-                      </div>
-                    </button>
-                  )}
-
-                  <button onClick={() => { handleLogout(); setShowProfileMenu(false); }} className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-2xl transition-colors text-left text-sm font-bold text-gray-400 hover:text-red-400 w-full group">
-                    <LogOut size={18} className="text-gray-500 group-hover:text-red-400 transition-colors" /> Sign Out
-                  </button>
-
-                  <div className="h-px w-full bg-white/5 my-1"></div>
-
-                  <button onClick={() => { setShowProfileMenu(false); alert("Multi Anime Battle v1.0.0\nBuilt by Yash."); }} className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-2xl transition-colors text-left text-sm font-bold text-gray-400 hover:text-white w-full group">
-                    <Info size={18} className="text-gray-500 group-hover:text-blue-400 transition-colors" /> About
-                  </button>
-                  <button onClick={() => { setShowProfileMenu(false); alert("No personal information is sold or shared. Only match statistics are tracked. Your email is securely handled via Google Firebase."); }} className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-2xl transition-colors text-left text-sm font-bold text-gray-400 hover:text-white w-full group">
-                    <ShieldAlert size={18} className="text-gray-500 group-hover:text-emerald-400 transition-colors" /> Privacy Policy
-                  </button>
-                </div>
-
-                <div className="px-6 py-4 bg-black/40 border-t border-white/5 text-center mt-auto">
-                  <span className="text-[10px] text-gray-600 font-bold tracking-widest uppercase">Version 1.0.0</span>
-                </div>
-
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <TopProfileBar
+          username={username}
+          userPhotoURL={userPhotoURL}
+          userStats={userStats}
+          authUser={authUser}
+          showProfileMenu={showProfileMenu}
+          setShowProfileMenu={setShowProfileMenu}
+          onLogout={handleLogout}
+          onLogin={handleLogin}
+          onAvatarUpload={handleAvatarUpload}
+          isUploadingAvatar={isUploadingAvatar}
+          onShowAbout={() => setShowAboutModal(true)}
+          onShowPrivacy={() => setShowPrivacyModal(true)}
+        />
       )}
 
       <div className={`w-full max-w-5xl flex-1 flex flex-col min-h-0 ${isAppView ? 'overflow-hidden' : ''}`}>
         {/* Hide giant header if we are drafting to save space */}
         {!isAppView && (
-          <header className="text-center mb-10 relative shrink-0 pt-8">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-600/10 blur-[120px] -z-10 animate-pulse"></div>
-            <h1 className="text-4xl md:text-6xl font-black italic tracking-tighter text-white mb-3 drop-shadow-2xl">
-              MULTI <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-rose-500 bg-clip-text text-transparent">{gameState.config.mode.toUpperCase()}</span> BATTLE
+          <header className="text-center mb-12 relative shrink-0 pt-12">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#ff3c5f]/10 blur-[120px] -z-10 animate-pulse"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-[#6c63ff]/10 blur-[100px] -z-10 animate-pulse delay-700"></div>
+            <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white mb-4 drop-shadow-2xl font-orbitron">
+              MULTI <span className="text-[#ff3c5f] drop-shadow-[0_0_15px_rgba(255,60,95,0.8)]">{gameState.config.mode.toUpperCase()}</span> BATTLE
             </h1>
-            <div className="flex items-center justify-center gap-4">
-              <span className="h-px w-16 bg-gradient-to-r from-transparent to-gray-600"></span>
-              <p className="text-gray-400 tracking-[0.3em] uppercase text-xs md:text-sm font-bold leading-none">
-                {gameState.config.series || "Legendary Arena"}
+            <div className="flex items-center justify-center gap-4 mb-2">
+              <span className="h-px w-24 bg-gradient-to-r from-transparent to-[#6c63ff]"></span>
+              <p className="text-[#00f5ff] tracking-[0.3em] uppercase text-xs md:text-sm font-bold leading-none drop-shadow-[0_0_8px_rgba(0,245,255,0.8)]">
+                Build Your Anime Dream Team & Battle Globally
               </p>
-              <span className="h-px w-16 bg-gradient-to-l from-transparent to-gray-600"></span>
+              <span className="h-px w-24 bg-gradient-to-l from-transparent to-[#6c63ff]"></span>
             </div>
             {roomId && (
               <div className="mt-5 inline-flex items-center gap-3 bg-black/50 border border-white/10 rounded-full px-5 py-2 backdrop-blur-md shadow-xl">
@@ -1537,14 +1587,15 @@ const App: React.FC = () => {
           </header>
         )}
 
+
         <AnimatePresence mode="wait">
           {!roomId && (
             <motion.div
-              key="lobby"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              key="lobby-container"
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+              transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
               className="w-full flex-1 flex flex-col gap-6"
             >
               <div className="w-full max-w-lg mx-auto space-y-6">
@@ -1608,222 +1659,319 @@ const App: React.FC = () => {
                     </motion.div>
                   )}
                 </AnimatePresence>
+
                 {/* User Profile Section */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  className="bg-[#0a0a0c]/80 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-2xl relative overflow-hidden"
+                  className="bg-gray-900/30 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-[0_0_50px_rgba(0,0,0,0.3)] relative overflow-hidden group"
                 >
-                  <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 to-purple-500 opacity-50"></div>
+                  <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-purple-500/30 rounded-tl-[1.5rem] pointer-events-none"></div>
+                  <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-purple-500/30 rounded-tr-[1.5rem] pointer-events-none"></div>
+                  <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-purple-500/30 rounded-bl-[1.5rem] pointer-events-none"></div>
+                  <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-purple-500/30 rounded-br-[1.5rem] pointer-events-none"></div>
 
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5">
-                    {/* Name and Stats */}
-                    <div className="flex-1 min-w-0 flex flex-col justify-center">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest leading-none">Codename</span>
-                        {!authUser && <span className="text-[9px] bg-amber-500/10 border border-amber-500/20 text-amber-500 px-1.5 py-0.5 rounded font-black tracking-widest leading-none">GUEST</span>}
+                  <div className="flex flex-col gap-6 relative z-10 w-full">
+
+                    {/* Top Row: Avatar, Info & Stats */}
+                    <div className="flex flex-col lg:flex-row items-center justify-between gap-6 w-full bg-black/40 backdrop-blur-md p-6 rounded-3xl border border-white/5 shadow-[inset_0_0_30px_rgba(0,0,0,0.5)]">
+
+                      {/* Left Side: Avatar & Info */}
+                      <div className="flex flex-col sm:flex-row items-center gap-6">
+                        <div className="flex flex-col items-center sm:items-start text-center sm:text-left">
+                          <div className="flex items-center gap-2">
+                            {/* Replaced 'Operator Active' with Codename indicator visually, actual codename is the username below */}
+                            <span className="text-[10px] sm:text-xs font-black text-purple-400 uppercase tracking-[0.4em] leading-none drop-shadow-[0_0_8px_rgba(168,85,247,0.5)] bg-purple-500/10 px-3 py-1.5 rounded border border-purple-500/30">CODENAME</span>
+                            {!authUser && <span className="text-[9px] bg-amber-500/10 border border-amber-500/30 text-amber-500 px-2 py-1.5 rounded font-black tracking-[0.2em] leading-none">GUEST</span>}
+                          </div>
+                          {isEditingUsername ? (
+                            <form onSubmit={handleUpdateUsername} className="flex items-center gap-2 mt-2">
+                              <input
+                                autoFocus
+                                type="text"
+                                value={tempUsername}
+                                onChange={e => setTempUsername(e.target.value)}
+                                className="bg-black/80 border-2 border-purple-500/50 text-white text-2xl font-black tracking-widest uppercase rounded-xl px-4 py-2 w-full max-w-[280px] focus:outline-none focus:border-purple-400 shadow-[0_0_30px_rgba(168,85,247,0.15)] placeholder:text-gray-600 transition-all font-orbitron"
+                                placeholder="ENTER ALIAS..."
+                                maxLength={9}
+                              />
+                              <button type="submit" disabled={tempUsername.trim().length === 0} className="p-3 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/40 rounded-xl transition-all border border-emerald-500/30 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:grayscale disabled:hover:scale-100">
+                                <Check size={24} className="drop-shadow-[0_0_8px_rgba(16,185,129,0.8)]" />
+                              </button>
+                            </form>
+                          ) : (
+                            <div className="flex items-center gap-3 group/name cursor-pointer" onClick={() => { setTempUsername(username); setIsEditingUsername(true); }}>
+                              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white italic tracking-tighter uppercase leading-none drop-shadow-[0_0_30px_rgba(255,255,255,0.4)] font-orbitron group-hover/name:text-purple-100 transition-colors">{username}</h2>
+                              <button aria-label="Edit Username" className="p-2 sm:p-2.5 bg-white/5 group-hover/name:bg-purple-500/30 text-gray-500 group-hover/name:text-purple-300 border border-white/10 group-hover/name:border-purple-500/60 rounded-xl transition-all shadow-sm shrink-0">
+                                <Edit2 size={18} className="group-hover/name:drop-shadow-[0_0_12px_rgba(168,85,247,1)]" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
 
-                      {isEditingUsername ? (
-                        <form onSubmit={handleUpdateUsername} className="flex items-center gap-2 mt-1">
-                          <input
-                            autoFocus
-                            type="text"
-                            value={tempUsername}
-                            onChange={e => setTempUsername(e.target.value)}
-                            className="bg-black/60 border border-white/20 text-white text-lg font-black tracking-widest uppercase rounded-lg px-2 py-1 w-full max-w-[180px] focus:outline-none focus:border-purple-500/50 shadow-inner"
-                            maxLength={15}
-                          />
-                          <button type="submit" disabled={tempUsername.trim().length === 0} className="p-1.5 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 rounded-lg transition-colors disabled:opacity-50 shrink-0 border border-emerald-500/30">
-                            <Check size={16} />
-                          </button>
-                        </form>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <span className="text-2xl sm:text-3xl font-black text-white tracking-widest uppercase truncate max-w-[180px] sm:max-w-[220px] drop-shadow-sm leading-none pt-1">{username}</span>
-                          <button onClick={() => { setTempUsername(username); setIsEditingUsername(true); }} className="p-1.5 bg-black/40 text-gray-400 hover:text-white hover:bg-white/10 border border-white/10 rounded-lg transition-all shrink-0 mt-1 shadow-sm" title="Edit Codename">
-                            <Edit2 size={14} />
-                          </button>
+                      {/* Stats Highlights (Now right-aligned in top row on lg screens) */}
+                      <div className="flex items-center gap-8 sm:gap-12 px-6 py-4 justify-center lg:justify-end">
+                        <div className="flex flex-col items-center group/stat cursor-default">
+                          <span className="text-emerald-400 font-black text-4xl sm:text-5xl leading-none font-orbitron drop-shadow-[0_0_20px_rgba(16,185,129,0.7)] group-hover/stat:scale-110 transition-transform">{userStats?.wins || 0}</span>
+                          <span className="text-[10px] sm:text-xs text-emerald-500/60 font-black uppercase tracking-[0.4em] mt-3 group-hover/stat:text-emerald-400 transition-colors">Wins</span>
                         </div>
-                      )}
-
-                      {/* Condensed Stats for Logged In Users - MOVED TO PROFILE MENU */}
+                        <div className="w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent"></div>
+                        <div className="flex flex-col items-center group/stat cursor-default">
+                          <span className="text-rose-500 font-black text-4xl sm:text-5xl leading-none font-orbitron drop-shadow-[0_0_20px_rgba(244,63,94,0.7)] group-hover/stat:scale-110 transition-transform">{userStats?.losses || 0}</span>
+                          <span className="text-[10px] sm:text-xs text-rose-500/60 font-black uppercase tracking-[0.4em] mt-3 group-hover/stat:text-rose-400 transition-colors">Loss</span>
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Right Side: Rankings & Friends */}
-                    <div className="flex items-center justify-end w-full sm:w-auto mt-2 sm:mt-0 relative z-10 gap-3">
-                      {localUserId && (
-                        <button
-                          onClick={() => setShowFriendsModal(true)}
-                          className="relative flex items-center justify-center gap-2 px-4 py-3 sm:py-4 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 rounded-2xl transition-all font-black text-sm uppercase tracking-widest hover:-translate-y-0.5 shadow-sm"
-                        >
-                          <Users size={18} />
-                          <span className="hidden sm:inline">Friends</span>
-                          {pendingRequestsCount > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-rose-500 text-white rounded-full flex items-center justify-center text-[10px] font-black">{pendingRequestsCount}</span>
-                          )}
-                        </button>
-                      )}
+                    {/* Bottom Row: Social & Rankings side-by-side */}
+                    <div className="grid grid-cols-2 gap-4 sm:gap-6">
+                      {/* Social Button */}
+                      <button
+                        onClick={() => setShowFriendsModal(true)}
+                        className="relative w-full flex flex-col items-center justify-center py-6 sm:py-8 bg-gradient-to-br from-blue-500/10 to-transparent hover:from-blue-500/20 border border-blue-500/20 hover:border-blue-500/50 rounded-3xl transition-all group/friends shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] hover:-translate-y-1 active:scale-95 overflow-hidden"
+                      >
+                        {/* Subtle background glow */}
+                        <div className="absolute inset-0 bg-blue-500/5 opacity-0 group-hover/friends:opacity-100 transition-opacity blur-xl"></div>
 
+                        <div className="relative z-10 flex flex-col items-center">
+                          <Users className="w-8 h-8 sm:w-10 sm:h-10 text-blue-400 mb-3 group-hover/friends:scale-110 transition-transform drop-shadow-[0_0_12px_rgba(59,130,246,0.8)]" />
+                          <span className="text-xs sm:text-sm font-black text-blue-400 uppercase tracking-[0.3em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Social</span>
+                          {incomingRequests.length > 0 && (
+                            <span className="absolute -top-3 -right-6 sm:-top-4 sm:-right-8 px-2 py-0.5 bg-rose-500 text-white rounded-full flex items-center justify-center text-[11px] sm:text-xs font-black shadow-[0_0_15px_rgba(244,63,94,1)] animate-bounce border-2 border-gray-900">{incomingRequests.length} NEW</span>
+                          )}
+                        </div>
+                      </button>
+
+                      {/* Leaderboard Trigger */}
                       <button
                         onClick={() => setShowLeaderboard(true)}
-                        className="flex items-center justify-center gap-2 px-4 py-3 sm:py-4 bg-gradient-to-br from-yellow-500/10 to-amber-500/5 hover:from-yellow-500/20 hover:to-amber-500/10 text-yellow-500 border border-yellow-500/30 rounded-2xl transition-all font-black text-sm uppercase tracking-widest hover:-translate-y-0.5 shadow-sm"
+                        className="relative w-full flex flex-col items-center justify-center py-6 sm:py-8 bg-gradient-to-br from-yellow-500/10 to-transparent hover:from-yellow-500/20 border border-yellow-500/20 hover:border-yellow-500/50 rounded-3xl transition-all group/rank shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_30px_rgba(234,179,8,0.3)] hover:-translate-y-1 active:scale-95 overflow-hidden"
                       >
-                        <Trophy size={18} />
-                        <span className="hidden sm:inline">Rankings</span>
+                        {/* Subtle background glow */}
+                        <div className="absolute inset-0 bg-yellow-500/5 opacity-0 group-hover/rank:opacity-100 transition-opacity blur-xl"></div>
+
+                        <div className="relative z-10 flex flex-col items-center">
+                          <Trophy className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-500 mb-3 group-hover/rank:scale-110 group-hover/rank:-rotate-12 transition-transform drop-shadow-[0_0_12px_rgba(234,179,8,0.8)]" />
+                          <span className="text-xs sm:text-sm font-black text-yellow-500 uppercase tracking-[0.3em] drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">Rankings</span>
+                        </div>
                       </button>
                     </div>
+
                   </div>
                 </motion.div>
 
-                {/* Multiplayer Arena Section */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.1 }}
-                  className="bg-[#0a0a0c]/80 backdrop-blur-xl rounded-3xl border border-white/10 shadow-2xl relative"
-                >
-                  <div className="p-8">
-                    <div className="flex flex-col items-center justify-center mb-6">
-                      <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-2">
-                        <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
-                        <span className="text-emerald-400 font-black text-[10px] tracking-[0.2em] uppercase">
-                          {fakeActivePlayers.toLocaleString()} Active Players Mode
-                        </span>
-                      </div>
-                      <h2 className="text-3xl font-black italic tracking-tighter text-center">MULTIPLAYER</h2>
-                    </div>
+                {username && (
+                  <Lobby
+                    fakeActivePlayers={fakeActivePlayers}
+                    loadingAction={loadingAction}
+                    matchToReconnect={matchToReconnect ? matchToReconnect.id : null}
+                    createRoom={createRoom}
+                    joinCode={joinCode}
+                    setJoinCode={setJoinCode}
+                    handleJoinSubmit={handleJoinSubmit}
+                    openRooms={openRooms}
+                    botRooms={botRooms}
+                    visibleMatchesCount={visibleMatchesCount}
+                    handleScrollMatches={handleScrollMatches}
+                    joinRoomWithCode={joinRoomWithCode}
+                    isLoadingMore={isLoadingMore}
+                    getDeterministicRoomImage={getDeterministicRoomImage}
+                    charactersPool={charactersPool}
+                  />
+                )}
+              </div>
+            </motion.div>
+          )}
 
-                    <div className="grid grid-cols-2 gap-4 auto-rows-fr">
-                      <button
-                        onClick={async () => { setLoadingAction('hosting-public'); try { await createRoom(true); } finally { setLoadingAction(null); } }}
-                        disabled={loadingAction !== null || matchToReconnect !== null}
-                        className="group relative flex flex-col items-center justify-center gap-3 p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl font-black tracking-widest hover:bg-emerald-500/20 transition-all shadow-lg text-emerald-400 overflow-hidden disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed h-full"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        {loadingAction === 'hosting-public' ? (
-                          <div className="relative w-7 h-7">
-                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border-2 border-emerald-500/20 border-t-emerald-400 rounded-full" />
-                            <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute inset-0 bg-emerald-400/20 rounded-full blur-md" />
-                          </div>
-                        ) : <Users size={28} className="group-hover:scale-110 transition-transform duration-300" />}
-                        <span className="text-sm text-center uppercase leading-tight">
-                          {loadingAction === 'hosting-public' ? 'CREATING...' : 'PUBLIC\nMATCH'}
-                        </span>
-                      </button>
+          {/* ── MATCHMAKING ANIMATION ───────────────────────── */}
+          {showMatchmakingAnim && (
+            <motion.div
+              key="matchmaking"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, scale: 1.05 }}
+              transition={{ duration: 0.4 }}
+              className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden"
+              style={{ background: 'radial-gradient(ellipse at center, #0d0620 0%, #050510 100%)' }}
+            >
+              {/* Animated background glows */}
+              <motion.div
+                animate={{ scale: [1, 1.3, 1], opacity: [0.25, 0.45, 0.25] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute top-1/2 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-700/30 blur-[120px] rounded-full pointer-events-none"
+              />
+              <motion.div
+                animate={{ scale: [1.3, 1, 1.3], opacity: [0.25, 0.45, 0.25] }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute top-1/2 right-1/4 translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-700/30 blur-[120px] rounded-full pointer-events-none"
+              />
+              {/* Scanning line */}
+              <motion.div
+                animate={{ y: ['-100%', '200%'] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
+                className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400/40 to-transparent pointer-events-none"
+                style={{ willChange: 'transform' }}
+              />
+              {/* Grid overlay */}
+              <div className="absolute inset-0 opacity-[0.025] pointer-events-none"
+                style={{ backgroundImage: 'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)', backgroundSize: '48px 48px' }}
+              />
 
-                      <button
-                        onClick={async () => { setLoadingAction('hosting-private'); try { await createRoom(false); } finally { setLoadingAction(null); } }}
-                        disabled={loadingAction !== null || matchToReconnect !== null}
-                        className="group relative flex flex-col items-center justify-center gap-3 p-6 bg-black/40 border border-white/10 rounded-2xl font-black tracking-widest hover:bg-white/5 hover:border-white/20 transition-all shadow-lg text-gray-300 overflow-hidden disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed h-full"
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        {loadingAction === 'hosting-private' ? (
-                          <div className="relative w-7 h-7">
-                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border-2 border-white/20 border-t-purple-400 rounded-full" />
-                            <motion.div animate={{ opacity: [0.2, 0.5, 0.2] }} transition={{ duration: 1.5, repeat: Infinity }} className="absolute inset-0 bg-purple-400/20 rounded-full blur-md" />
-                          </div>
-                        ) : <Shield size={28} className="group-hover:scale-110 transition-transform duration-300 text-gray-400" />}
-                        <span className="text-sm text-center uppercase leading-tight">
-                          {loadingAction === 'hosting-private' ? 'CREATING...' : 'PRIVATE\nMATCH'}
-                        </span>
-                      </button>
-                    </div>
-
-                    <div className="relative flex items-center py-6 mt-2">
-                      <div className="flex-grow border-t border-white/5"></div>
-                      <span className="flex-shrink-0 mx-4 text-gray-600 text-[10px] font-bold uppercase tracking-widest">Or Join Private</span>
-                      <div className="flex-grow border-t border-white/5"></div>
-                    </div>
-
-                    {matchToReconnect && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mb-4 p-3 bg-purple-500/10 border border-purple-500/20 rounded-xl text-center"
-                      >
-                        <p className="text-[10px] font-black text-purple-400 uppercase tracking-widest leading-relaxed">
-                          Resolve your current match to start a new battle.
-                        </p>
-                      </motion.div>
+              {/* Mode badge */}
+              <motion.div
+                initial={{ y: -30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.5 }}
+                className="absolute top-10 flex flex-col items-center gap-2"
+              >
+                <span className="text-[10px] text-gray-500 font-black uppercase tracking-[0.5em]">Match Found</span>
+                <div className="flex items-center gap-2 px-5 py-2 bg-white/5 border border-white/10 rounded-full backdrop-blur-md">
+                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,1)]" />
+                  <span className="text-sm font-black text-white tracking-widest uppercase">
+                    {gameState.config.mode}
+                    {gameState.config.series && gameState.config.series !== 'All' && (
+                      <span className="text-purple-400 ml-2">· {gameState.config.series}</span>
                     )}
+                  </span>
+                </div>
+              </motion.div>
 
-                    <form onSubmit={handleJoinSubmit} className="space-y-4">
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <input
-                          type="text"
-                          placeholder="ENTER ROOM CODE..."
-                          value={joinCode}
-                          onChange={e => setJoinCode(e.target.value)}
-                          className="w-full bg-black/40 border border-white/10 text-center sm:text-left text-xl font-black tracking-[0.3em] uppercase rounded-xl px-5 py-4 focus:outline-none focus:border-purple-500/50 transition-colors shadow-inner"
-                          maxLength={5}
+              {/* Players row */}
+              <div className="relative flex items-center justify-center w-full max-w-2xl px-4 gap-0">
+
+                {/* Player 1 */}
+                <motion.div
+                  initial={{ x: -120, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.6, type: 'spring', stiffness: 90 }}
+                  className="flex-1 flex flex-col items-center gap-4"
+                >
+                  <div className="relative">
+                    {/* Glowing ring */}
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                      className="absolute -inset-2 rounded-full border-2 border-dashed border-purple-500/40"
+                    />
+                    <motion.div
+                      animate={{ scale: [1, 1.08, 1], opacity: [0.6, 1, 0.6] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute -inset-4 rounded-full bg-purple-500/10 blur-xl"
+                    />
+                    <div className="relative w-28 h-28 rounded-full border-4 border-purple-500/60 overflow-hidden shadow-[0_0_40px_rgba(168,85,247,0.5)] bg-black/60">
+                      {(localRole === 'p1' ? userPhotoURL : hostPhotoURLState) ? (
+                        <img
+                          src={(localRole === 'p1' ? userPhotoURL : hostPhotoURLState)!}
+                          alt={gameState.p1.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
                         />
-                        <button
-                          type="submit"
-                          disabled={joinCode.length < 5 || loadingAction !== null || matchToReconnect !== null}
-                          className="px-6 py-4 bg-purple-600 hover:bg-purple-500 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed text-white font-black rounded-2xl transition-all shadow-[0_0_20px_rgba(168,85,247,0.3)] flex items-center gap-2 uppercase tracking-widest text-xs"
-                        >
-                          {loadingAction === 'joining' ? (
-                            <div className="relative w-4 h-4">
-                              <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border-2 border-white/20 border-t-white rounded-full" />
-                            </div>
-                          ) : <Handshake size={20} />}
-                          {loadingAction === 'joining' ? 'JOINING...' : 'JOIN'}
-                        </button>
-                      </div>
-                    </form>
+                      ) : (
+                        <div className="w-full h-full bg-purple-500/20 flex items-center justify-center">
+                          <Users size={40} className="text-purple-400" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-white font-black text-xl uppercase tracking-widest drop-shadow-[0_0_12px_rgba(168,85,247,0.8)]">
+                      {gameState.p1.name}
+                    </p>
+                    <p className="text-purple-400/70 text-[10px] font-bold tracking-[0.35em] uppercase mt-1">Player 1</p>
+                  </div>
+                </motion.div>
+
+                {/* VS Centre */}
+                <motion.div
+                  initial={{ scale: 0, rotate: -30, opacity: 0 }}
+                  animate={{ scale: 1, rotate: 0, opacity: 1 }}
+                  transition={{ delay: 0.7, duration: 0.5, type: 'spring', stiffness: 160 }}
+                  className="relative flex flex-col items-center justify-center mx-4 shrink-0 w-28"
+                >
+                  {/* Outer glow ring */}
+                  <motion.div
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.8, 0.4] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute w-24 h-24 rounded-full bg-gradient-to-br from-purple-600/30 to-blue-600/30 blur-xl"
+                  />
+                  <div className="relative flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-purple-900/80 to-blue-900/80 border-2 border-purple-500/50 shadow-[0_0_30px_rgba(168,85,247,0.6)]">
+                    <span className="text-3xl font-black italic text-white drop-shadow-[0_0_20px_rgba(255,255,255,0.8)] font-orbitron">VS</span>
+                  </div>
+                  {/* lightning bolts */}
+                  <motion.div
+                    animate={{ opacity: [0.4, 1, 0.4], scale: [0.8, 1.1, 0.8] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="absolute -top-4 text-yellow-400 text-xl"
+                  >⚡</motion.div>
+                  <motion.div
+                    animate={{ opacity: [1, 0.4, 1], scale: [1.1, 0.8, 1.1] }}
+                    transition={{ duration: 0.8, repeat: Infinity }}
+                    className="absolute -bottom-4 text-yellow-400 text-xl rotate-180"
+                  >⚡</motion.div>
+                </motion.div>
+
+                {/* Player 2 */}
+                <motion.div
+                  initial={{ x: 120, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: 0.3, duration: 0.6, type: 'spring', stiffness: 90 }}
+                  className="flex-1 flex flex-col items-center gap-4"
+                >
+                  <div className="relative">
+                    <motion.div
+                      animate={{ rotate: -360 }}
+                      transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+                      className="absolute -inset-2 rounded-full border-2 border-dashed border-blue-500/40"
+                    />
+                    <motion.div
+                      animate={{ scale: [1.08, 1, 1.08], opacity: [1, 0.6, 1] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="absolute -inset-4 rounded-full bg-blue-500/10 blur-xl"
+                    />
+                    <div className="relative w-28 h-28 rounded-full border-4 border-blue-500/60 overflow-hidden shadow-[0_0_40px_rgba(59,130,246,0.5)] bg-black/60">
+                      {(localRole === 'p2' ? userPhotoURL : guestPhotoURLState) ? (
+                        <img
+                          src={(localRole === 'p2' ? userPhotoURL : guestPhotoURLState)!}
+                          alt={gameState.p2.name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-blue-500/20 flex items-center justify-center">
+                          <Users size={40} className="text-blue-400" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-white font-black text-xl uppercase tracking-widest drop-shadow-[0_0_12px_rgba(59,130,246,0.8)]">
+                      {gameState.p2.name}
+                    </p>
+                    <p className="text-blue-400/70 text-[10px] font-bold tracking-[0.35em] uppercase mt-1">Player 2</p>
                   </div>
                 </motion.div>
               </div>
 
-              {!roomId && (openRooms.length > 0 || botRooms.length > 0) && (
-                <div className="max-w-lg mx-auto w-full mt-0 bg-[#0a0a0c]/80 backdrop-blur-xl p-6 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-1 h-full bg-emerald-500/50"></div>
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
-                      <Activity size={16} className="text-emerald-400" /> LIVE OPEN MATCHES
-                    </h3>
-                    <span className="bg-emerald-500/20 text-emerald-400 text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-widest">{(openRooms.length + botRooms.length)} Available</span>
-                  </div>
-                  <div className="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
-                    {[...openRooms, ...botRooms].map((room) => {
-                      const isJoiningThisRoom = loadingAction === `joining-${room.id}`;
-                      return (
-                        <button
-                          key={room.id}
-                          onClick={() => joinRoomWithCode(room.id, `joining-${room.id}`)}
-                          disabled={loadingAction !== null || matchToReconnect !== null}
-                          className="w-full flex items-center justify-between p-3 bg-black/40 hover:bg-white/5 border border-white/5 hover:border-emerald-500/30 rounded-xl transition-all group text-left disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed"
-                        >
-                          <div className="flex flex-col items-start gap-1">
-                            <div className="flex items-center gap-2">
-                              <Crown size={12} className="text-emerald-500" />
-                              <span className="text-gray-200 font-bold uppercase text-xs tracking-widest">{room.host}</span>
-                            </div>
-                            <div className="text-[9px] text-gray-500 font-bold tracking-widest uppercase flex items-center gap-2">
-                              <span className="text-purple-400/80">{room.gameState?.config?.mode || "Unknown"}</span>
-                              {room.gameState?.config?.series && (
-                                <>
-                                  <span className="text-white/20">•</span>
-                                  <span className="text-blue-400/80 max-w-[100px] truncate">{room.gameState.config.series}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                          <span className="flex items-center gap-2 text-emerald-400 font-black text-[10px] tracking-widest uppercase bg-emerald-500/10 px-3 py-1.5 rounded-lg group-hover:bg-emerald-500/20 group-hover:scale-105 transition-all outline outline-1 outline-emerald-500/20">
-                            {isJoiningThisRoom ? (
-                              <div className="relative w-3 h-3 mr-1">
-                                <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border-2 border-emerald-500/20 border-t-emerald-400 rounded-full" />
-                              </div>
-                            ) : null}
-                            {isJoiningThisRoom ? 'JOINING' : 'JOIN'}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
+              {/* Bottom status */}
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
+                className="absolute bottom-12 flex flex-col items-center gap-3"
+              >
+                <div className="flex items-center gap-2">
+                  {[0, 1, 2].map(i => (
+                    <motion.div
+                      key={i}
+                      animate={{ scale: [1, 1.4, 1], opacity: [0.4, 1, 0.4] }}
+                      transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.2 }}
+                      className="w-2 h-2 rounded-full bg-emerald-400"
+                    />
+                  ))}
                 </div>
-              )}
+                <p className="text-gray-500 text-[11px] font-black uppercase tracking-[0.4em] animate-pulse">Preparing Battle...</p>
+              </motion.div>
             </motion.div>
           )}
 
@@ -1844,10 +1992,16 @@ const App: React.FC = () => {
                       <span className="text-[10px] font-black text-rose-400 uppercase tracking-widest">Setup Phase - Room expires in: {Math.floor(roomExpiryTimeLeft / 60)}:{(roomExpiryTimeLeft % 60).toString().padStart(2, '0')}</span>
                     </div>
                   )}
-                  <SetupScreen onStart={startDraft} />
+                  <SetupScreen onStart={startDraft} onBack={handleBackToLobby} />
                 </div>
               ) : (
-                <div className="flex flex-col items-center justify-center py-20">
+                <div className="flex flex-col items-center justify-center py-20 relative">
+                  <button
+                    onClick={handleBackToLobby}
+                    className="absolute top-0 left-0 p-3 bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white rounded-2xl border border-white/5 transition-all flex items-center gap-2 font-black uppercase tracking-widest text-[10px]"
+                  >
+                    <ArrowLeft size={16} /> Back to Lobby
+                  </button>
                   <div className="relative w-24 h-24 mb-10">
                     <motion.div
                       animate={{
@@ -1881,7 +2035,9 @@ const App: React.FC = () => {
                 </div>
               )}
             </motion.div>
-          )}
+          )
+          }
+
           {roomId && gameState.status === "waiting_for_player" && (
             <motion.div
               key="waiting"
@@ -1891,7 +2047,13 @@ const App: React.FC = () => {
               transition={{ duration: 0.3 }}
               className="w-full flex-1 flex flex-col items-center justify-center -mt-20"
             >
-              <div className="text-center p-12 bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-3xl max-w-xl mx-auto shadow-2xl w-full">
+              <div className="text-center p-12 bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-3xl max-w-xl mx-auto shadow-2xl w-full relative">
+                <button
+                  onClick={handleBackToLobby}
+                  className="absolute top-6 left-6 p-3 bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white rounded-2xl border border-white/5 transition-all flex items-center gap-2 font-black uppercase tracking-widest text-[10px]"
+                >
+                  <ArrowLeft size={16} /> Cancel Battle
+                </button>
                 <div className="inline-block animate-pulse rounded-full p-4 bg-purple-600/20 mb-6 border border-purple-500/30">
                   <Users size={48} className="text-purple-400" />
                 </div>
@@ -1920,7 +2082,8 @@ const App: React.FC = () => {
                 )}
               </div>
             </motion.div>
-          )}
+          )
+          }
           {/* ZERO-SCROLL NATIVE DRAFT APP UI */}
           {(gameState.status === "drafting" || gameState.status === "ready") && (
             <motion.div
@@ -1957,6 +2120,29 @@ const App: React.FC = () => {
                       </motion.div>
                     )}
                   </AnimatePresence>
+
+                  <AnimatePresence>
+                    {showSurrenderConfirm && (
+                      <motion.div initial={{ opacity: 0, scale: 0.9, y: -10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: -10 }} className="absolute top-12 right-0 bg-gray-900/95 backdrop-blur-xl border border-rose-500/20 rounded-2xl p-4 shadow-2xl w-64 z-[60]">
+                        <div className="flex items-center gap-2 text-rose-500 mb-2">
+                          <ShieldAlert size={16} />
+                          <h4 className="font-black text-xs tracking-widest uppercase">Surrender Match?</h4>
+                        </div>
+                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-4 leading-relaxed">
+                          Are you sure you want to surrender? You will immediately lose this match.
+                        </p>
+                        <div className="flex justify-end gap-2">
+                          <button onClick={() => setShowSurrenderConfirm(false)} className="px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-white transition-colors">
+                            Cancel
+                          </button>
+                          <button onClick={confirmInGameSurrender} className="px-3 py-1.5 bg-rose-500 hover:bg-rose-600 text-white text-[9px] font-black uppercase tracking-widest rounded-lg transition-colors">
+                            Surrender
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <button onClick={() => setShowEmojiPicker(!showEmojiPicker)} className="bg-white/10 hover:bg-white/20 p-3 rounded-full backdrop-blur-md border border-white/10 transition-colors shadow-lg text-xl flex items-center justify-center relative">
                     😃
                   </button>
@@ -2011,6 +2197,11 @@ const App: React.FC = () => {
                           <img
                             src={gameState.currentDraw.img}
                             alt={gameState.currentDraw.name}
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.src = "https://img.icons8.com/ios-filled/100/ffffff/user-male-circle.png";
+                              target.className = "absolute inset-0 w-full h-full object-contain opacity-20 p-8";
+                            }}
                             className="absolute inset-0 w-full h-full object-cover object-top opacity-90 group-hover:opacity-100 transition-opacity duration-500"
                           />
                           <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0c] via-transparent to-black/20 pointer-events-none"></div>
@@ -2066,7 +2257,8 @@ const App: React.FC = () => {
                 />
               </div>
             </motion.div>
-          )}
+          )
+          }
 
           {gameState.status === "finished" && (
             <motion.div
@@ -2126,7 +2318,18 @@ const App: React.FC = () => {
 
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <button
-                  onClick={() => {
+                  onClick={async () => {
+                    if (roomId) {
+                      try {
+                        if (localRole === 'p1') {
+                          await deleteDoc(doc(db, "games", roomId));
+                        } else if (localRole === 'p2') {
+                          await updateDoc(doc(db, "games", roomId), { guest: null, guestId: null, guestPhotoURL: null });
+                        }
+                      } catch (err) {
+                        console.error("Failed to update room on exit:", err);
+                      }
+                    }
                     setRoomId(null);
                     setLocalRole(null);
                     setGameState({
@@ -2145,6 +2348,8 @@ const App: React.FC = () => {
                       p2Misses: 0,
                       battleLog: [],
                     });
+                    setPool([]);
+                    setUsedIndices(new Set());
                   }}
                   className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-white/10 rounded-full font-black text-gray-300 hover:text-white transition-all shadow-xl uppercase tracking-widest text-sm flex-1 max-w-[200px]"
                 >
@@ -2154,25 +2359,45 @@ const App: React.FC = () => {
                 <button
                   onClick={() => {
                     if (localRole === "p1") {
+                      // Preserve names and reset for rematch
+                      const p1Name = gameState.p1.name;
+                      const p2Name = gameState.p2.name;
+
                       updateFirestoreState({
-                        status: "setup",
-                        p1: INITIAL_PLAYER("Player 1"),
-                        p2: INITIAL_PLAYER("Player 2"),
+                        status: "matchmaking", // Trigger VS animation and fast sync
+                        p1: INITIAL_PLAYER(p1Name),
+                        p2: INITIAL_PLAYER(p2Name),
                         currentDraw: null,
                         winner: null,
                         battleLog: []
-                      })
+                      });
+
+                      setPool([]);
+                      setUsedIndices(new Set());
+
+                      // Reset once-only flag so animation plays again
+                      matchmakingShownRef.current = false;
+
+                      // After animation duration, move to drafting
+                      setTimeout(() => {
+                        updateFirestoreState({
+                          status: "drafting",
+                          turn: Math.random() > 0.5 ? "p1" : "p2",
+                          turnStartTime: Date.now(),
+                        });
+                      }, 3000);
                     }
                   }}
-                  disabled={localRole !== "p1"}
+                  disabled={localRole !== "p1" || (localRole === "p1" && !guestPlayer)}
                   className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full font-black text-white hover:scale-105 transition-transform shadow-xl uppercase tracking-widest text-sm disabled:opacity-50 disabled:cursor-not-allowed flex-1 max-w-[300px]"
                 >
-                  {localRole === "p1" ? "Initiate New Conflict" : "Waiting for Host..."}
+                  {localRole === "p1" ? (guestPlayer ? "Initiate New Conflict" : "Opponent Left") : "Waiting for Host..."}
                 </button>
               </div>
             </motion.div>
-          )}
-        </AnimatePresence>
+          )
+          }
+        </AnimatePresence >
       </div>
 
       <AnimatePresence>
@@ -2191,19 +2416,23 @@ const App: React.FC = () => {
         )}
 
         {showLeaderboard && (
-          <Leaderboard
-            currentUserId={localUserId}
-            currentUsername={username}
-            friendIds={friendIds}
-            onClose={() => setShowLeaderboard(false)}
-          />
+          <Suspense fallback={<div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]"><div className="w-8 h-8 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin" /></div>}>
+            <Leaderboard
+              key="leaderboard-modal"
+              currentUserId={localUserId}
+              onClose={() => setShowLeaderboard(false)}
+            />
+          </Suspense>
         )}
         {showFriendsModal && (
-          <FriendsModal
-            currentUserId={localUserId}
-            currentUsername={username}
-            onClose={() => setShowFriendsModal(false)}
-          />
+          <Suspense fallback={<div className="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]"><div className="w-8 h-8 border-4 border-purple-500/20 border-t-purple-500 rounded-full animate-spin" /></div>}>
+            <FriendsModal
+              key="friends-modal"
+              currentUserId={localUserId}
+              currentUsername={username}
+              onClose={() => setShowFriendsModal(false)}
+            />
+          </Suspense>
         )}
       </AnimatePresence>
 
@@ -2256,39 +2485,22 @@ const App: React.FC = () => {
       </AnimatePresence>
 
       {/* Global Lobby Chat Overlay (Also show in setup/waiting for player) */}
-      {(!roomId || gameState.status === "setup" || gameState.status === "waiting_for_player") && (
-        <GlobalChat currentUserId={localUserId} currentUsername={username} />
-      )}
+      {
+        (!roomId || gameState.status === "setup" || gameState.status === "waiting_for_player") && (
+          <Suspense fallback={null}>
+            <GlobalChat currentUserId={localUserId} currentUsername={username} />
+          </Suspense>
+        )
+      }
 
-      {/* Incoming Challenge Overlay */}
-      <AnimatePresence>
-        {incomingInvite && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 50 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 50 }}
-            className="fixed bottom-6 right-6 z-50 bg-gray-900 border border-purple-500/50 rounded-2xl shadow-2xl p-5 w-80 backdrop-blur-xl"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center border border-purple-500/30">
-                <Sword size={20} className="text-purple-400" />
-              </div>
-              <div>
-                <h4 className="font-black tracking-widest uppercase text-white leading-none">Match Invite!</h4>
-                <p className="text-xs text-purple-300 font-bold mt-1 uppercase"><span className="text-white">{incomingInvite.senderName}</span> challenges you!</p>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <button onClick={handleDeclineInvite} className="flex-1 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-400 font-black uppercase tracking-widest text-xs transition-colors">
-                Decline
-              </button>
-              <button onClick={handleAcceptInvite} className="flex-1 py-2 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-400 font-black uppercase tracking-widest text-xs transition-colors">
-                Accept
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <MatchInviteOverlay
+        incomingInvite={incomingInvite}
+        onAccept={handleAcceptInvite}
+        onDecline={handleDeclineInvite}
+      />
+
+      <AboutModal isOpen={showAboutModal} onClose={() => setShowAboutModal(false)} />
+      <PrivacyPolicyModal isOpen={showPrivacyModal} onClose={() => setShowPrivacyModal(false)} />
 
       <style>{`
         .custom-scrollbar::-webkit-scrollbar {
@@ -2305,7 +2517,7 @@ const App: React.FC = () => {
           background: rgba(255, 255, 255, 0.1);
         }
       `}</style>
-    </div>
+    </main >
   );
 };
 

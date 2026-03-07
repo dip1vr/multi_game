@@ -1,0 +1,31 @@
+
+E:\repo_yash\web-app\src\App.tsx
+   127:13  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   130:30  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   132:30  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   151:70  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   153:75  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   219:56  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   235:25  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   407:6   warning  React Hook useEffect has a missing dependency: 'roomId'. Either include it or remove the dependency array                                                                         react-hooks/exhaustive-deps
+   449:29  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   468:21  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   596:18  error    'e' is defined but never used                                                                                                                                                     @typescript-eslint/no-unused-vars
+   596:21  error    Empty block statement                                                                                                                                                             no-empty
+   661:18  error    'e' is defined but never used                                                                                                                                                     @typescript-eslint/no-unused-vars
+   661:21  error    Empty block statement                                                                                                                                                             no-empty
+   724:6   warning  React Hook useEffect has a missing dependency: 'userPhotoURL'. Either include it or remove the dependency array                                                                   react-hooks/exhaustive-deps
+   774:6   warning  React Hook useEffect has a missing dependency: 'localUserId'. Either include it or remove the dependency array                                                                    react-hooks/exhaustive-deps
+   804:52  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   821:16  error    'e' is defined but never used                                                                                                                                                     @typescript-eslint/no-unused-vars
+   891:35  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+   976:20  error    '_' is defined but never used                                                                                                                                                     @typescript-eslint/no-unused-vars
+   976:23  error    Empty block statement                                                                                                                                                             no-empty
+  1132:19  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+  1163:35  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+  1252:54  error    Unexpected any. Specify a different type                                                                                                                                          @typescript-eslint/no-explicit-any
+  1280:6   warning  React Hook useEffect has a missing dependency: 'gameState.nextDraws'. Either include it or remove the dependency array                                                            react-hooks/exhaustive-deps
+  1511:6   warning  React Hook useEffect has missing dependencies: 'assignRole', 'gameState', 'skipTurn', 'updateFirestoreState', and 'username'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 26 problems (21 errors, 5 warnings)
+

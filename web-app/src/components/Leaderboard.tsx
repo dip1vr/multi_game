@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Trophy, Medal, X, Activity, User, UserPlus } from 'lucide-react';
+﻿import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Trophy, X, Activity, User, Shield, Zap, Target, Star } from 'lucide-react';
 import { db } from '../firebase';
-import { collection, query, orderBy, limit, getDocs, getCountFromServer, where, onSnapshot, setDoc, doc, serverTimestamp, documentId } from 'firebase/firestore';
+import { collection, query, orderBy, limit, onSnapshot, getDocs, getCountFromServer, where, documentId } from 'firebase/firestore';
 
 interface LeaderboardUser {
     id: string;
@@ -16,11 +16,9 @@ interface LeaderboardUser {
 interface LeaderboardProps {
     onClose: () => void;
     currentUserId: string | null;
-    currentUsername: string;
-    friendIds: Set<string>;
 }
 
-const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, currentUsername, friendIds }) => {
+const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId }) => {
     const [leaders, setLeaders] = useState<LeaderboardUser[]>([]);
     const [currentUserRank, setCurrentUserRank] = useState<number | null>(null);
     const [currentUserStats, setCurrentUserStats] = useState<LeaderboardUser | null>(null);
@@ -28,16 +26,13 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
 
     useEffect(() => {
         let unsubLeaderboard: () => void;
+        setLoading(true);
 
         const fetchLeaderboard = async () => {
-            setLoading(true);
-            const startTime = Date.now();
-
             try {
                 const usersRef = collection(db, 'users');
-
-                // Fetch Top 20 Live
                 const q = query(usersRef, orderBy('wins', 'desc'), limit(20));
+
                 unsubLeaderboard = onSnapshot(q, async (querySnapshot) => {
                     const topUsers: LeaderboardUser[] = [];
                     querySnapshot.forEach((doc) => {
@@ -45,14 +40,11 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
                     });
                     setLeaders(topUsers);
 
-                    // Fetch Current User Rank if logged in
                     if (currentUserId) {
-                        // Find stats for current user
                         const topUserIndex = topUsers.findIndex(u => u.id === currentUserId);
                         let stats = topUserIndex !== -1 ? topUsers[topUserIndex] : null;
 
                         if (!stats) {
-                            // Unlikely to be in top 20, fetch their doc directly
                             const qCurrentUser = query(usersRef, where('__name__', '==', currentUserId));
                             const userSnap = await getDocs(qCurrentUser);
                             if (!userSnap.empty) {
@@ -62,264 +54,246 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId, curre
 
                         if (stats) {
                             setCurrentUserStats(stats);
-
                             if (topUserIndex !== -1) {
-                                // User is in top 20, show their exact position
                                 setCurrentUserRank(topUserIndex + 1);
                             } else {
-                                // Calculate rank by counting how many users have strictly more wins
                                 const countQuery = query(usersRef, where('wins', '>', stats.wins || 0));
                                 const snapshot = await getCountFromServer(countQuery);
                                 const higherWinsCount = snapshot.data().count;
 
-                                // For users with the same amount of wins, we need to count those who come BEFORE 
-                                // this user in the implicit tie-breaker sort.
-                                // orderBy('wins', 'desc') implicitly uses __name__ (documentId) 'desc' as the tie-breaker.
-                                // Therefore, document IDs greater than the current user's ID come before them.
                                 const equalQuery = query(
                                     usersRef,
                                     where('wins', '==', stats.wins || 0),
                                     where(documentId(), '>', stats.id)
                                 );
                                 const equalSnapshot = await getCountFromServer(equalQuery);
-                                const equalWinsBeforeCount = equalSnapshot.data().count;
-
-                                // Exact accurate rank
-                                setCurrentUserRank(higherWinsCount + equalWinsBeforeCount + 1);
+                                setCurrentUserRank(higherWinsCount + equalSnapshot.data().count + 1);
                             }
                         }
                     }
-
-                    // Enforce a minimum loading time of 1500ms to show the animation
-                    const elapsedTime = Date.now() - startTime;
-                    const remainingTime = Math.max(0, 1500 - elapsedTime);
-
-                    setTimeout(() => {
-                        setLoading(false);
-                    }, remainingTime);
-
-                }, (error) => {
-                    console.error("Error fetching leaderboard live:", error);
-                    setLoading(false);
+                    // Artificial delay for premium loading feel
+                    setTimeout(() => setLoading(false), 2000);
                 });
             } catch (error) {
-                console.error("Error setting up leaderboard listener:", error);
+                console.error("Leaderboard error:", error);
                 setLoading(false);
             }
         };
 
         fetchLeaderboard();
-
-        return () => {
-            if (unsubLeaderboard) unsubLeaderboard();
-        };
+        return () => unsubLeaderboard?.();
     }, [currentUserId]);
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="w-full max-w-2xl bg-[#0a0a0c] border border-white/10 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative"
-            >
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-amber-500 to-orange-500"></div>
+    const RankBadge = ({ rank }: { rank: number }) => {
+        const colors = {
+            1: "from-yellow-400 via-amber-200 to-yellow-500",
+            2: "from-slate-300 via-white to-slate-400",
+            3: "from-orange-400 via-orange-200 to-orange-600"
+        };
+        const glows = {
+            1: "shadow-[0_0_15px_rgba(250,204,21,0.5)]",
+            2: "shadow-[0_0_15px_rgba(203,213,225,0.5)]",
+            3: "shadow-[0_0_15px_rgba(251,146,60,0.5)]"
+        };
 
-                <div className="flex items-center justify-between p-6 border-b border-white/10 bg-white/5">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-yellow-500/20 rounded-xl border border-yellow-500/30">
-                            <Trophy size={24} className="text-yellow-400" />
+        if (rank <= 3) {
+            return (
+                <div className={`relative w-10 h-10 flex items-center justify-center`}>
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                        className={`absolute inset-0 rounded-full bg-gradient-to-tr ${colors[rank as 1 | 2 | 3]} opacity-20 blur-sm`}
+                    />
+                    <div className={`relative z-10 w-8 h-8 rounded-full bg-gradient-to-tr ${colors[rank as 1 | 2 | 3]} flex items-center justify-center ${glows[rank as 1 | 2 | 3]} border border-white/20`}>
+                        <Trophy size={14} className="text-black/80" />
+                    </div>
+                </div>
+            );
+        }
+        return (
+            <div className="w-10 h-10 flex items-center justify-center">
+                <span className="text-gray-500 font-black text-sm italic tracking-tighter">#{rank}</span>
+            </div>
+        );
+    };
+
+    return (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl">
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 40 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                className="w-full max-w-2xl bg-[#050508] border border-white/10 rounded-[2.5rem] shadow-[0_30px_100px_rgba(0,0,0,0.8)] overflow-hidden flex flex-col max-h-[85vh] relative"
+            >
+                {/* Cyber Accents */}
+                <div className="absolute top-0 right-10 w-24 h-1 bg-blue-500/50 blur-sm" />
+                <div className="absolute top-0 left-10 w-24 h-1 bg-purple-500/50 blur-sm" />
+
+                {/* Header */}
+                <div className="flex items-center justify-between p-8 border-b border-white/5 bg-white/[0.02]">
+                    <div className="flex items-center gap-5">
+                        <div className="relative">
+                            <motion.div
+                                animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+                                transition={{ duration: 2, repeat: Infinity }}
+                                className="absolute -inset-2 bg-purple-500/20 blur-xl rounded-full"
+                            />
+                            <div className="relative p-3 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl border border-white/20">
+                                <Star size={24} className="text-white fill-current" />
+                            </div>
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black text-white italic tracking-widest uppercase leading-none">Global Rankings</h2>
-                            <p className="text-gray-400 text-xs font-bold uppercase tracking-widest mt-1">Top 20 Commanders</p>
+                            <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">Global Ranks</h2>
+                            <p className="text-purple-400/60 text-[10px] font-black uppercase tracking-[0.4em] mt-2">Elite Combatants Protocol</p>
                         </div>
                     </div>
-                    <button
-                        onClick={onClose}
-                        className="p-2 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors"
-                    >
-                        <X size={24} />
+                    <button onClick={onClose} className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-gray-400 hover:text-white transition-all group">
+                        <X size={20} className="group-hover:rotate-90 transition-transform" />
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center h-80 relative overflow-hidden">
-                            {/* Scanning Animation Container */}
-                            <div className="relative w-32 h-32 mb-8">
-                                {/* Outer Pulse Ring */}
-                                <motion.div
-                                    animate={{
-                                        scale: [1, 1.2, 1],
-                                        opacity: [0.3, 0.6, 0.3],
-                                        borderWidth: ["1px", "4px", "1px"]
-                                    }}
-                                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                                    className="absolute inset-0 rounded-full border border-purple-500/50"
-                                />
-                                {/* Inner Glowing Orb */}
-                                <motion.div
-                                    animate={{
-                                        scale: [1, 0.8, 1],
-                                        boxShadow: [
-                                            "0 0 20px rgba(168,85,247,0.4)",
-                                            "0 0 40px rgba(168,85,247,0.8)",
-                                            "0 0 20px rgba(168,85,247,0.4)"
-                                        ]
-                                    }}
-                                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                                    className="absolute inset-4 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center shadow-lg"
-                                >
-                                    <Activity size={24} className="text-white animate-pulse" />
-                                </motion.div>
-                                {/* Scan Line */}
-                                <motion.div
-                                    animate={{ top: ["0%", "100%", "0%"] }}
-                                    transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                    className="absolute left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent z-10 shadow-[0_0_10px_rgba(168,85,247,0.8)]"
-                                />
-                            </div>
-
-                            {/* Staggered Loading Text */}
-                            <div className="flex gap-1">
-                                {"COMPILING INTELLIGENCE...".split("").map((char, i) => (
-                                    <motion.span
-                                        key={i}
-                                        animate={{
-                                            opacity: [0.2, 1, 0.2],
-                                            color: ["#6b7280", "#a855f7", "#6b7280"]
-                                        }}
-                                        transition={{
-                                            duration: 2,
-                                            repeat: Infinity,
-                                            delay: i * 0.05,
-                                            ease: "easeInOut"
-                                        }}
-                                        className="text-[10px] font-black uppercase tracking-widest leading-none pt-1"
-                                    >
-                                        {char}
-                                    </motion.span>
-                                ))}
-                            </div>
-
-                            {/* Decorative Background Elements */}
-                            <div className="absolute inset-0 pointer-events-none">
-                                <motion.div
-                                    animate={{ opacity: [0.1, 0.3, 0.1] }}
-                                    transition={{ duration: 5, repeat: Infinity }}
-                                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-500/5 rounded-full blur-3xl"
-                                />
-                            </div>
-                        </div>
-                    ) : leaders.length === 0 ? (
-                        <div className="text-center py-20 text-gray-500">
-                            <Trophy size={48} className="mx-auto mb-4 opacity-20" />
-                            <p className="text-sm font-bold uppercase tracking-widest">No rankings formulated yet.</p>
-                        </div>
-                    ) : (
-                        <div className="space-y-2 relative">
-                            {leaders.map((user, index) => {
-                                const isCurrentUser = user.id === currentUserId;
-                                const rank = index + 1;
-                                let rankVisual = <span className="text-gray-500 font-bold">{rank}</span>;
-                                if (rank === 1) rankVisual = <Medal size={20} className="text-yellow-400" />;
-                                else if (rank === 2) rankVisual = <Medal size={20} className="text-gray-300" />;
-                                else if (rank === 3) rankVisual = <Medal size={20} className="text-amber-600" />;
-
-                                return (
-                                    <div
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                    <AnimatePresence mode="wait">
+                        {loading ? (
+                            <motion.div
+                                key="loading"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                className="h-96 flex flex-col items-center justify-center"
+                            >
+                                <div className="relative w-40 h-40 mb-10">
+                                    <motion.div
+                                        animate={{ rotate: 360 }}
+                                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+                                        className="absolute inset-0 border-t-2 border-r-2 border-transparent border-t-purple-500 border-r-blue-500 rounded-full"
+                                    />
+                                    <motion.div
+                                        animate={{ rotate: -360 }}
+                                        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+                                        className="absolute inset-4 border-b-2 border-l-2 border-transparent border-b-blue-400 border-l-purple-400 rounded-full opacity-50"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <Activity size={40} className="text-purple-500 animate-pulse" />
+                                    </div>
+                                </div>
+                                <div className="flex flex-col items-center gap-2">
+                                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-[0.5em] animate-pulse">Syncing Leaderboard</span>
+                                    <div className="flex gap-1">
+                                        {[0, 1, 2].map(i => (
+                                            <motion.div
+                                                key={i}
+                                                animate={{ scale: [1, 1.5, 1], opacity: [0.3, 1, 0.3] }}
+                                                transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
+                                                className="w-1.5 h-1.5 rounded-full bg-purple-500"
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <motion.div
+                                key="list"
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="space-y-4"
+                            >
+                                {leaders.map((user, index) => (
+                                    <motion.div
                                         key={user.id}
-                                        className={`flex items-center gap-4 p-3 rounded-xl border transition-colors ${isCurrentUser
-                                            ? 'bg-purple-900/40 border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.15)]'
-                                            : 'bg-black/40 border-white/5 hover:bg-white/5'
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: index * 0.05 }}
+                                        className={`group relative flex items-center gap-5 p-4 rounded-[1.5rem] border transition-all duration-300 ${user.id === currentUserId
+                                            ? 'bg-purple-500/10 border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.1)]'
+                                            : 'bg-white/[0.03] border-white/5 hover:bg-white/[0.06] hover:border-white/10'
                                             }`}
                                     >
-                                        <div className="w-8 flex justify-center items-center shrink-0">
-                                            {rankVisual}
+                                        <div className="shrink-0">
+                                            <RankBadge rank={index + 1} />
                                         </div>
-                                        <div className="w-10 h-10 rounded-full bg-gray-800 border border-white/10 flex items-center justify-center overflow-hidden shrink-0">
-                                            {user.photoURL ? (
-                                                <img src={user.photoURL} alt={user.displayName} className="w-full h-full object-cover" />
-                                            ) : (
-                                                <User size={20} className="text-gray-400" />
-                                            )}
+
+                                        <div className="relative w-14 h-14 shrink-0">
+                                            <div className="w-full h-full rounded-2xl bg-black border border-white/10 p-0.5 overflow-hidden shadow-xl">
+                                                {user.photoURL ? (
+                                                    <img src={user.photoURL} className="w-full h-full object-cover rounded-xl" alt="" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center bg-gray-900 rounded-xl">
+                                                        <User size={24} className="text-gray-600" />
+                                                    </div>
+                                                )}
+                                            </div>
+                                            {index === 0 && <Zap size={16} className="absolute -top-1 -right-1 text-yellow-400 fill-current animate-bounce" />}
                                         </div>
+
                                         <div className="flex-1 min-w-0">
-                                            <div className="flex items-center gap-2">
-                                                <h3 className={`font-black uppercase tracking-widest truncate text-xs sm:text-base ${isCurrentUser ? 'text-purple-400' : 'text-gray-200'}`}>
-                                                    {user.displayName || 'LEGENDARY COMMANDER'}
+                                            <div className="flex items-center gap-3 mb-1">
+                                                <h3 className={`font-black uppercase tracking-widest text-sm sm:text-lg truncate ${user.id === currentUserId ? 'text-white' : 'text-gray-300'}`}>
+                                                    {user.displayName || 'ANON-OPERATIVE'}
                                                 </h3>
-                                                {isCurrentUser && (
-                                                    <span className="text-[8px] sm:text-[9px] bg-purple-500/20 text-purple-300 px-1.5 py-0.5 rounded font-black uppercase tracking-widest whitespace-nowrap">You</span>
-                                                )}
-                                                {!isCurrentUser && currentUserId && !friendIds.has(user.id) && (
-                                                    <button
-                                                        onClick={async () => {
-                                                            try {
-                                                                await setDoc(doc(collection(db, 'friendRequests')), {
-                                                                    senderId: currentUserId,
-                                                                    senderName: currentUsername,
-                                                                    receiverId: user.id,
-                                                                    status: 'pending',
-                                                                    timestamp: serverTimestamp()
-                                                                });
-                                                                alert("Friend request sent!");
-                                                            } catch (e) {
-                                                                console.error(e);
-                                                            }
-                                                        }}
-                                                        className="p-1 hover:bg-emerald-500/20 text-gray-500 hover:text-emerald-400 rounded transition-colors"
-                                                        title="Add Friend"
-                                                    >
-                                                        <UserPlus size={14} />
-                                                    </button>
+                                                {user.id === currentUserId && (
+                                                    <span className="px-2 py-0.5 bg-white text-black text-[9px] font-black rounded italic flex items-center gap-1">
+                                                        YOU
+                                                    </span>
                                                 )}
                                             </div>
-                                        </div>
-                                        <div className="flex gap-2 sm:gap-6 shrink-0 text-right pr-1 sm:pr-2">
-                                            <div className="flex flex-col items-center sm:items-end">
-                                                <span className="text-[8px] sm:text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest">W</span>
-                                                <span className="text-emerald-400 font-black text-xs sm:text-sm">{user.wins || 0}</span>
-                                            </div>
-                                            <div className="flex flex-col items-center sm:items-end">
-                                                <span className="text-[8px] sm:text-[10px] text-rose-500/70 font-bold uppercase tracking-widest">L</span>
-                                                <span className="text-rose-400 font-black text-xs sm:text-sm">{user.losses || 0}</span>
-                                            </div>
-                                            <div className="flex flex-col items-center sm:items-end">
-                                                <span className="text-[8px] sm:text-[10px] text-gray-500/70 font-bold uppercase tracking-widest">D</span>
-                                                <span className="text-gray-400 font-black text-xs sm:text-sm">{user.draws || 0}</span>
+                                            <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-gray-500">
+                                                <span className="flex items-center gap-1"><Target size={10} className="text-purple-500" /> LVL {Math.floor(user.wins / 5) + 1}</span>
+                                                <span className="flex items-center gap-1"><Shield size={10} className="text-blue-500" /> {user.wins + user.losses + user.draws} BATTLES</span>
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    )}
+
+                                        <div className="flex items-center gap-4 sm:gap-8 px-4 py-2 bg-black/40 border border-white/5 rounded-2xl shrink-0">
+                                            <div className="flex flex-col items-center">
+                                                <span className="text-[8px] text-emerald-500/50 font-black tracking-widest uppercase mb-0.5">W</span>
+                                                <span className="text-emerald-400 font-black text-sm">{user.wins || 0}</span>
+                                            </div>
+                                            <div className="flex flex-col items-center">
+                                                <span className="text-[8px] text-rose-500/50 font-black tracking-widest uppercase mb-0.5">L</span>
+                                                <span className="text-rose-400 font-black text-sm">{user.losses || 0}</span>
+                                            </div>
+                                        </div>
+                                    </motion.div>
+                                ))}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
                 </div>
 
-                {/* Current User Stats Bar at the bottom if logged in, but not in top 20 or just want to show explicit rank */}
+                {/* Footer HUD */}
                 {currentUserId && currentUserStats && (
-                    <div className="p-4 bg-purple-900/20 border-t border-purple-500/30 shrink-0">
-                        <div className="flex items-center justify-between">
-                            <div>
-                                <p className="text-[10px] text-purple-400 font-bold uppercase tracking-widest leading-none mb-1">Your Rank</p>
-                                <div className="flex items-end gap-2 text-white font-black italic">
-                                    <span className="text-3xl leading-none">#{currentUserRank || '-'}</span>
+                    <div className="p-8 bg-[#0a0a12] border-t border-white/10">
+                        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
+                            <div className="flex items-center gap-6">
+                                <div className="text-center sm:text-left px-6 py-3 bg-purple-500/10 border border-purple-500/30 rounded-3xl backdrop-blur-md">
+                                    <p className="text-[10px] text-purple-400/80 font-black uppercase tracking-[0.3em] mb-1">Your Protocol Rank</p>
+                                    <p className="text-4xl font-black text-white italic leading-none tracking-tighter shadow-purple-500/50">#{currentUserRank || '?'}</p>
+                                </div>
+                                <div className="h-10 w-px bg-white/10 hidden sm:block"></div>
+                                <div className="hidden md:flex flex-col">
+                                    <span className="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Combat Rating</span>
+                                    <div className="flex gap-1">
+                                        {[...Array(5)].map((_, i) => (
+                                            <div key={i} className={`w-3 h-1.5 rounded-full ${i < Math.min(5, Math.floor(currentUserStats.wins / 10)) ? 'bg-purple-500' : 'bg-white/10'}`} />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex gap-4 sm:gap-8 bg-black/40 px-4 py-2 rounded-xl border border-white/5">
-                                <div className="flex flex-col items-center">
-                                    <span className="text-[10px] text-emerald-500/70 font-bold uppercase tracking-widest">Wins</span>
-                                    <span className="text-emerald-400 font-black text-base">{currentUserStats.wins || 0}</span>
+
+                            <div className="flex items-center gap-3 px-6 py-4 bg-white/[0.02] border border-white/5 rounded-3xl backdrop-blur-md">
+                                <div className="flex flex-col items-center px-4">
+                                    <span className="text-[9px] text-emerald-500 font-black uppercase tracking-widest">Wins</span>
+                                    <span className="text-xl font-black text-emerald-400">{currentUserStats.wins || 0}</span>
                                 </div>
-                                <div className="flex flex-col items-center">
-                                    <span className="text-[10px] text-rose-500/70 font-bold uppercase tracking-widest">Losses</span>
-                                    <span className="text-rose-400 font-black text-base">{currentUserStats.losses || 0}</span>
+                                <div className="w-px h-8 bg-white/10 mx-2"></div>
+                                <div className="flex flex-col items-center px-4">
+                                    <span className="text-[9px] text-rose-500 font-black uppercase tracking-widest">Losses</span>
+                                    <span className="text-xl font-black text-rose-400">{currentUserStats.losses || 0}</span>
                                 </div>
-                                <div className="flex flex-col items-center">
-                                    <span className="text-[10px] text-gray-500/70 font-bold uppercase tracking-widest">Draws</span>
-                                    <span className="text-gray-400 font-black text-base">{currentUserStats.draws || 0}</span>
+                                <div className="w-px h-8 bg-white/10 mx-2"></div>
+                                <div className="flex flex-col items-center px-4">
+                                    <span className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Draws</span>
+                                    <span className="text-xl font-black text-gray-400">{currentUserStats.draws || 0}</span>
                                 </div>
                             </div>
                         </div>

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Users, X, UserPlus, Check, XCircle, Search, Sword, Activity, Trophy, Frown, Equal, UserCheck, Clock } from 'lucide-react';
+﻿import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Users, X, UserPlus, Check, Search, Sword, Activity, Trophy, Frown, Equal, UserCheck, Clock, Sparkles } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, query, where, onSnapshot, doc, getDoc, setDoc, deleteDoc, serverTimestamp, getDocs, limit } from 'firebase/firestore';
 
@@ -32,7 +32,6 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
     const [friends, setFriends] = useState<Friend[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [loading, setLoading] = useState(true);
-    const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
     // Global Search States
     const [globalSearchQuery, setGlobalSearchQuery] = useState('');
@@ -40,14 +39,11 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
     const [isSearching, setIsSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
 
-
-
     // Timeout fallback just in case onSnapshot never fires
     useEffect(() => {
         const timer = setTimeout(() => {
             if (loading) {
                 setLoading(false);
-                setErrorMsg("Loading timed out. Check network or database rules.");
             }
         }, 5000);
         return () => clearTimeout(timer);
@@ -70,7 +66,6 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
             setRequests(parsedReqs.sort((a, b) => (b.timestamp?.toMillis() || 0) - (a.timestamp?.toMillis() || 0)));
         }, (error) => {
             console.error("Error fetching friend requests:", error);
-            setErrorMsg(`Requests Query Error: ${error.message}`);
         });
 
         return () => unsubReq();
@@ -125,7 +120,6 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
             setLoading(false);
         }, (error) => {
             console.error("Error fetching friends list:", error);
-            setErrorMsg(`Friends Query Error: ${error.message}`);
             setLoading(false);
         });
 
@@ -134,7 +128,6 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
 
     const handleAcceptRequest = async (request: FriendRequest) => {
         try {
-            // Create friendship document
             const friendPairId = [request.senderId, request.receiverId].sort().join('_');
             await setDoc(doc(db, 'friends', friendPairId), {
                 userIds: [request.senderId, request.receiverId],
@@ -145,8 +138,6 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
                 createdAt: serverTimestamp(),
                 isOfficialFriend: true
             });
-
-            // Delete request
             await deleteDoc(doc(db, 'friendRequests', request.id));
         } catch (e) {
             console.error("Error accepting request", e);
@@ -163,7 +154,6 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
 
     const handleChallenge = async (friend: Friend) => {
         try {
-            // Create an invite document for the friend
             const inviteRef = doc(collection(db, 'gameInvites'));
             await setDoc(inviteRef, {
                 senderId: currentUserId,
@@ -172,8 +162,6 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
                 status: 'pending',
                 timestamp: serverTimestamp()
             });
-
-            // Close modal and let the main app handle room creation
             const event = new CustomEvent('initiate_challenge', { detail: { inviteId: inviteRef.id, friendId: friend.friendId } });
             window.dispatchEvent(event);
             onClose();
@@ -205,7 +193,6 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
             });
             setSearchResults(results);
 
-            // Fallback: If no exact case results, try case-insensitive search
             if (results.length === 0) {
                 const lowerTerm = term.toLowerCase();
                 const q2 = query(
@@ -234,20 +221,13 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
 
     const handleSendGlobalRequest = async (userResult: any) => {
         try {
-            // Check if request already outgoing
-            if (outgoingRequests.has(userResult.id)) {
-                return;
-            }
-
-            // Check if already friends
+            if (outgoingRequests.has(userResult.id)) return;
             const friendPairId = [currentUserId, userResult.id].sort().join('_');
             const friendDoc = await getDoc(doc(db, 'friends', friendPairId));
             if (friendDoc.exists()) {
                 alert("You are already friends!");
                 return;
             }
-
-            // Send request
             const newReqRef = doc(collection(db, 'friendRequests'));
             await setDoc(newReqRef, {
                 senderId: currentUserId,
@@ -263,212 +243,317 @@ const FriendsModal: React.FC<FriendsModalProps> = ({ onClose, currentUserId, cur
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="w-full max-w-md bg-[#0a0a0c] border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden relative max-h-[80vh]"
-            >
-                <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500"></div>
+    const tabs = [
+        { id: 'friends', label: 'Friends', icon: <Users size={16} />, count: friends.length },
+        { id: 'requests', label: 'Requests', icon: <Activity size={16} />, count: requests.length },
+        { id: 'add', label: 'Add Player', icon: <UserPlus size={16} /> },
+    ];
 
-                <div className="flex items-center justify-between p-6 border-b border-white/10 bg-white/5 pb-4">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 bg-emerald-500/20 rounded-xl border border-emerald-500/30">
-                            <Users size={24} className="text-emerald-400" />
+    return (
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 pointer-events-none"
+        >
+            <div
+                onClick={onClose}
+                className="absolute inset-0 bg-black/60 backdrop-blur-md cursor-pointer pointer-events-auto"
+            />
+
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 30 }}
+                className="w-full max-w-lg bg-[#0d0d12]/90 border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden relative z-10 backdrop-blur-3xl pointer-events-auto"
+            >
+                {/* Premium Gradient Top Border */}
+                <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-emerald-500/50 to-transparent"></div>
+                <div className="absolute top-0 left-0 w-full h-32 bg-emerald-500/5 blur-[80px] pointer-events-none"></div>
+
+                {/* Header */}
+                <div className="flex items-center justify-between p-8 pb-4 relative">
+                    <div className="flex items-center gap-4">
+                        <div className="p-3 bg-gradient-to-br from-emerald-500/20 to-teal-500/10 rounded-2xl border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
+                            <Users size={28} className="text-emerald-400" />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black text-white italic tracking-widest uppercase leading-none">Friends</h2>
+                            <h2 className="text-3xl font-black text-white italic tracking-[0.1em] uppercase leading-none drop-shadow-sm">Social <span className="text-emerald-500">Hub</span></h2>
+                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-[.4em] mt-2 flex items-center gap-1.5">
+                                <Sparkles size={10} className="text-emerald-500/60" /> Elite Network
+                            </p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="p-2 rounded-full hover:bg-white/10 text-gray-400 hover:text-white transition-colors">
-                        <X size={24} />
+                    <button
+                        onClick={onClose}
+                        className="p-3 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all border border-white/5 hover:border-white/10 shadow-inner group"
+                    >
+                        <X size={20} className="group-hover:rotate-90 transition-transform duration-300" />
                     </button>
                 </div>
 
-
-                <div className="flex px-4 pt-4 gap-2">
-                    <button
-                        onClick={() => setActiveTab('friends')}
-                        className={`flex-1 py-2 text-sm font-black tracking-widest uppercase rounded-lg transition-all ${activeTab === 'friends' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-gray-500 hover:bg-white/5 border border-transparent'}`}
-                    >
-                        Friends List ({friends.length})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('requests')}
-                        className={`flex-1 py-2 text-sm font-black tracking-widest uppercase rounded-lg transition-all relative ${activeTab === 'requests' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'text-gray-500 hover:bg-white/5 border border-transparent'}`}
-                    >
-                        Requests
-                        {requests.length > 0 && (
-                            <span className="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white flex items-center justify-center text-[10px] rounded-full">{requests.length}</span>
-                        )}
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('add')}
-                        className={`flex-1 py-2 text-sm font-black tracking-widest uppercase rounded-lg transition-all ${activeTab === 'add' ? 'bg-purple-500/20 text-purple-400 border border-purple-500/30' : 'text-gray-500 hover:bg-white/5 border border-transparent'}`}
-                    >
-                        Add Friend
-                    </button>
+                {/* Modern Tabs */}
+                <div className="flex px-6 pt-4 relative">
+                    <div className="flex-1 flex bg-black/40 p-1.5 rounded-2xl border border-white/5 shadow-inner">
+                        {tabs.map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => setActiveTab(tab.id as any)}
+                                className={`flex-1 relative py-2.5 flex items-center justify-center gap-2 rounded-xl transition-all duration-500 group`}
+                            >
+                                <AnimatePresence>
+                                    {activeTab === tab.id && (
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            exit={{ opacity: 0, scale: 0.9 }}
+                                            className="absolute inset-0 bg-gradient-to-r from-emerald-600/20 to-emerald-400/10 border border-emerald-500/20 rounded-xl"
+                                        />
+                                    )}
+                                </AnimatePresence>
+                                <span className={`relative z-10 transition-colors duration-300 ${activeTab === tab.id ? 'text-emerald-400' : 'text-gray-500 group-hover:text-gray-300'}`}>
+                                    {tab.icon}
+                                </span>
+                                <span className={`relative z-10 text-[11px] font-black tracking-widest uppercase transition-colors duration-300 ${activeTab === tab.id ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`}>
+                                    {tab.label}
+                                </span>
+                                {tab.count !== undefined && tab.count > 0 && (
+                                    <span className="relative z-10 bg-emerald-500 text-black text-[9px] font-black px-1.5 py-0.5 rounded-md min-w-[18px] text-center shadow-lg shadow-emerald-500/20 animate-pulse">
+                                        {tab.count}
+                                    </span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
-                    {errorMsg && (
-                        <div className="p-3 mb-4 text-xs font-bold text-rose-400 bg-rose-500/10 border border-rose-500/20 rounded-xl">
-                            {errorMsg}
-                        </div>
-                    )}
-
-                    {loading ? (
-                        <div className="flex flex-col items-center justify-center h-40 text-gray-500 space-y-4">
-                            <Activity size={32} className="animate-spin text-emerald-500" />
-                        </div>
-                    ) : activeTab === 'friends' ? (
-                        <div className="space-y-4">
-                            <div className="relative">
-                                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
-                                <input
-                                    type="text"
-                                    placeholder="Search friends..."
-                                    value={searchQuery}
-                                    onChange={e => setSearchQuery(e.target.value)}
-                                    className="w-full bg-black/40 text-white rounded-xl pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/50 font-medium tracking-wide placeholder:text-gray-600 border border-white/5"
-                                />
-                            </div>
-                            {filteredFriends.length === 0 ? (
-                                <div className="text-center py-10 text-gray-500">
-                                    <p className="text-xs font-bold uppercase tracking-widest">No friends found.</p>
-                                </div>
-                            ) : (
-                                <div className="space-y-2">
-                                    {filteredFriends.map(f => (
-                                        <div key={f.id} className="flex items-center justify-between p-3 bg-black/40 border border-white/5 rounded-xl">
-                                            <span className="font-black text-gray-200 uppercase tracking-widest truncate">{f.friendName}</span>
-                                            <div className="flex gap-2">
-
-                                                <button
-                                                    onClick={() => handleChallenge(f)}
-                                                    className="flex items-center gap-1.5 px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-lg text-xs font-black uppercase tracking-widest transition-colors"
-                                                >
-                                                    <Sword size={14} /> Challenge
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    ) : activeTab === 'requests' ? (
-                        <div className="space-y-2">
-                            {requests.length === 0 ? (
-                                <div className="text-center py-10 text-gray-500">
-                                    <p className="text-xs font-bold uppercase tracking-widest">No pending requests.</p>
-                                </div>
-                            ) : (
-                                requests.map(req => (
-                                    <div key={req.id} className="flex items-center justify-between p-3 bg-blue-900/10 border border-blue-500/20 rounded-xl">
-                                        <div className="flex flex-col">
-                                            <span className="font-black text-gray-200 uppercase tracking-widest truncate">{req.senderName}</span>
-                                            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Wants to be friends</span>
-                                        </div>
-                                        <div className="flex items-center gap-2">
-                                            <button onClick={() => handleRejectRequest(req.id)} className="p-2 text-gray-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors">
-                                                <XCircle size={18} />
-                                            </button>
-                                            <button onClick={() => handleAcceptRequest(req)} className="p-2 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 rounded-lg transition-colors">
-                                                <Check size={18} />
-                                            </button>
-                                        </div>
+                <div className="flex-1 overflow-y-auto p-6 custom-scrollbar min-h-[400px]">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            {activeTab === 'friends' && (
+                                <div className="space-y-6">
+                                    <div className="relative group">
+                                        <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-emerald-400 transition-colors" />
+                                        <input
+                                            type="text"
+                                            placeholder="Find friends in your network..."
+                                            value={searchQuery}
+                                            onChange={e => setSearchQuery(e.target.value)}
+                                            className="w-full bg-black/40 text-white rounded-2xl pl-12 pr-4 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-emerald-500/30 font-medium tracking-wide placeholder:text-gray-600 border border-white/5 transition-all focus:bg-black/60 shadow-inner"
+                                        />
                                     </div>
-                                ))
-                            )}
-                        </div>
-                    ) : activeTab === 'add' ? (
-                        <div className="space-y-4">
-                            <form onSubmit={handleGlobalSearch} className="flex gap-2 relative">
-                                <input
-                                    type="text"
-                                    placeholder="Enter exact player name..."
-                                    value={globalSearchQuery}
-                                    onChange={(e) => setGlobalSearchQuery(e.target.value)}
-                                    className="flex-1 bg-black/40 text-white rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/50 font-medium tracking-wide placeholder:text-gray-600 border border-white/5"
-                                />
-                                <button type="submit" disabled={isSearching} className="px-4 py-2 bg-purple-500/20 text-purple-400 hover:bg-purple-500/30 rounded-xl font-black uppercase text-xs tracking-widest border border-purple-500/30 transition-colors">
-                                    {isSearching ? <Activity className="animate-spin w-4 h-4" /> : <Search className="w-4 h-4" />}
-                                </button>
-                            </form>
 
-                            {searchError && (
-                                <p className="text-rose-400 text-xs text-center font-bold tracking-widest uppercase">{searchError}</p>
-                            )}
-
-                            {searchResults.length > 0 && (
-                                <div className="space-y-2">
-                                    {searchResults.map(user => (
-                                        <div key={user.id} className="p-3 bg-black/40 border border-white/5 rounded-xl flex items-center justify-between">
-                                            <div className="flex flex-col">
-                                                <span className="font-black text-gray-200 uppercase tracking-widest">{user.displayName || 'Unknown'}</span>
-                                                <div className="flex items-center gap-3 mt-1 text-[10px] text-gray-500 font-bold tracking-widest uppercase">
-                                                    <span className="flex items-center gap-1 text-emerald-400"><Trophy size={10} /> {user.wins || 0}</span>
-                                                    <span className="flex items-center gap-1 text-rose-400"><Frown size={10} /> {user.losses || 0}</span>
-                                                    <span className="flex items-center gap-1 text-blue-400"><Equal size={10} /> {user.draws || 0}</span>
-                                                </div>
+                                    {loading ? (
+                                        <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                                            <div className="relative">
+                                                <Activity size={40} className="animate-spin text-emerald-500/20" />
+                                                <Activity size={40} className="absolute inset-0 animate-pulse text-emerald-500" />
                                             </div>
-                                            {(() => {
-                                                const isFriend = friends.some(f => f.friendId === user.id);
-                                                const hasSent = outgoingRequests.has(user.id);
-                                                const hasReceived = requests.some(req => req.senderId === user.id);
-
-                                                if (user.id === currentUserId) {
-                                                    return (
-                                                        <div className="px-3 py-1 bg-white/5 rounded-lg text-[10px] font-bold text-gray-400 uppercase tracking-widest border border-white/10">
-                                                            You
+                                            <p className="text-[10px] font-black text-gray-500 uppercase tracking-[.4em]">Establishing Link...</p>
+                                        </div>
+                                    ) : filteredFriends.length === 0 ? (
+                                        <div className="flex flex-col items-center justify-center py-20 text-center space-y-4">
+                                            <div className="p-6 bg-white/5 rounded-full border border-white/5">
+                                                <Users size={48} className="text-gray-700" />
+                                            </div>
+                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest leading-relaxed">Network isolation detected. <br /> Add players to begin.</p>
+                                        </div>
+                                    ) : (
+                                        <div className="grid gap-3">
+                                            {filteredFriends.map((f, i) => (
+                                                <motion.div
+                                                    initial={{ opacity: 0, x: -20 }}
+                                                    animate={{ opacity: 1, x: 0 }}
+                                                    transition={{ delay: i * 0.05 }}
+                                                    key={f.id}
+                                                    className="group flex items-center justify-between p-4 bg-gradient-to-r from-white/[0.02] to-transparent border border-white/5 rounded-2xl hover:border-emerald-500/30 hover:bg-white/[0.04] transition-all duration-300 hover:scale-[1.01]"
+                                                >
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center font-black text-emerald-400 text-sm">
+                                                            {f.friendName.charAt(0).toUpperCase()}
                                                         </div>
-                                                    );
-                                                }
-                                                if (isFriend) {
-                                                    return (
-                                                        <button disabled className="p-2 text-emerald-400 bg-emerald-500/10 rounded-lg border border-emerald-500/30 opacity-50 cursor-not-allowed" title="Already Friends">
-                                                            <UserCheck size={16} />
-                                                        </button>
-                                                    );
-                                                }
-                                                if (hasSent) {
-                                                    return (
-                                                        <button disabled className="p-2 text-yellow-500 bg-yellow-500/10 rounded-lg border border-yellow-500/30 opacity-50 cursor-not-allowed" title="Request Sent">
-                                                            <Clock size={16} />
-                                                        </button>
-                                                    );
-                                                }
-                                                if (hasReceived) {
+                                                        <span className="font-black text-gray-100 uppercase tracking-widest text-sm">{f.friendName}</span>
+                                                    </div>
+                                                    <button
+                                                        onClick={() => handleChallenge(f)}
+                                                        className="flex items-center gap-2 px-5 py-2.5 bg-rose-600 text-white rounded-xl text-[10px] font-black uppercase tracking-[.2em] transition-all hover:bg-rose-500 hover:shadow-lg hover:shadow-rose-600/20 active:scale-95 border border-rose-500/50"
+                                                    >
+                                                        <Sword size={14} className="group-hover:rotate-12 transition-transform" /> Battle
+                                                    </button>
+                                                </motion.div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'requests' && (
+                                <div className="space-y-3">
+                                    {requests.length === 0 ? (
+                                        <div className="flex flex-col items-center justify-center py-24 text-center space-y-4">
+                                            <div className="p-6 bg-white/5 rounded-full border border-white/5">
+                                                <Activity size={48} className="text-gray-700" />
+                                            </div>
+                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">No signals received.</p>
+                                        </div>
+                                    ) : (
+                                        requests.map((req, i) => (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 10 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: i * 0.05 }}
+                                                key={req.id}
+                                                className="flex items-center justify-between p-4 bg-blue-500/5 border border-blue-500/20 rounded-2xl hover:bg-blue-500/10 transition-colors"
+                                            >
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-blue-500/20 border border-blue-500/30 flex items-center justify-center text-blue-400">
+                                                        <UserPlus size={18} />
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="font-black text-white uppercase tracking-widest text-sm">{req.senderName}</span>
+                                                        <span className="text-[9px] text-blue-400 font-black uppercase tracking-widest mt-0.5">Incoming Request</span>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2">
+                                                    <button onClick={() => handleRejectRequest(req.id)} className="p-2.5 text-gray-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-xl transition-all border border-transparent hover:border-rose-500/20">
+                                                        <X size={20} />
+                                                    </button>
+                                                    <button onClick={() => handleAcceptRequest(req)} className="p-2.5 text-emerald-400 bg-emerald-500/20 hover:bg-emerald-500/30 border border-emerald-500/30 rounded-xl transition-all shadow-lg hover:shadow-emerald-500/10">
+                                                        <Check size={20} />
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        ))
+                                    )}
+                                </div>
+                            )}
+
+                            {activeTab === 'add' && (
+                                <div className="space-y-6">
+                                    <form onSubmit={handleGlobalSearch} className="flex gap-3">
+                                        <div className="relative flex-1">
+                                            <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                                            <input
+                                                type="text"
+                                                placeholder="Enter exact player alias..."
+                                                value={globalSearchQuery}
+                                                onChange={(e) => setGlobalSearchQuery(e.target.value)}
+                                                className="w-full bg-black/40 text-white rounded-2xl pl-12 pr-4 py-4 text-sm focus:outline-none focus:ring-1 focus:ring-purple-500/30 font-medium tracking-wide placeholder:text-gray-600 border border-white/5 transition-all"
+                                            />
+                                        </div>
+                                        <button
+                                            type="submit"
+                                            disabled={isSearching}
+                                            className="px-6 bg-gradient-to-br from-purple-600 to-indigo-600 text-white hover:from-purple-500 hover:to-indigo-500 rounded-2xl shadow-lg shadow-purple-600/20 border border-purple-500/30 transition-all active:scale-95 disabled:opacity-50"
+                                        >
+                                            {isSearching ? <Activity className="animate-spin w-5 h-5" /> : <Search className="w-5 h-5" />}
+                                        </button>
+                                    </form>
+
+                                    {searchError && (
+                                        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400 text-[10px] text-center font-black tracking-[.2em] uppercase">
+                                            {searchError}
+                                        </motion.div>
+                                    )}
+
+                                    <div className="space-y-3">
+                                        {searchResults.map((user, i) => (
+                                            <motion.div
+                                                initial={{ opacity: 0, scale: 0.98 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                transition={{ delay: i * 0.05 }}
+                                                key={user.id}
+                                                className="p-4 bg-white/[0.02] border border-white/5 rounded-2xl flex items-center justify-between hover:bg-white/[0.04] transition-colors group"
+                                            >
+                                                <div className="flex flex-col">
+                                                    <span className="font-black text-white uppercase tracking-widest text-sm">{user.displayName || 'Unknown'}</span>
+                                                    <div className="flex items-center gap-4 mt-2 text-[9px] font-black tracking-[.2em] uppercase">
+                                                        <span className="flex items-center gap-1.5 text-emerald-400/80"><Trophy size={10} /> {user.wins || 0}</span>
+                                                        <span className="flex items-center gap-1.5 text-rose-400/80"><Frown size={10} /> {user.losses || 0}</span>
+                                                        <span className="flex items-center gap-1.5 text-blue-400/80"><Equal size={10} /> {user.draws || 0}</span>
+                                                    </div>
+                                                </div>
+
+                                                {(() => {
+                                                    const isFriend = friends.some(f => f.friendId === user.id);
+                                                    const hasSent = outgoingRequests.has(user.id);
+                                                    const hasReceived = requests.some(req => req.senderId === user.id);
+
+                                                    if (user.id === currentUserId) {
+                                                        return (
+                                                            <div className="px-4 py-2 bg-white/5 rounded-xl text-[9px] font-black text-gray-500 uppercase tracking-widest border border-white/5">
+                                                                Self
+                                                            </div>
+                                                        );
+                                                    }
+                                                    if (isFriend) {
+                                                        return (
+                                                            <div className="p-3 text-emerald-400 bg-emerald-500/10 rounded-xl border border-emerald-500/20" title="Already Friends">
+                                                                <UserCheck size={18} />
+                                                            </div>
+                                                        );
+                                                    }
+                                                    if (hasSent) {
+                                                        return (
+                                                            <div className="p-3 text-yellow-500 bg-yellow-500/10 rounded-xl border border-yellow-500/20" title="Request Sent">
+                                                                <Clock size={18} />
+                                                            </div>
+                                                        );
+                                                    }
+                                                    if (hasReceived) {
+                                                        return (
+                                                            <button
+                                                                onClick={() => {
+                                                                    const req = requests.find(r => r.senderId === user.id);
+                                                                    if (req) handleAcceptRequest(req);
+                                                                }}
+                                                                className="p-3 text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-xl border border-blue-500/20 transition-all" title="Accept Request">
+                                                                <Check size={18} />
+                                                            </button>
+                                                        );
+                                                    }
                                                     return (
                                                         <button
-                                                            onClick={() => {
-                                                                const req = requests.find(r => r.senderId === user.id);
-                                                                if (req) handleAcceptRequest(req);
-                                                            }}
-                                                            className="p-2 text-blue-400 bg-blue-500/10 hover:bg-blue-500/20 rounded-lg border border-blue-500/30 transition-colors" title="Accept Request">
-                                                            <Check size={16} />
+                                                            onClick={() => handleSendGlobalRequest(user)}
+                                                            className="p-3 text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 rounded-xl transition-all border border-purple-500/20 group-hover:border-purple-500/40" title="Add Friend">
+                                                            <UserPlus size={18} />
                                                         </button>
                                                     );
-                                                }
-                                                return (
-                                                    <button
-                                                        onClick={() => handleSendGlobalRequest(user)}
-                                                        className="p-2 text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 rounded-lg transition-colors border border-purple-500/30" title="Add Friend">
-                                                        <UserPlus size={16} />
-                                                    </button>
-                                                );
-                                            })()}
-                                        </div>
-                                    ))}
+                                                })()}
+                                            </motion.div>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
-                        </div>
-                    ) : null}
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
+
+                <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-white/5 to-transparent"></div>
             </motion.div>
-        </div>
+
+            <style>{`
+                .custom-scrollbar::-webkit-scrollbar {
+                    width: 4px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb {
+                    background: rgba(255, 255, 255, 0.05);
+                    border-radius: 10px;
+                }
+                .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                    background: rgba(255, 255, 255, 0.1);
+                }
+            `}</style>
+        </motion.div >
     );
 };
 

@@ -86,7 +86,16 @@ export const TeamDisplay: React.FC<TeamDisplayProps> = React.memo(({ player, isL
                             >
                                 {char && char.img ? (
                                     <>
-                                        <img src={char.img} alt={char.name} className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
+                                        <img
+                                            src={char.img}
+                                            alt={char.name}
+                                            onError={(e) => {
+                                                const target = e.target as HTMLImageElement;
+                                                target.src = "https://img.icons8.com/ios-filled/100/ffffff/user-male-circle.png";
+                                                target.className = "absolute inset-0 w-full h-full object-contain opacity-20 p-2";
+                                            }}
+                                            className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
+                                        />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
                                         <div className="absolute bottom-0 right-0 p-0.5 opacity-90 scale-[0.6] origin-bottom-right">
                                             {roleIconsMapping[role]}

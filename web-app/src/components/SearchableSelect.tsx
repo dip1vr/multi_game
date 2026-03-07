@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, Search, Check } from 'lucide-react';
 
@@ -91,3 +91,4 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = React.memo(({ o
         </div>
     );
 });
+

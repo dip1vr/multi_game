@@ -1,27 +1,36 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Zap } from 'lucide-react';
+import { Zap, ArrowLeft } from 'lucide-react';
 import { SearchableSelect } from './SearchableSelect';
 import { GameMode } from '../types';
-import { datasets } from '../dataStore';
+import { SERIES_LISTS } from '../dataStore';
 
 interface SetupScreenProps {
     onStart: (mode: GameMode, series: string | null) => void;
+    onBack: () => void;
 }
 
-export const SetupScreen: React.FC<SetupScreenProps> = React.memo(({ onStart }) => {
+export const SetupScreen: React.FC<SetupScreenProps> = React.memo(({ onStart, onBack }) => {
     const [mode, setMode] = useState<GameMode>("Anime");
     const [series, setSeries] = useState<string>("All");
 
-    const availableSeriesList = Array.from(new Set(datasets[mode].map((c: any) => mode === "Pokemon" ? c.region : c.series).filter(Boolean))).sort() as string[];
+    const availableSeriesList = SERIES_LISTS[mode] || [];
     const finalOptions = ["All", ...availableSeriesList];
 
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-md lg:max-w-2xl mx-auto bg-gray-900/40 backdrop-blur-xl px-6 py-8 md:p-10 rounded-3xl border border-white/10 shadow-2xl mt-4"
+            className="w-full max-w-md lg:max-w-2xl mx-auto bg-gray-900/40 backdrop-blur-xl px-6 py-8 md:p-10 rounded-3xl border border-white/10 shadow-2xl mt-4 relative"
         >
+            <button
+                type="button"
+                onClick={onBack}
+                className="absolute top-6 left-6 p-2 text-gray-500 hover:text-white hover:bg-white/5 rounded-xl transition-all border border-transparent hover:border-white/10 group"
+            >
+                <ArrowLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
+            </button>
+
             <h2 className="text-3xl md:text-4xl font-black text-center mb-8 italic tracking-tighter">BATTLE CONFIG</h2>
 
             <div className="space-y-10">
