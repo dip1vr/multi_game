@@ -71,7 +71,7 @@ const MatchItem = React.memo(({
             className="group relative flex items-center justify-between overflow-hidden rounded-[1.5rem] border border-white/10 hover:border-emerald-500/40 transition-[border-color,transform,box-shadow,opacity] duration-300 h-20 sm:h-28 bg-[#0a0a0e]"
             style={{
                 contentVisibility: 'auto',
-                containIntrinsicSize: '80px',
+                containIntrinsicSize: '110px',
                 willChange: 'transform',
                 transform: 'translate3d(0,0,0)'
             }}
@@ -89,8 +89,8 @@ const MatchItem = React.memo(({
             <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0c] via-[#0a0a0c]/80 to-transparent pointer-events-none" />
             <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/0 to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
 
-            <div className="relative flex items-center gap-4 p-4">
-                <div className="relative shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-white/10 bg-black/40 shadow-lg">
+            <div className="relative flex items-center gap-3 sm:gap-4 p-3 sm:p-4">
+                <div className="relative shrink-0 w-10 h-10 sm:w-16 sm:h-16 rounded-xl overflow-hidden border border-white/10 bg-black/40 shadow-lg">
                     {avatarImg ? (
                         <img
                             src={avatarImg}
@@ -106,35 +106,35 @@ const MatchItem = React.memo(({
                         />
                     ) : (
                         <div className={`absolute inset-0 flex items-center justify-center ${isBot ? 'bg-purple-500/20' : 'bg-emerald-500/15'}`}>
-                            <Users size={28} className={isBot ? 'text-purple-400' : 'text-emerald-400'} />
+                            <Users size={20} className={isBot ? 'text-purple-400' : 'text-emerald-400'} />
                         </div>
                     )}
-                    <div className="absolute bottom-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border border-black shadow-[0_0_6px_rgba(16,185,129,0.9)]" />
+                    <div className="absolute bottom-0.5 right-0.5 w-2 h-2 rounded-full bg-emerald-500 border border-black shadow-[0_0_6px_rgba(16,185,129,0.9)]" />
                 </div>
                 <div className="flex flex-col min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="text-white font-black uppercase text-sm sm:text-base tracking-wider leading-none truncate max-w-[120px] sm:max-w-[140px]">{room.host}</span>
+                        <span className="text-white font-black uppercase text-xs sm:text-base tracking-wider leading-none truncate max-w-[80px] xs:max-w-[120px] sm:max-w-[140px]">{room.host}</span>
 
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                    <div className="flex items-center gap-2 text-[9px] sm:text-[10px] font-bold tracking-widest uppercase text-gray-400">
                         <span className={isBot ? 'text-purple-400/80' : 'text-emerald-400/80'}>{mode}</span>
                         {series && series !== 'All' && (
                             <>
                                 <span className="text-white/10">•</span>
-                                <span className="text-blue-400/70 truncate max-w-[110px]">{series}</span>
+                                <span className="text-blue-400/70 truncate max-w-[70px] xs:max-w-[110px]">{series}</span>
                             </>
                         )}
                     </div>
                 </div>
             </div>
-            <div className="relative pr-4 sm:pr-6 shrink-0">
+            <div className="relative pr-3 sm:pr-6 shrink-0">
                 <button
                     onClick={() => joinRoomWithCode(room.id, `joining-${room.id}`)}
                     disabled={loadingAction !== null || matchToReconnect !== null}
-                    className="px-4 sm:px-6 py-2 sm:py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-800 disabled:text-gray-500 text-gray-900 font-black text-[9px] sm:text-[10px] tracking-[0.2em] uppercase rounded-full shadow-lg active:scale-95 transition-all"
+                    className="px-3 sm:px-6 py-1.5 sm:py-2.5 bg-emerald-500 hover:bg-emerald-400 disabled:bg-gray-800 disabled:text-gray-500 text-gray-900 font-black text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] uppercase rounded-full shadow-lg active:scale-95 transition-all"
                 >
                     {isJoiningThisRoom ? (
-                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-4 h-4 border-2 border-gray-900/30 border-t-gray-900 rounded-full" />
+                        <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-3 h-3 sm:w-4 sm:h-4 border-2 border-gray-900/30 border-t-gray-900 rounded-full" />
                     ) : 'ENGAGE'}
                 </button>
             </div>
@@ -180,58 +180,58 @@ const Lobby: React.FC<LobbyProps> = ({
                         className="bg-gray-900/30 backdrop-blur-xl rounded-3xl border border-white/10 shadow-3xl relative overflow-hidden flex-1"
                     >
                         <div className="absolute inset-0 pointer-events-none opacity-5 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_2px,3px_100%]"></div>
-                        <div className="p-4 sm:p-8">
+                        <div className="p-3 sm:p-8">
                             <div className="flex flex-col items-center justify-center mb-6">
-                                <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-2">
-                                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
-                                    <span className="text-emerald-400 font-black text-[10px] tracking-[0.2em] uppercase">
+                                <div className="flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full mb-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.8)]"></div>
+                                    <span className="text-emerald-400 font-black text-[8px] sm:text-[10px] tracking-[0.1em] sm:tracking-[0.2em] uppercase">
                                         {fakeActivePlayers.toLocaleString()} Active Players Mode
                                     </span>
                                 </div>
-                                <h2 className="text-3xl font-black italic tracking-tighter text-center">MULTIPLAYER</h2>
+                                <h2 className="text-2xl sm:text-3xl font-black italic tracking-tighter text-center">MULTIPLAYER</h2>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 sm:gap-6 auto-rows-fr">
+                            <div className="grid grid-cols-2 gap-2 sm:gap-6 auto-rows-fr">
                                 <button
                                     onClick={() => createRoom(true)}
                                     disabled={loadingAction !== null || matchToReconnect !== null}
-                                    className="group relative flex flex-col items-center justify-center gap-4 p-8 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-2 border-emerald-500/20 rounded-[2rem] font-black tracking-[0.2em] transition-all h-full disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed hover:border-emerald-500/50 hover:shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:-translate-y-2 active:scale-95 overflow-hidden"
+                                    className="group relative flex flex-col items-center justify-center gap-2 sm:gap-4 p-2 sm:p-8 bg-gradient-to-br from-emerald-500/5 to-emerald-500/10 border-2 border-emerald-500/20 rounded-[1.5rem] sm:rounded-[2rem] font-black tracking-[0.05em] sm:tracking-[0.2em] transition-all h-full disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed hover:border-emerald-500/50 hover:shadow-[0_0_40px_rgba(16,185,129,0.3)] hover:-translate-y-2 active:scale-95 overflow-hidden"
                                 >
-                                    <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-emerald-500/20 rounded-tl-[1.8rem] pointer-events-none group-hover:border-emerald-400 transition-all"></div>
-                                    <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-emerald-500/20 rounded-tr-[1.8rem] pointer-events-none group-hover:border-emerald-400 transition-all"></div>
+                                    <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-emerald-500/20 rounded-tl-[1.3rem] pointer-events-none group-hover:border-emerald-400 transition-all"></div>
+                                    <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-emerald-500/20 rounded-tr-[1.3rem] pointer-events-none group-hover:border-emerald-400 transition-all"></div>
                                     <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                    <div className="relative w-16 h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center border border-emerald-500/30 mb-2 group-hover:scale-110 transition-transform shadow-lg">
+                                    <div className="relative w-10 h-10 sm:w-16 sm:h-16 bg-emerald-500/20 rounded-2xl flex items-center justify-center border border-emerald-500/30 mb-1 sm:mb-2 group-hover:scale-110 transition-transform shadow-lg">
                                         {loadingAction === 'hosting-public' ? (
-                                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-8 h-8 border-4 border-emerald-500/20 border-t-emerald-400 rounded-full" />
-                                        ) : <Users size={32} className="text-emerald-400" />}
+                                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-5 h-5 sm:w-8 sm:h-8 border-4 border-emerald-500/20 border-t-emerald-400 rounded-full" />
+                                        ) : <Users size={20} className="text-emerald-400" />}
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-xl text-emerald-400 font-orbitron drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]">PUBLIC</span>
-                                        <span className="text-[10px] text-emerald-500/60 font-black tracking-widest mt-1 text-center">BATTLE ARENA</span>
+                                        <span className="text-sm sm:text-xl text-emerald-400 font-orbitron drop-shadow-[0_0_10px_rgba(16,185,129,0.5)]">PUBLIC</span>
+                                        <span className="text-[8px] sm:text-[10px] text-emerald-500/60 font-black tracking-widest mt-0.5 sm:mt-1 text-center">BATTLE ARENA</span>
                                     </div>
                                 </button>
 
                                 <button
                                     onClick={() => createRoom(false)}
                                     disabled={loadingAction !== null || matchToReconnect !== null}
-                                    className="group relative flex flex-col items-center justify-center gap-4 p-8 bg-gradient-to-br from-purple-500/5 to-purple-500/10 border-2 border-purple-500/20 rounded-[2rem] font-black tracking-[0.2em] transition-all h-full disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed hover:border-purple-500/50 hover:shadow-[0_0_40px_rgba(168,85,247,0.3)] hover:-translate-y-2 active:scale-95 overflow-hidden"
+                                    className="group relative flex flex-col items-center justify-center gap-2 sm:gap-4 p-2 sm:p-8 bg-gradient-to-br from-purple-500/5 to-purple-500/10 border-2 border-purple-500/20 rounded-[1.5rem] sm:rounded-[2rem] font-black tracking-[0.05em] sm:tracking-[0.2em] transition-all h-full disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed hover:border-purple-500/50 hover:shadow-[0_0_40px_rgba(168,85,247,0.3)] hover:-translate-y-2 active:scale-95 overflow-hidden"
                                 >
-                                    <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-purple-500/20 rounded-tl-[1.8rem] pointer-events-none group-hover:border-purple-400 transition-all"></div>
-                                    <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-purple-500/20 rounded-tr-[1.8rem] pointer-events-none group-hover:border-purple-400 transition-all"></div>
+                                    <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-purple-500/20 rounded-tl-[1.3rem] pointer-events-none group-hover:border-purple-400 transition-all"></div>
+                                    <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-purple-500/20 rounded-tr-[1.3rem] pointer-events-none group-hover:border-purple-400 transition-all"></div>
                                     <div className="absolute inset-0 bg-gradient-to-br from-purple-400/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                                    <div className="relative w-16 h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center border border-purple-500/30 mb-2 group-hover:scale-110 transition-transform shadow-lg">
+                                    <div className="relative w-10 h-10 sm:w-16 sm:h-16 bg-purple-500/20 rounded-2xl flex items-center justify-center border border-purple-500/30 mb-1 sm:mb-2 group-hover:scale-110 transition-transform shadow-lg">
                                         {loadingAction === 'hosting-private' ? (
-                                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-8 h-8 border-4 border-purple-500/20 border-t-purple-400 rounded-full" />
-                                        ) : <Shield size={32} className="text-purple-400" />}
+                                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-5 h-5 sm:w-8 sm:h-8 border-4 border-purple-500/20 border-t-purple-400 rounded-full" />
+                                        ) : <Shield size={20} className="text-purple-400" />}
                                     </div>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-xl text-purple-400 font-orbitron drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">PRIVATE</span>
-                                        <span className="text-[10px] text-purple-500/60 font-black tracking-widest mt-1 text-center">DUEL MODE</span>
+                                        <span className="text-sm sm:text-xl text-purple-400 font-orbitron drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]">PRIVATE</span>
+                                        <span className="text-[8px] sm:text-[10px] text-purple-500/60 font-black tracking-widest mt-0.5 sm:mt-1 text-center">DUEL MODE</span>
                                     </div>
                                 </button>
                             </div>
 
-                            <div className="relative flex items-center py-6 mt-2">
+                            <div className="relative flex items-center py-4 sm:py-6 mt-2">
                                 <div className="flex-grow border-t border-white/5"></div>
                                 <span className="flex-shrink-0 mx-4 text-gray-600 text-[10px] font-bold uppercase tracking-widest">Or Join Private</span>
                                 <div className="flex-grow border-t border-white/5"></div>
@@ -245,18 +245,18 @@ const Lobby: React.FC<LobbyProps> = ({
                                             placeholder="ENTER ROOM CODE..."
                                             value={joinCode}
                                             onChange={e => setJoinCode(e.target.value)}
-                                            className="w-full bg-black/60 border-2 border-white/10 text-center sm:text-left text-2xl font-black tracking-[0.4em] uppercase rounded-2xl px-6 py-5 focus:outline-none focus:border-purple-500/50 transition-all shadow-2xl placeholder:text-gray-700 placeholder:tracking-widest placeholder:text-sm"
+                                            className="w-full bg-black/60 border-2 border-white/10 text-center sm:text-left text-xl sm:text-2xl font-black tracking-[0.2em] sm:tracking-[0.4em] uppercase rounded-2xl px-4 sm:px-6 py-4 sm:py-5 focus:outline-none focus:border-purple-500/50 transition-all shadow-2xl placeholder:text-gray-700 placeholder:tracking-widest placeholder:text-sm"
                                             maxLength={5}
                                         />
                                     </div>
                                     <button
                                         type="submit"
                                         disabled={joinCode.length < 5 || loadingAction !== null || matchToReconnect !== null}
-                                        className="px-10 py-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed text-white font-black rounded-2xl transition-all shadow-[0_10px_30px_rgba(108,99,255,0.3)] hover:shadow-[0_15px_40px_rgba(108,99,255,0.5)] hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-sm"
+                                        className="px-6 sm:px-10 py-4 sm:py-5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-30 disabled:grayscale disabled:cursor-not-allowed text-white font-black rounded-2xl transition-all shadow-[0_10px_30px_rgba(108,99,255,0.3)] hover:shadow-[0_15px_40px_rgba(108,99,255,0.5)] hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3 uppercase tracking-[0.2em] text-sm"
                                     >
                                         {loadingAction === 'joining' ? (
                                             <motion.div animate={{ rotate: 360 }} transition={{ duration: 1, repeat: Infinity, ease: "linear" }} className="w-5 h-5 border-3 border-white/20 border-t-white rounded-full" />
-                                        ) : <Handshake size={22} />}
+                                        ) : <Handshake size={20} />}
                                         JOIN
                                     </button>
                                 </div>
@@ -267,13 +267,13 @@ const Lobby: React.FC<LobbyProps> = ({
 
                 {/* Live Matches List */}
                 <div className="h-full flex flex-col">
-                    <div className="bg-[#0a0a0c]/80 backdrop-blur-xl p-4 sm:p-8 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden flex-1 flex flex-col">
+                    <div className="bg-[#0a0a0c]/80 backdrop-blur-xl p-3 sm:p-8 rounded-[2.5rem] border border-white/10 shadow-2xl relative overflow-hidden flex-1 flex flex-col">
                         <div className="absolute top-0 left-0 w-1.5 h-full bg-emerald-500/50"></div>
                         <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
+                            <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
                                 <Activity size={18} className="text-emerald-400" /> LIVE OPEN MATCHES
                             </h3>
-                            <span className="bg-emerald-500/20 text-emerald-400 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">{(openRooms.length + botRooms.length)} Available</span>
+                            <span className="bg-emerald-500/20 text-emerald-400 text-[8px] sm:text-[10px] font-black px-2 sm:px-3 py-1 rounded-full uppercase tracking-widest">{(openRooms.length + botRooms.length)} Available</span>
                         </div>
                         <div
                             className="space-y-4 overflow-y-auto custom-scrollbar pr-2 flex-1 max-h-[400px]"

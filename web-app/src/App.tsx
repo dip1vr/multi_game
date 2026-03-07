@@ -1541,7 +1541,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <main className={`${isAppView ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] overflow-x-hidden overflow-y-auto'} relative w-full text-[#e0e0e6] p-2 sm:p-4 font-sans selection:bg-purple-500/30 flex flex-col items-center`}>
+    <main className={`${isAppView ? 'h-[100dvh] overflow-hidden' : 'min-h-[100dvh] overflow-x-hidden overflow-y-auto'} relative w-full text-[#e0e0e6] px-2 sm:px-4 py-4 font-sans selection:bg-purple-500/30 flex flex-col items-center`}>
       <GamingBackground />
 
       {!roomId && (
@@ -1564,10 +1564,10 @@ const App: React.FC = () => {
       <div className={`w-full max-w-4xl flex-1 flex flex-col min-h-0 ${isAppView ? 'overflow-hidden' : ''}`}>
         {/* Hide giant header if we are drafting to save space */}
         {!isAppView && (
-          <header className="text-center mb-12 relative shrink-0 pt-12">
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#ff3c5f]/10 blur-[120px] -z-10 animate-pulse"></div>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-[#6c63ff]/10 blur-[100px] -z-10 animate-pulse delay-700"></div>
-            <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-white mb-4 drop-shadow-2xl font-orbitron">
+          <header className="text-center mb-8 sm:mb-12 relative shrink-0 pt-10 sm:pt-12 w-full max-w-full overflow-hidden">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 sm:w-96 sm:h-96 bg-[#ff3c5f]/10 blur-[80px] sm:blur-[120px] -z-10 animate-pulse"></div>
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 sm:w-72 sm:h-72 bg-[#6c63ff]/10 blur-[70px] sm:blur-[100px] -z-10 animate-pulse delay-700"></div>
+            <h1 className="text-3xl sm:text-5xl md:text-7xl font-black italic tracking-tighter text-white mb-3 sm:mb-4 drop-shadow-2xl font-orbitron px-4 overflow-wrap-anywhere">
               MULTI <span className="text-[#ff3c5f] drop-shadow-[0_0_15px_rgba(255,60,95,0.8)]">{gameState.config.mode.toUpperCase()}</span> BATTLE
             </h1>
             <div className="flex items-center justify-center gap-4 mb-2">
