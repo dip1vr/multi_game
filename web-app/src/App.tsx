@@ -62,7 +62,7 @@ const App: React.FC = () => {
   const [tempUsername, setTempUsername] = useState<string>('');
   const [loadingAction, setLoadingAction] = useState<string | null>(null);
   const [showProfileMenu, setShowProfileMenu] = useState<boolean>(false);
-  const [visibleMatchesCount, setVisibleMatchesCount] = useState<number>(4);
+  const [visibleMatchesCount, setVisibleMatchesCount] = useState<number>(6);
   const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
 
   // Social Data from Context
