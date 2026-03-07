@@ -129,7 +129,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId }) => 
                 <div className="absolute top-0 left-10 w-24 h-1 bg-purple-500/50 blur-sm" />
 
                 {/* Header */}
-                <div className="flex items-center justify-between p-8 border-b border-white/5 bg-white/[0.02]">
+                <div className="flex items-center justify-between p-4 sm:p-8 border-b border-white/5 bg-white/[0.02]">
                     <div className="flex items-center gap-5">
                         <div className="relative">
                             <motion.div
@@ -137,13 +137,13 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId }) => 
                                 transition={{ duration: 2, repeat: Infinity }}
                                 className="absolute -inset-2 bg-purple-500/20 blur-xl rounded-full"
                             />
-                            <div className="relative p-3 bg-gradient-to-br from-purple-500 to-blue-600 rounded-2xl border border-white/20">
-                                <Star size={24} className="text-white fill-current" />
+                            <div className="relative p-2 sm:p-3 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl sm:rounded-2xl border border-white/20">
+                                <Star size={18} className="text-white fill-current sm:w-[24px] sm:h-[24px]" />
                             </div>
                         </div>
                         <div>
-                            <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase leading-none">Global Ranks</h2>
-                            <p className="text-purple-400/60 text-[10px] font-black uppercase tracking-[0.4em] mt-2">Elite Combatants Protocol</p>
+                            <h2 className="text-xl sm:text-3xl font-black text-white italic tracking-tighter uppercase leading-none">Global Ranks</h2>
+                            <p className="text-purple-400/60 text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] sm:tracking-[0.4em] mt-1 sm:mt-2">Elite Combatants Protocol</p>
                         </div>
                     </div>
                     <button onClick={onClose} className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl text-gray-400 hover:text-white transition-all group">
@@ -204,7 +204,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId }) => 
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: index * 0.05 }}
-                                        className={`group relative flex items-center gap-5 p-4 rounded-[1.5rem] border transition-all duration-300 ${user.id === currentUserId
+                                        className={`group relative flex items-center gap-3 sm:gap-5 p-3 sm:p-4 rounded-[1.2rem] sm:rounded-[1.5rem] border transition-all duration-300 ${user.id === currentUserId
                                             ? 'bg-purple-500/10 border-purple-500/40 shadow-[0_0_30px_rgba(168,85,247,0.1)]'
                                             : 'bg-white/[0.03] border-white/5 hover:bg-white/[0.06] hover:border-white/10'
                                             }`}
@@ -213,17 +213,17 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId }) => 
                                             <RankBadge rank={index + 1} />
                                         </div>
 
-                                        <div className="relative w-14 h-14 shrink-0">
-                                            <div className="w-full h-full rounded-2xl bg-black border border-white/10 p-0.5 overflow-hidden shadow-xl">
+                                        <div className="relative w-10 h-10 sm:w-14 sm:h-14 shrink-0">
+                                            <div className="w-full h-full rounded-xl sm:rounded-2xl bg-black border border-white/10 p-0.5 overflow-hidden shadow-xl">
                                                 {user.photoURL ? (
-                                                    <img src={user.photoURL} className="w-full h-full object-cover rounded-xl" alt="" />
+                                                    <img src={user.photoURL} className="w-full h-full object-cover rounded-lg sm:rounded-xl" alt="" />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center bg-gray-900 rounded-xl">
-                                                        <User size={24} className="text-gray-600" />
+                                                    <div className="w-full h-full flex items-center justify-center bg-gray-900 rounded-lg sm:rounded-xl">
+                                                        <User size={18} className="text-gray-600 sm:w-[24px] sm:h-[24px]" />
                                                     </div>
                                                 )}
                                             </div>
-                                            {index === 0 && <Zap size={16} className="absolute -top-1 -right-1 text-yellow-400 fill-current animate-bounce" />}
+                                            {index === 0 && <Zap size={14} className="absolute -top-1 -right-1 text-yellow-400 fill-current animate-bounce sm:w-[16px] sm:h-[16px]" />}
                                         </div>
 
                                         <div className="flex-1 min-w-0">
@@ -237,20 +237,20 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId }) => 
                                                     </span>
                                                 )}
                                             </div>
-                                            <div className="flex items-center gap-4 text-[9px] font-black uppercase tracking-widest text-gray-500">
+                                            <div className="flex items-center gap-2 sm:gap-4 text-[8px] sm:text-[9px] font-black uppercase tracking-widest text-gray-500">
                                                 <span className="flex items-center gap-1"><Target size={10} className="text-purple-500" /> LVL {Math.floor(user.wins / 5) + 1}</span>
-                                                <span className="flex items-center gap-1"><Shield size={10} className="text-blue-500" /> {user.wins + user.losses + user.draws} BATTLES</span>
+                                                <span className="flex items-center gap-1"><Shield size={10} className="text-blue-500" /> {user.wins + user.losses + user.draws} <span className="hidden xs:inline">BATTLES</span></span>
                                             </div>
                                         </div>
 
-                                        <div className="flex items-center gap-4 sm:gap-8 px-4 py-2 bg-black/40 border border-white/5 rounded-2xl shrink-0">
+                                        <div className="flex items-center gap-3 sm:gap-8 px-2 sm:px-4 py-1.5 sm:py-2 bg-black/40 border border-white/5 rounded-xl sm:rounded-2xl shrink-0">
                                             <div className="flex flex-col items-center">
-                                                <span className="text-[8px] text-emerald-500/50 font-black tracking-widest uppercase mb-0.5">W</span>
-                                                <span className="text-emerald-400 font-black text-sm">{user.wins || 0}</span>
+                                                <span className="text-[7px] sm:text-[8px] text-emerald-500/50 font-black tracking-widest uppercase mb-0.5">W</span>
+                                                <span className="text-emerald-400 font-black text-xs sm:text-sm">{user.wins || 0}</span>
                                             </div>
                                             <div className="flex flex-col items-center">
-                                                <span className="text-[8px] text-rose-500/50 font-black tracking-widest uppercase mb-0.5">L</span>
-                                                <span className="text-rose-400 font-black text-sm">{user.losses || 0}</span>
+                                                <span className="text-[7px] sm:text-[8px] text-rose-500/50 font-black tracking-widest uppercase mb-0.5">L</span>
+                                                <span className="text-rose-400 font-black text-xs sm:text-sm">{user.losses || 0}</span>
                                             </div>
                                         </div>
                                     </motion.div>
@@ -262,12 +262,12 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId }) => 
 
                 {/* Footer HUD */}
                 {currentUserId && currentUserStats && (
-                    <div className="p-8 bg-[#0a0a12] border-t border-white/10">
+                    <div className="p-4 sm:p-8 bg-[#0a0a12] border-t border-white/10">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                             <div className="flex items-center gap-6">
-                                <div className="text-center sm:text-left px-6 py-3 bg-purple-500/10 border border-purple-500/30 rounded-3xl backdrop-blur-md">
-                                    <p className="text-[10px] text-purple-400/80 font-black uppercase tracking-[0.3em] mb-1">Your Protocol Rank</p>
-                                    <p className="text-4xl font-black text-white italic leading-none tracking-tighter shadow-purple-500/50">#{currentUserRank || '?'}</p>
+                                <div className="text-center sm:text-left px-4 sm:px-6 py-2 sm:py-3 bg-purple-500/10 border border-purple-500/30 rounded-2xl sm:rounded-3xl backdrop-blur-md">
+                                    <p className="text-[8px] sm:text-[10px] text-purple-400/80 font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] mb-1">Your Protocol Rank</p>
+                                    <p className="text-2xl sm:text-4xl font-black text-white italic leading-none tracking-tighter shadow-purple-500/50">#{currentUserRank || '?'}</p>
                                 </div>
                                 <div className="h-10 w-px bg-white/10 hidden sm:block"></div>
                                 <div className="hidden md:flex flex-col">
@@ -280,20 +280,20 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ onClose, currentUserId }) => 
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 px-6 py-4 bg-white/[0.02] border border-white/5 rounded-3xl backdrop-blur-md">
-                                <div className="flex flex-col items-center px-4">
-                                    <span className="text-[9px] text-emerald-500 font-black uppercase tracking-widest">Wins</span>
-                                    <span className="text-xl font-black text-emerald-400">{currentUserStats.wins || 0}</span>
+                            <div className="flex items-center gap-1 sm:gap-3 px-3 sm:px-6 py-3 sm:py-4 bg-white/[0.02] border border-white/5 rounded-2xl sm:rounded-3xl backdrop-blur-md">
+                                <div className="flex flex-col items-center px-2 sm:px-4">
+                                    <span className="text-[7px] sm:text-[9px] text-emerald-500 font-black uppercase tracking-widest">Wins</span>
+                                    <span className="text-base sm:text-xl font-black text-emerald-400">{currentUserStats.wins || 0}</span>
                                 </div>
-                                <div className="w-px h-8 bg-white/10 mx-2"></div>
-                                <div className="flex flex-col items-center px-4">
-                                    <span className="text-[9px] text-rose-500 font-black uppercase tracking-widest">Losses</span>
-                                    <span className="text-xl font-black text-rose-400">{currentUserStats.losses || 0}</span>
+                                <div className="w-px h-6 sm:h-8 bg-white/10 mx-1 sm:mx-2"></div>
+                                <div className="flex flex-col items-center px-2 sm:px-4">
+                                    <span className="text-[7px] sm:text-[9px] text-rose-500 font-black uppercase tracking-widest">Losses</span>
+                                    <span className="text-base sm:text-xl font-black text-rose-400">{currentUserStats.losses || 0}</span>
                                 </div>
-                                <div className="w-px h-8 bg-white/10 mx-2"></div>
-                                <div className="flex flex-col items-center px-4">
-                                    <span className="text-[9px] text-gray-500 font-black uppercase tracking-widest">Draws</span>
-                                    <span className="text-xl font-black text-gray-400">{currentUserStats.draws || 0}</span>
+                                <div className="w-px h-6 sm:h-8 bg-white/10 mx-1 sm:mx-2"></div>
+                                <div className="flex flex-col items-center px-2 sm:px-4">
+                                    <span className="text-[7px] sm:text-[9px] text-gray-500 font-black uppercase tracking-widest">Draws</span>
+                                    <span className="text-base sm:text-xl font-black text-gray-400">{currentUserStats.draws || 0}</span>
                                 </div>
                             </div>
                         </div>
