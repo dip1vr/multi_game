@@ -11,6 +11,24 @@ export const getRolesForMode = (mode: GameMode) => {
     return ANIME_ROLES;
 };
 
+export const getStatKeyMapForMode = (mode: GameMode): Record<string, string> => {
+    if (mode === "Anime") return {
+        "Captain": "captain", "Vice Captain": "vice_captain", "Tank": "tank",
+        "Healer": "healer", "Assassin": "assassin", "Support 1": "support",
+        "Support 2": "support", "Traitor": "traitor"
+    };
+    if (mode === "Marvel") return {
+        "Paragon": "paragon", "Genius": "genius", "Powerhouse": "powerhouse",
+        "Mystic": "mystic", "Street Level": "street_level", "Cosmic": "cosmic",
+        "Trickster": "trickster", "Herald": "herald"
+    };
+    if (mode === "Pokemon") return {
+        "HP": "hp", "Atk": "attack", "Def": "defense",
+        "SpA": "special-attack", "SpD": "special-defense", "Spe": "speed", "Type": "hp"
+    };
+    return {};
+};
+
 const ANIME_MATCHUPS = [
     { r1: "Captain", r2: "Captain", pts: 30 },
     { r1: "Vice Captain", r2: "Vice Captain", pts: 25 },

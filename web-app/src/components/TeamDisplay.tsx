@@ -41,26 +41,26 @@ interface TeamDisplayProps {
 
 export const TeamDisplay: React.FC<TeamDisplayProps> = React.memo(({ player, isLeft, roles, isLocal, showAddFriend, onAddFriend, misses }) => {
     return (
-        <div className={`flex flex-col gap-1 p-1.5 sm:p-2 bg-gray-900/50 backdrop-blur-md rounded-lg border ${isLocal ? 'border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.15)]' : isLeft ? 'border-blue-500/30' : 'border-red-500/30'} w-full`}>
-            <div className="flex items-center justify-between pb-1 mb-0.5 border-b border-white/5">
-                <h2 className={`text-xs sm:text-sm font-black flex items-center gap-1 ${isLocal ? 'text-purple-400' : isLeft ? 'text-blue-400' : 'text-red-400'}`}>
-                    <Users size={12} /> <span className="truncate max-w-[100px] sm:max-w-[200px]">{player.name}</span>
-                    {isLocal && <span className="ml-1 text-[8px] font-black bg-purple-500/20 px-1 py-0.5 rounded-sm uppercase tracking-widest text-purple-300">You</span>}
+        <div className={`flex flex-col gap-0.5 lg:gap-1 p-1 lg:p-2 bg-gray-900/50 backdrop-blur-md rounded-lg border ${isLocal ? 'border-purple-500/50 shadow-[0_0_15px_rgba(168,85,247,0.15)]' : isLeft ? 'border-blue-500/30' : 'border-red-500/30'} w-full`}>
+            <div className="flex items-center justify-between pb-0.5 lg:pb-1 mb-0 lg:mb-0.5 border-b border-white/5">
+                <h2 className={`text-[10px] sm:text-xs lg:text-sm font-black flex items-center gap-1 ${isLocal ? 'text-purple-400' : isLeft ? 'text-blue-400' : 'text-red-400'}`}>
+                    <Users size={10} className="lg:w-3 lg:h-3" /> <span className="truncate max-w-[60px] sm:max-w-[100px] lg:max-w-[200px]">{player.name}</span>
+                    {isLocal && <span className="ml-1 text-[6px] lg:text-[8px] font-black bg-purple-500/20 px-1 py-0.5 rounded-sm uppercase tracking-widest text-purple-300">You</span>}
                     {!isLocal && showAddFriend && (
-                        <button onClick={onAddFriend} className="ml-2 bg-purple-500/20 text-purple-400 hover:bg-purple-500/40 p-1.5 rounded-lg transition-colors border border-purple-500/30" title="Add Friend">
-                            <UserPlus size={14} />
+                        <button onClick={onAddFriend} className="ml-1 bg-purple-500/20 text-purple-400 hover:bg-purple-500/40 p-1 rounded-lg transition-colors border border-purple-500/30" title="Add Friend">
+                            <UserPlus size={10} />
                         </button>
                     )}
                 </h2>
-                <div className="flex flex-col items-end gap-1">
-                    <div className="flex items-center gap-1 bg-black/40 px-1.5 py-0.5 rounded border border-white/5">
-                        <span className="text-[7px] text-gray-500 uppercase tracking-widest font-bold hidden sm:inline mr-1">Skips</span>
+                <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-0.5 bg-black/40 px-1 py-0.5 rounded border border-white/5">
+                        <span className="text-[6px] lg:text-[7px] text-gray-500 uppercase tracking-widest font-bold hidden sm:inline mr-0.5">Skips</span>
                         {[...Array(player.skips)].map((_, i) => <div key={`s-${i}`} className="w-1 h-1 rounded-full bg-rose-500 shadow-[0_0_5px_rgba(244,63,94,0.5)]"></div>)}
                         {[...Array(2 - player.skips)].map((_, i) => <div key={`e-${i}`} className="w-1 h-1 rounded-full bg-gray-800"></div>)}
                     </div>
                     {misses > 0 && (
-                        <div className="flex items-center gap-1 bg-red-950/30 px-1.5 py-0.5 rounded border border-red-500/20">
-                            <span className="text-[7px] text-red-500 uppercase tracking-widest font-bold hidden sm:inline mr-1">Strikes</span>
+                        <div className="flex items-center gap-0.5 bg-red-950/30 px-1 py-0.5 rounded border border-red-500/20">
+                            <span className="text-[6px] lg:text-[7px] text-red-500 uppercase tracking-widest font-bold hidden sm:inline mr-0.5">Strikes</span>
                             {[...Array(misses)].map((_, i) => (
                                 <motion.div
                                     key={`m-${i}`}
@@ -75,7 +75,7 @@ export const TeamDisplay: React.FC<TeamDisplayProps> = React.memo(({ player, isL
             </div>
 
             <div className="flex justify-center w-full">
-                <div className="grid grid-cols-8 lg:grid-cols-4 gap-1 sm:gap-1.5 w-full max-w-[400px] lg:max-w-none">
+                <div className="grid grid-cols-8 lg:grid-cols-4 gap-0.5 sm:gap-1 lg:gap-1.5 w-full max-w-[400px] lg:max-w-none">
                     {roles.map(role => {
                         const char = player.team[role];
                         return (
@@ -97,14 +97,14 @@ export const TeamDisplay: React.FC<TeamDisplayProps> = React.memo(({ player, isL
                                             className="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/20"></div>
-                                        <div className="absolute bottom-0 right-0 p-0.5 opacity-90 scale-[0.6] origin-bottom-right">
+                                        <div className="absolute bottom-0 right-0 p-0.5 opacity-90 scale-[0.5] lg:scale-[0.6] origin-bottom-right">
                                             {roleIconsMapping[role]}
                                         </div>
                                     </>
                                 ) : (
                                     <>
-                                        <span className="text-gray-500 mb-0.5 opacity-50 scale-[0.6]">{roleIconsMapping[role]}</span>
-                                        <span className="text-[7px] font-bold text-gray-600 uppercase tracking-tighter text-center leading-none px-0.5" style={{ fontSize: '0.5rem' }}>
+                                        <span className="text-gray-500 mb-0.5 opacity-50 scale-[0.45] lg:scale-[0.6]">{roleIconsMapping[role]}</span>
+                                        <span className="text-[5px] lg:text-[7px] font-bold text-gray-600 uppercase tracking-tighter text-center leading-none px-0.5">
                                             {role.split(' ').map(w => w[0]).join('')}
                                         </span>
                                     </>

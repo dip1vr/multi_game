@@ -14,7 +14,7 @@ import { signInWithPopup, signInWithRedirect, getRedirectResult, signInAnonymous
 
 import { loadDataset } from './dataStore';
 import { Character, GameState, Player, GameMode, PlayerRole, Room } from './types';
-import { getRolesForMode, calculateBattle } from './gameLogic';
+import { getRolesForMode, calculateBattle, getStatKeyMapForMode } from './gameLogic';
 import { SetupScreen } from './components/SetupScreen';
 import { TeamDisplay, roleIconsMapping } from './components/TeamDisplay';
 const Leaderboard = lazy(() => import('./components/Leaderboard'));
@@ -1388,6 +1388,80 @@ const App: React.FC = () => {
     }
   };
 
+  // Auto-Bot Join: if public match has no opponent for 90s, a bot joins between 90-120s
+  const botJoinTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => {
+    // Clear any existing timeout when dependencies change
+    if (botJoinTimeoutRef.current) {
+      clearTimeout(botJoinTimeoutRef.current);
+      botJoinTimeoutRef.current = null;
+    }
+
+    // Only host of a public room in waiting_for_player status can trigger this
+    if (!roomId || localRole !== 'p1' || gameState.status !== 'waiting_for_player' || !roomCreatedAt) return;
+
+    // Check if the room is intended to be public
+    const checkAndScheduleBot = async () => {
+      try {
+        const roomSnap = await getDoc(doc(db, 'games', roomId));
+        if (!roomSnap.exists()) return;
+        const roomData = roomSnap.data() as Room;
+        if (!roomData.intendedPublic || roomData.guest) return;
+
+        const elapsed = Date.now() - roomCreatedAt;
+        const elapsedSec = elapsed / 1000;
+
+        if (elapsedSec >= 120) {
+          // Already past the window, join immediately
+          joinBotToRoom();
+        } else if (elapsedSec >= 90) {
+          // We're in the 90-120s window, join after a short random delay
+          const delay = Math.random() * 5000; // 0-5s
+          botJoinTimeoutRef.current = setTimeout(joinBotToRoom, delay);
+        } else {
+          // Schedule for when we hit 90s + random(0-30s)
+          const delayUntil90 = (90 - elapsedSec) * 1000;
+          const randomExtra = Math.random() * 30000; // 0-30s extra
+          botJoinTimeoutRef.current = setTimeout(joinBotToRoom, delayUntil90 + randomExtra);
+        }
+      } catch (e) {
+        console.error('[Auto-Bot] Error checking room:', e);
+      }
+    };
+
+    const joinBotToRoom = async () => {
+      try {
+        // Re-check that no guest has joined
+        const roomSnap = await getDoc(doc(db, 'games', roomId));
+        if (!roomSnap.exists()) return;
+        const roomData = roomSnap.data() as Room;
+        if (roomData.guest) return; // Someone already joined
+
+        const botName = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+        const botId = `BOT_ID_${botName}`;
+
+        await updateDoc(doc(db, 'games', roomId), {
+          guest: botName,
+          guestId: botId,
+          guestPhotoURL: null,
+          'gameState.p2.name': botName
+        });
+        console.log(`[Auto-Bot] Bot "${botName}" joined public room ${roomId}`);
+      } catch (e) {
+        console.error('[Auto-Bot] Failed to join bot:', e);
+      }
+    };
+
+    checkAndScheduleBot();
+
+    return () => {
+      if (botJoinTimeoutRef.current) {
+        clearTimeout(botJoinTimeoutRef.current);
+        botJoinTimeoutRef.current = null;
+      }
+    };
+  }, [roomId, localRole, gameState.status, roomCreatedAt]);
+
   useEffect(() => {
     if (gameState.status !== "drafting") return;
 
@@ -1412,8 +1486,16 @@ const App: React.FC = () => {
           const currentPlayer = gameState[botRole];
           const availableRoles = roles.filter(r => !currentPlayer.team[r]);
           if (availableRoles.length > 0) {
-            const randomRole = availableRoles[Math.floor(Math.random() * availableRoles.length)];
-            assignRole(randomRole, true);
+            // Smart bot: pick from the top 3 highest-stat roles for this character
+            const statKeyMap = getStatKeyMapForMode(gameState.config.mode);
+            const scored = availableRoles.map(role => {
+              const statKey = statKeyMap[role];
+              const value = statKey ? (gameState.currentDraw?.stats?.[statKey] || 0) : 0;
+              return { role, value };
+            }).sort((a, b) => b.value - a.value);
+            const topN = Math.min(3, scored.length);
+            const chosen = scored[Math.floor(Math.random() * topN)];
+            assignRole(chosen.role, true);
           } else {
             skipTurn(true);
           }
@@ -2045,27 +2127,27 @@ const App: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3 }}
-              className="w-full flex-1 flex flex-col items-center justify-center -mt-20"
+              className="w-full flex-1 flex flex-col items-center justify-center -mt-10 sm:-mt-20 px-2 sm:px-0"
             >
-              <div className="text-center p-12 bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-3xl max-w-xl mx-auto shadow-2xl w-full relative">
+              <div className="text-center p-6 sm:p-12 bg-gray-900/40 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl max-w-xl mx-auto shadow-2xl w-full relative">
                 <button
                   onClick={handleBackToLobby}
-                  className="absolute top-6 left-6 p-3 bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white rounded-2xl border border-white/5 transition-all flex items-center gap-2 font-black uppercase tracking-widest text-[10px]"
+                  className="absolute top-3 left-3 sm:top-6 sm:left-6 p-2 sm:p-3 bg-white/5 hover:bg-white/10 text-gray-500 hover:text-white rounded-xl sm:rounded-2xl border border-white/5 transition-all flex items-center gap-1.5 sm:gap-2 font-black uppercase tracking-widest text-[8px] sm:text-[10px]"
                 >
                   <ArrowLeft size={16} /> Cancel Battle
                 </button>
-                <div className="inline-block animate-pulse rounded-full p-4 bg-purple-600/20 mb-6 border border-purple-500/30">
-                  <Users size={48} className="text-purple-400" />
+                <div className="inline-block animate-pulse rounded-full p-3 sm:p-4 bg-purple-600/20 mb-4 sm:mb-6 border border-purple-500/30 mt-6 sm:mt-0">
+                  <Users size={32} className="text-purple-400 sm:w-12 sm:h-12" />
                 </div>
-                <h2 className="text-2xl font-black text-gray-200 tracking-widest uppercase mb-4">
+                <h2 className="text-lg sm:text-2xl font-black text-gray-200 tracking-widest uppercase mb-2 sm:mb-4">
                   Match Configured
                 </h2>
-                <p className="text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">
+                <p className="text-gray-400 mb-4 sm:mb-8 max-w-md mx-auto leading-relaxed text-sm sm:text-base">
                   Waiting for an opponent to join. Your game will begin automatically as soon as the second player connects.
                 </p>
-                <div className="inline-block bg-black/50 border border-white/10 rounded-2xl p-6">
-                  <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Share Room Code</p>
-                  <p className="text-4xl font-black text-white tracking-[0.3em] font-mono">{roomId}</p>
+                <div className="inline-block bg-black/50 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6">
+                  <p className="text-[10px] sm:text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 sm:mb-2">Share Room Code</p>
+                  <p className="text-2xl sm:text-4xl font-black text-white tracking-[0.2em] sm:tracking-[0.3em] font-mono">{roomId}</p>
                 </div>
 
                 {roomExpiryTimeLeft !== null && (
@@ -2092,11 +2174,11 @@ const App: React.FC = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.4 }}
-              className="w-full flex-1 flex flex-col lg:flex-row justify-between gap-2 sm:gap-4 lg:gap-8 overflow-hidden py-1 min-h-0 w-full max-w-7xl mx-auto"
+              className="w-full flex-1 flex flex-col lg:flex-row justify-between gap-1 sm:gap-2 lg:gap-6 overflow-hidden py-1 min-h-0 w-full max-w-7xl mx-auto"
             >
 
               {/* OPPONENT TEAM (TOP or LEFT) */}
-              <div className="shrink-0 w-full lg:w-[280px] xl:w-[320px] animate-fade-in-down lg:order-1 flex flex-col justify-center">
+              <div className="shrink-0 w-full lg:w-[280px] xl:w-[320px] animate-fade-in-down lg:order-1 flex flex-col justify-center max-h-[80px] sm:max-h-[100px] lg:max-h-none overflow-hidden">
                 <TeamDisplay
                   player={localRole === 'p1' ? gameState.p2 : gameState.p1}
                   isLeft={localRole === 'p1' ? false : true}
@@ -2164,19 +2246,19 @@ const App: React.FC = () => {
                 </div>
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-b from-transparent via-purple-900/10 to-transparent -z-10 pointer-events-none"></div>
 
-                <div className="text-center mb-2 shrink-0">
-                  <span className="text-[9px] font-black text-white/40 uppercase tracking-[0.3em] bg-white/5 px-3 py-1 rounded-full border border-white/5 shadow-inner">NOW DRAFTING</span>
-                  <h3 className={`text-xl sm:text-2xl font-black mt-2 transition-colors duration-500 ${gameState.turn === localRole ? 'text-purple-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]' : 'text-gray-500'}`}>
+                <div className="text-center mb-1 sm:mb-2 shrink-0">
+                  <span className="text-[7px] sm:text-[9px] font-black text-white/40 uppercase tracking-[0.3em] bg-white/5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full border border-white/5 shadow-inner">NOW DRAFTING</span>
+                  <h3 className={`text-base sm:text-xl lg:text-2xl font-black mt-1 sm:mt-2 transition-colors duration-500 ${gameState.turn === localRole ? 'text-purple-400 drop-shadow-[0_0_10px_rgba(168,85,247,0.5)]' : 'text-gray-500'}`}>
                     {gameState.turn === localRole ? "YOUR TURN" : `${gameState[gameState.turn].name}'S TURN`}
                   </h3>
 
-                  <div className="w-full max-w-[200px] h-1.5 bg-black/50 rounded-full mx-auto mt-3 overflow-hidden border border-white/10">
+                  <div className="w-full max-w-[160px] sm:max-w-[200px] h-1 sm:h-1.5 bg-black/50 rounded-full mx-auto mt-1.5 sm:mt-3 overflow-hidden border border-white/10">
                     <div
                       className={`h-full transition-all duration-200 ease-linear ${timeLeft <= 5 ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.8)]' : timeLeft <= 10 ? 'bg-orange-500' : 'bg-purple-500'}`}
                       style={{ width: `${(timeLeft / 30) * 100}%` }}
                     ></div>
                   </div>
-                  <div className={`text-[10px] font-black mt-1 tracking-widest ${timeLeft <= 5 ? 'text-red-400 animate-pulse' : 'text-gray-500'}`}>
+                  <div className={`text-[8px] sm:text-[10px] font-black mt-0.5 sm:mt-1 tracking-widest ${timeLeft <= 5 ? 'text-red-400 animate-pulse' : 'text-gray-500'}`}>
                     {timeLeft <= 5 && <ShieldAlert size={10} className="inline mr-1 mb-0.5" />}
                     {timeLeft}s REMAINING {(localRole === gameState.turn) && timeLeft <= 10 && <span className="text-red-500 ml-1">(!) ALERT</span>}
                   </div>
@@ -2189,9 +2271,9 @@ const App: React.FC = () => {
                       initial={{ opacity: 0, scale: 0.8, y: 30 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 1.1, y: -20, filter: "blur(10px)" }}
-                      className="flex flex-col h-full w-full max-w-sm px-2 sm:px-0 py-2"
+                      className="flex flex-col h-full w-full max-w-sm px-1 sm:px-0 py-1 sm:py-2"
                     >
-                      <div className="relative group flex-1 bg-[#0a0a0c] p-2 sm:p-3 rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden max-h-full min-h-0">
+                      <div className="relative group flex-1 bg-[#0a0a0c] p-1.5 sm:p-3 rounded-xl sm:rounded-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden max-h-full min-h-0">
                         {/* Image container limits height and ensures strict scaling */}
                         <div className="relative flex-1 items-center justify-center rounded-xl bg-black border border-white/5 overflow-hidden shadow-inner min-h-0">
                           <img
@@ -2214,17 +2296,17 @@ const App: React.FC = () => {
                         </div>
 
                         {/* Action Grid (Always pinned bottom inside the card) */}
-                        <div className="mt-2 sm:mt-3 shrink-0">
-                          <div className="grid grid-cols-4 sm:grid-cols-4 gap-1 sm:gap-1.5 mb-2">
+                        <div className="mt-1.5 sm:mt-3 shrink-0">
+                          <div className="grid grid-cols-4 gap-0.5 sm:gap-1.5 mb-1 sm:mb-2">
                             {roles.filter(r => !gameState[gameState.turn].team[r]).map(role => (
                               <button
                                 key={role}
                                 onClick={() => assignRole(role)}
                                 disabled={gameState.turn !== localRole}
-                                className="flex flex-col items-center justify-center gap-1 py-1.5 sm:py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/50 rounded-lg text-white transition-all active:scale-95 disabled:opacity-30 disabled:hover:border-white/10 disabled:cursor-not-allowed group/btn"
+                                className="flex flex-col items-center justify-center gap-0.5 sm:gap-1 py-1 sm:py-2 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-purple-500/50 rounded-md sm:rounded-lg text-white transition-all active:scale-95 disabled:opacity-30 disabled:hover:border-white/10 disabled:cursor-not-allowed group/btn"
                               >
-                                <span className="scale-[0.6] sm:scale-75 text-gray-400 group-hover/btn:text-purple-400 transition-colors drop-shadow-md">{roleIconsMapping[role]}</span>
-                                <span className="text-[7px] font-bold uppercase tracking-tighter truncate w-full text-center px-1 overflow-hidden opacity-80">{role}</span>
+                                <span className="scale-[0.5] sm:scale-75 text-gray-400 group-hover/btn:text-purple-400 transition-colors drop-shadow-md">{roleIconsMapping[role]}</span>
+                                <span className="text-[5px] sm:text-[7px] font-bold uppercase tracking-tighter truncate w-full text-center px-0.5 overflow-hidden opacity-80">{role}</span>
                               </button>
                             ))}
                           </div>
@@ -2232,7 +2314,7 @@ const App: React.FC = () => {
                           <button
                             onClick={() => skipTurn()}
                             disabled={gameState[gameState.turn].skips <= 0 || gameState.turn !== localRole}
-                            className={`w-full flex items-center justify-center gap-1.5 py-1.5 sm:py-2 rounded-lg text-[9px] font-black transition-all uppercase tracking-[0.2em] shadow-lg border
+                            className={`w-full flex items-center justify-center gap-1 sm:gap-1.5 py-1 sm:py-2 rounded-md sm:rounded-lg text-[8px] sm:text-[9px] font-black transition-all uppercase tracking-[0.15em] sm:tracking-[0.2em] shadow-lg border
                             ${gameState[gameState.turn].skips > 0 && gameState.turn === localRole
                                 ? 'bg-rose-500/10 border-rose-500/30 text-rose-400 hover:bg-rose-500/20 active:scale-95'
                                 : 'bg-black/40 border-white/5 text-gray-600 disabled:cursor-not-allowed'}`}
@@ -2247,7 +2329,7 @@ const App: React.FC = () => {
               </div>
 
               {/* LOCAL PLAYER TEAM (BOTTOM or RIGHT) */}
-              <div className="shrink-0 w-full lg:w-[280px] xl:w-[320px] animate-fade-in-up lg:order-3 flex flex-col justify-center">
+              <div className="shrink-0 w-full lg:w-[280px] xl:w-[320px] animate-fade-in-up lg:order-3 flex flex-col justify-center max-h-[80px] sm:max-h-[100px] lg:max-h-none overflow-hidden">
                 <TeamDisplay
                   player={localRole === 'p1' ? gameState.p1 : gameState.p2}
                   isLeft={localRole === 'p1' ? true : false}
