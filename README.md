@@ -41,4 +41,4 @@ This project is provided as-is under the MIT License. Feel free to fork and modi
 
 ---
 
-Happy drafting! 🎉
+Happy drafting! 🎉 By Flirter
